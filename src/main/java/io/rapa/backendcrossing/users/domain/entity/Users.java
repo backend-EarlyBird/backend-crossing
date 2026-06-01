@@ -1,7 +1,7 @@
-package io.rapa.backendcrossing.domain.entity;
+package io.rapa.backendcrossing.users.domain.entity;
 
-import io.rapa.backendcrossing.constant.Role;
-import io.rapa.backendcrossing.constant.UserStatus;
+import io.rapa.backendcrossing.users.constants.Role;
+import io.rapa.backendcrossing.users.constants.UserStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

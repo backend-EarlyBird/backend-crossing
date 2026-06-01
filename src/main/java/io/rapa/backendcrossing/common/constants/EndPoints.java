@@ -1,4 +1,4 @@
-package io.rapa.backendcrossing.constant;
+package io.rapa.backendcrossing.common.constants;
 
 public class EndPoints {
     public static final String[] POST_ANONYMOUS = {
