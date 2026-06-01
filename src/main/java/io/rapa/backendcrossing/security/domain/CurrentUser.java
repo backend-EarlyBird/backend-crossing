@@ -1,4 +1,4 @@
-package io.rapa.backendcrossing.oauth.domain;
+package io.rapa.backendcrossing.security.domain;
 
 import io.rapa.backendcrossing.common.constants.ErrorCode;
 import io.rapa.backendcrossing.common.exception.CustomException;

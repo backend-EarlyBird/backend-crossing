@@ -1,13 +1,10 @@
-package io.rapa.backendcrossing.oauth.service;
+package io.rapa.backendcrossing.security.service;
 
-import io.rapa.backendcrossing.common.constants.ErrorCode;
-import io.rapa.backendcrossing.common.exception.CustomException;
-import io.rapa.backendcrossing.oauth.domain.CurrentUser;
+import io.rapa.backendcrossing.security.domain.CurrentUser;
 import io.rapa.backendcrossing.users.domain.entity.Users;
 import io.rapa.backendcrossing.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
