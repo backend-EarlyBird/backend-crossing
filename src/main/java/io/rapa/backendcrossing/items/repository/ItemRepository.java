@@ -1,5 +1,6 @@
 package io.rapa.backendcrossing.items.repository;
 
+import io.rapa.backendcrossing.common.constants.ErrorCode;
 import io.rapa.backendcrossing.common.exception.CustomException;
 import io.rapa.backendcrossing.items.entity.Items;
 import org.springframework.data.jpa.repository.JpaRepository;

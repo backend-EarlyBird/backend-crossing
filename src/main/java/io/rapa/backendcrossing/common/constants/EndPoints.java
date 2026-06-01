@@ -1,8 +1,4 @@
-<<<<<<<< Updated upstream:src/main/java/io/rapa/backendcrossing/common/constants/EndPoints.java
 package io.rapa.backendcrossing.common.constants;
-========
-package io.rapa.backendcrossing.common.constant;
->>>>>>>> Stashed changes:src/main/java/io/rapa/backendcrossing/common/constant/EndPoints.java
 
 public class EndPoints {
     public static final String[] POST_ANONYMOUS = {

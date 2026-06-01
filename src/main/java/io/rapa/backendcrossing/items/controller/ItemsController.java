@@ -1,4 +1,4 @@
-package io.rapa.backendcrossing.controller;
+package io.rapa.backendcrossing.items.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

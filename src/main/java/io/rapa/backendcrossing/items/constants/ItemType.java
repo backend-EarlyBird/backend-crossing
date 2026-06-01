@@ -1,16 +1,16 @@
-package io.rapa.backendcrossing.common.constant;
+package io.rapa.backendcrossing.items.constants;
 
 /**
  * packageName    : io.rapa.backendcrossing.constant
- * fileName       : ItemsGradeType
+ * fileName       : ItemsType
  * author         : Admin
  * date           : 26. 6. 1.
- * description    : Items - 아이템 등급 enum
+ * description    : Items - 아이템 타입 enum
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 26. 6. 1.        Admin       최초 생성
  */
-public enum ItemsGradeType {
-    COMMON, UNCOMMON, RARE, EPIC, LEGENDARY
+public enum ItemType {
+    WEAPON, ARMOR, CONSUMABLE, ETC
 }
