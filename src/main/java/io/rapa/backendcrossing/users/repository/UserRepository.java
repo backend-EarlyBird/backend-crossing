@@ -1,8 +1,8 @@
-package io.rapa.backendcrossing.repository;
+package io.rapa.backendcrossing.users.repository;
 
-import io.rapa.backendcrossing.constant.ErrorCode;
-import io.rapa.backendcrossing.domain.entity.Users;
-import io.rapa.backendcrossing.exception.CustomException;
+import io.rapa.backendcrossing.common.constants.ErrorCode;
+import io.rapa.backendcrossing.users.domain.entity.Users;
+import io.rapa.backendcrossing.common.exception.CustomException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package io.rapa.backendcrossing.constant;
+package io.rapa.backendcrossing.common.constants;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package io.rapa.backendcrossing.config;
+package io.rapa.backendcrossing.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,8 +1,7 @@
-package io.rapa.backendcrossing.config;
+package io.rapa.backendcrossing.common.config;
 
 
-import io.rapa.backendcrossing.constant.EndPoints;
-import org.springframework.beans.factory.annotation.Value;
+import io.rapa.backendcrossing.common.constants.EndPoints;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

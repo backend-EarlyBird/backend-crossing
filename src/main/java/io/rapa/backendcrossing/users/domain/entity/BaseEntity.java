@@ -1,4 +1,4 @@
-package io.rapa.backendcrossing.domain.entity;
+package io.rapa.backendcrossing.users.domain.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
