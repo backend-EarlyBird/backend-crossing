@@ -13,4 +13,15 @@ spring:
     enabled: false
     validate-on-migrate: true
     baseline-on-migrate: false
-
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-name: Google
+            client-id: ${oauthClientId}
+            client-secret: ${oauthClientSecretKey}
+            scope:
+              - email
+custom:
+  baseUrl: ${baseUrl}
