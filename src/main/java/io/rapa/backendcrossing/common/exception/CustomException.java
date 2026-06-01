@@ -1,6 +1,6 @@
 package io.rapa.backendcrossing.common.exception;
 
-import io.rapa.backendcrossing.common.constants.ErrorCode;
+import io.rapa.backendcrossing.common.constant.ErrorCode;
 
 public class CustomException extends RuntimeException {
     private final ErrorCode errorCode;
