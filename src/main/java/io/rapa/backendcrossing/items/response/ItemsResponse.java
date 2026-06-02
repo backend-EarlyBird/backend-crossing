@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Schema(description = "아이템 상세 정보 응답 DTO")
-public class ItemResponse {
+public class ItemsResponse {
 
     @Schema(description = "아이템 ID", example = "1")
     private Long itemId;

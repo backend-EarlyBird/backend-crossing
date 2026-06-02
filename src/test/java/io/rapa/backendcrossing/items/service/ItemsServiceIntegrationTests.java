@@ -6,8 +6,8 @@ import io.rapa.backendcrossing.common.exception.CustomException;
 import io.rapa.backendcrossing.items.constants.ItemGrade;
 import io.rapa.backendcrossing.items.constants.ItemType;
 import io.rapa.backendcrossing.items.entity.Items;
-import io.rapa.backendcrossing.items.repository.ItemRepository;
-import io.rapa.backendcrossing.items.response.ItemResponse;
+import io.rapa.backendcrossing.items.repository.ItemsRepository;
+import io.rapa.backendcrossing.items.response.ItemsResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ public class ItemsServiceIntegrationTests {
 
     //통합이니 진짜 객체 사용함
     @Autowired
-    private ItemRepository itemRepository;
+    private ItemsRepository itemsRepository;
 
     @Autowired
     private ItemsService itemsService;
@@ -69,11 +69,11 @@ public class ItemsServiceIntegrationTests {
                .itemType(ItemType.WEAPON)
                .build();
 
-       itemRepository.save(item1);
-       itemRepository.save(item2);
+       itemsRepository.save(item1);
+       itemsRepository.save(item2);
 
         // when: Service 메서드 실행
-        List<ItemResponse> result = itemsService.findAllItems();
+        List<ItemsResponse> result = itemsService.findAllItems();
 
         // then: 반환된 결과 검증
         assertThat(result).hasSize(2);
@@ -94,11 +94,11 @@ public class ItemsServiceIntegrationTests {
                 .build();
 
         // DB가 생성한 itemId를 savedItem이 가지고 있게 됨
-        Items savedItem = itemRepository.save(newItem);
+        Items savedItem = itemsRepository.save(newItem);
         Long generatedId = savedItem.getItemId();
 
         // 2. When: 방금 DB가 만든 ID로 조회를 시도
-        ItemResponse result = itemsService.findItemById(generatedId);
+        ItemsResponse result = itemsService.findItemById(generatedId);
 
         // 3. Then: 검증
         assertThat(result.getItemName()).isEqualTo("테스트 아이템");

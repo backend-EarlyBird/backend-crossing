@@ -1,8 +1,8 @@
 package io.rapa.backendcrossing.items.service;
 
 import io.rapa.backendcrossing.items.entity.Items;
-import io.rapa.backendcrossing.items.repository.ItemRepository;
-import io.rapa.backendcrossing.items.response.ItemResponse;
+import io.rapa.backendcrossing.items.repository.ItemsRepository;
+import io.rapa.backendcrossing.items.response.ItemsResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  * fileName       : ItemsService
  * author         : Admin
  * date           : 26. 6. 1.
- * description    : Items 서비스 단위 테스트
+ * description    : Items 서비스
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
@@ -24,12 +24,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ItemsService {
 
-    private final ItemRepository itemRepository;
+    private final ItemsRepository itemRepository;
 
     /**
      * 모든 아이템 목록 조회
      */
-    public List<ItemResponse> findAllItems() {
+    public List<ItemsResponse> findAllItems() {
         return itemRepository.findAll().stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
@@ -38,13 +38,13 @@ public class ItemsService {
     /**
      * 아이템 단건 조회
      */
-    public ItemResponse findItemById(Long id) {
+    public ItemsResponse findItemById(Long id) {
         Items item = itemRepository.findByIdOrThrow(id);
         return convertToDto(item);
     }
 
-    private ItemResponse convertToDto(Items item) {
-        return ItemResponse.builder()
+    private ItemsResponse convertToDto(Items item) {
+        return ItemsResponse.builder()
                 .itemId(item.getItemId())
                 .itemName(item.getItemName())
                 .itemType(String.valueOf(item.getItemType()))
