@@ -2,6 +2,8 @@ package io.rapa.backendcrossing.common.config;
 
 
 import io.rapa.backendcrossing.common.constants.EndPoints;
+import io.rapa.backendcrossing.common.eventhandler.OauthSuccessHandler;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,14 +13,18 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfiguration {
+    private final OauthSuccessHandler oauthSuccessHandler;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity){
         return httpSecurity
                 .csrf(csrf->csrf.disable())
                 .cors(cors->cors.disable())
                 .formLogin(formLogin->formLogin.disable())
-                .oauth2Login(Customizer.withDefaults())
+                .oauth2Login(
+                        oauth->oauth.successHandler(oauthSuccessHandler)
+                )
                 .httpBasic(httpBasic->httpBasic.disable())
                 .sessionManagement(sessionConfig-> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
