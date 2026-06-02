@@ -3,7 +3,7 @@ package io.rapa.backendcrossing.common.eventhandler;
 import io.rapa.backendcrossing.common.constants.ErrorCode;
 import io.rapa.backendcrossing.common.exception.CustomException;
 import io.rapa.backendcrossing.security.domain.CurrentUser;
-import io.rapa.backendcrossing.security.dto.KeyPair;
+import io.rapa.backendcrossing.security.domain.dto.KeyPair;
 import io.rapa.backendcrossing.security.service.TokenService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -52,12 +52,6 @@ public class OauthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                 principal.getEmail(),
                 principal.getRole()
         );
-        //
-        KeyPair issuedKeyPair = KeyPair.builder()
-                .refreshToken(keyPair.refreshToken())
-                .accessToken(keyPair.accessToken())
-                .build();
-        //
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
@@ -65,8 +59,8 @@ public class OauthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         objectMapper.writeValue(
                 response.getWriter(),
                 Map.of(
-                        "accessToken", issuedKeyPair.accessToken(),
-                        "refreshToken", issuedKeyPair.refreshToken(),
+                        "accessToken", keyPair.accessToken(),
+                        "refreshToken", keyPair.refreshToken(),
                         "accessExpiresInSeconds", accessTokenTime
                 )
         );

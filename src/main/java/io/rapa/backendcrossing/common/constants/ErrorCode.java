@@ -1,9 +1,11 @@
 package io.rapa.backendcrossing.common.constants;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @Getter
+@RequiredArgsConstructor
 public enum ErrorCode {
 
     //500에러 공통
@@ -17,14 +19,13 @@ public enum ErrorCode {
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "해당 토큰은 만료된 토큰입니다."),
     ERROR_FROM_TOKEN(HttpStatus.UNAUTHORIZED, "토큰에서 문제가 발생했습니다."),
     ABNORMAL_TOKEN(HttpStatus.UNAUTHORIZED, "형식이 올바르지 않은 토큰입니다."),
-    AUTHENTICATION_ERROR(HttpStatus.UNAUTHORIZED, "인증 과정 중 오류가 발생했습니다.")
+    AUTHENTICATION_ERROR(HttpStatus.UNAUTHORIZED, "인증 과정 중 오류가 발생했습니다."),
+    EMAIL_ALREAY_EXISTS(HttpStatus.BAD_REQUEST, "해당 이메일의 계정이 이미 존재합니다."),
+    PASSWORD_INCORRECT(HttpStatus.UNAUTHORIZED, "잘못된 이메일/비밀번호 입니다."),
+    USER_INACTIVATED(HttpStatus.BAD_REQUEST, "해당 계정이 비활성화 상태입니다.")
     ;
 
 
     private final HttpStatus httpStatus;
     private final String description;
-    ErrorCode(HttpStatus status, String description){
-        this.httpStatus = status;
-        this.description = description;
-    }
 }
