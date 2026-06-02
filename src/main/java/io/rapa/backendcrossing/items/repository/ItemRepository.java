@@ -18,7 +18,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 
 public interface ItemRepository extends JpaRepository<Items, Long> {
-    // 💡 Repository에서 예외 처리까지 공통화!
+    // Repository에서 예외 처리까지 공통화!
     default Items findByIdOrThrow(Long id) {
         return findById(id).orElseThrow(
                 () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)

@@ -1,5 +1,7 @@
 package io.rapa.backendcrossing.common.constants;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -16,12 +18,19 @@ import lombok.Getter;
  */
 @Getter
 @Builder
+@Schema(description = "공통 응답 객체")
 public class CommonResponse<T> {
-    private final boolean success;
-    private final String message;
-    private final T data;
+    @Schema(description = "성공 여부", example = "true")
+    private boolean success;
 
-    // 💡 메서드 앞에 <T>를 추가하여 제네릭 타입임을 명시
+    @Schema(description = "메시지", example = "null")
+    private String message;
+
+    @Schema(description = "데이터")
+    private T data;
+
+    // 성공 시
+    @Operation(summary = "성공 응답 생성", hidden = true)
     public static <T> CommonResponse<T> success(T data) {
         return CommonResponse.<T>builder()
                 .success(true)
@@ -30,7 +39,8 @@ public class CommonResponse<T> {
                 .build();
     }
 
-    // 💡 실패 시에도 <T>를 명시
+    // 실패 시
+    @Operation(summary = "실패 응답 생성", hidden = true)
     public static <T> CommonResponse<T> fail(String message) {
         return CommonResponse.<T>builder()
                 .success(false)

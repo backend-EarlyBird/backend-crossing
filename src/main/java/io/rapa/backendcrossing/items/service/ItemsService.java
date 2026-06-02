@@ -26,6 +26,9 @@ public class ItemsService {
 
     private final ItemRepository itemRepository;
 
+    /**
+     * 모든 아이템 목록 조회
+     */
     public List<ItemResponse> findAllItems() {
         return itemRepository.findAll().stream()
                 .map(this::convertToDto)

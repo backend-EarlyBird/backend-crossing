@@ -22,17 +22,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class GlobalExceptionHandler {
 
+    // 500에러 말고 다른 응답 규격
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<CommonResponse<?>> handleCustomException(CustomException e) {
         log.error("에러 발생: {}", e.getErrorCode().getDescription());
 
-        // 💡 fail() 메서드로 에러 응답 규격 완성
         return ResponseEntity
                 .status(e.getErrorCode().getHttpStatus())
                 .body(CommonResponse.fail(e.getErrorCode().getDescription()));
     }
 
-    //(500)
+    // 500에러 응답 규격
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CommonResponse<?>> handleException(Exception e) {
         return ResponseEntity
