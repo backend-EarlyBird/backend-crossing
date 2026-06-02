@@ -36,7 +36,7 @@ public class OauthService extends DefaultOAuth2UserService {
                 ()-> new OAuth2AuthenticationException("해당 이메일의 계정은 가입되어 있지 않습니다.")
         );
         
-        if ( !providerId.equals(foundedUser.getProvider()) ){
+        if ( !providerId.equals(foundedUser.getEmailDomain()) ){
             throw new OAuth2AuthenticationException("계정과 다른 이메일 도메인의 서비스로 로그인이 불가능합니다.");
         }
 

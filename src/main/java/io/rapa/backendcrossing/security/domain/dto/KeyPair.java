@@ -1,4 +1,4 @@
-package io.rapa.backendcrossing.security.dto;
+package io.rapa.backendcrossing.security.domain.dto;
 
 import lombok.Builder;
 
