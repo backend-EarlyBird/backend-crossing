@@ -26,7 +26,8 @@ public enum ErrorCode {
     AUTHENTICATION_ERROR(HttpStatus.UNAUTHORIZED, "인증 과정 중 오류가 발생했습니다."),
     EMAIL_ALREAY_EXISTS(HttpStatus.BAD_REQUEST, "해당 이메일의 계정이 이미 존재합니다."),
     PASSWORD_INCORRECT(HttpStatus.UNAUTHORIZED, "잘못된 이메일/비밀번호 입니다."),
-    USER_INACTIVATED(HttpStatus.BAD_REQUEST, "해당 계정이 비활성화 상태입니다.")
+    USER_INACTIVATED(HttpStatus.BAD_REQUEST, "해당 계정이 비활성화 상태입니다."),
+    REFRESH_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "해당 Refrsh Token이 서버에 존재하지 않습니다.")
     ;
 
 
