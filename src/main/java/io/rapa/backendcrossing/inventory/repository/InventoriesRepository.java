@@ -1,8 +1,8 @@
 package io.rapa.backendcrossing.inventory.repository;
 
+import io.rapa.backendcrossing.common.constants.ErrorCode;
+import io.rapa.backendcrossing.common.exception.CustomException;
 import io.rapa.backendcrossing.inventory.entity.Inventories;
-import io.rapa.backendcrossing.inventory.response.InventoriesResponse;
-import io.rapa.backendcrossing.items.entity.Items;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -25,5 +25,12 @@ public interface InventoriesRepository extends JpaRepository<Inventories, Long> 
     List<Inventories> findByUserId(Long userId);
 
     // 유저의 특정 아이템 조회
-    Optional<Inventories> findByUserIdAndItem(Long userId, Items item);
+    Optional<Inventories> findByUserIdAndItemItemId(Long userId, Long itemId);
+
+    // userId 없으면 401
+    default List<Inventories> findByUserIdOrThrow(Long userId) {
+        if (userId == null) throw new CustomException(ErrorCode.INVENTORY_UNAUTHORIZED);
+        return findByUserId(userId);
+    }
+
 }

@@ -1,11 +1,18 @@
 package io.rapa.backendcrossing.inventory.controller;
 
 import io.rapa.backendcrossing.common.annotation.ApiInventoriesSupperts;
+import io.rapa.backendcrossing.common.constants.CommonResponse;
+import io.rapa.backendcrossing.inventory.response.InventoriesResponse;
 import io.rapa.backendcrossing.inventory.service.InventoriesService;
+import io.rapa.backendcrossing.security.domain.CurrentUser;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * packageName    : io.rapa.backendcrossing.inventory.controller
@@ -28,10 +35,12 @@ public class InventoriesController implements ApiInventoriesSupperts {
     private final InventoriesService service;
 
 
-   /* @GetMapping("/")
-    public ResponseEntity<CommonResponse<List<InventoriesResponse>>> getInventories(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    @GetMapping("/")
+    public ResponseEntity<CommonResponse<List<InventoriesResponse>>> getInventories
+            (@AuthenticationPrincipal CurrentUser currentUser) {
         // 보안 정보에서 유저 ID를 꺼냄
-        Long userId = userDetails.getUserId();
+
+        Long userId = currentUser.getId();
 
         List<InventoriesResponse> list =service.getInventory(userId);
         return ResponseEntity.ok(CommonResponse.success(list));
@@ -40,16 +49,14 @@ public class InventoriesController implements ApiInventoriesSupperts {
 
 
     @PostMapping("/pickup")
-    public String pickupItemAndInventory(@AuthenticationPrincipal CustomUserDetails userDetails
-    , @PathVariable Long itemId,  @PathVariable int quantity) {
+    public ResponseEntity<CommonResponse<Void>> pickupItemAndInventory(
+            @AuthenticationPrincipal CurrentUser currentUser,
+            @RequestParam Long itemId,
+            @RequestParam int quantity) {
 
-        // 보안 정보에서 유저 ID를 꺼냄
-        Long userId = userDetails.getUserId();
-
-        ItemResponse item = service.pickupItem(itemId, quantity, userId);
-
-        return ResponseEntity.ok(CommonResponse.success(item));
-
-    }*/
+        Long userId = currentUser.getId();
+        service.pickupItem(itemId, quantity, userId);
+        return ResponseEntity.ok(CommonResponse.success(null));
+    }
 
 }

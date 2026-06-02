@@ -85,14 +85,14 @@ public class InventoriesServiceIntegrationTests {
         Items item = saveItems();
 
         // when: 처음 획득 - 없으니까 새로 저장
-        inventoriesService.pickupItem(item, 2, userId);
+        inventoriesService.pickupItem(item.getItemId(), 2, userId);
 
         // then
-        Inventories inv = inventoriesRepository.findByUserIdAndItem(userId, item).orElseThrow();
+        Inventories inv = inventoriesRepository.findByUserIdAndItemItemId(userId, item.getItemId()).orElseThrow();
         assertThat(inv.getQuantity()).isEqualTo(2);
 
         // when: 두번째 획득 - 이미 있으니까 수량 증가
-        inventoriesService.pickupItem(item, 3, userId);
+        inventoriesService.pickupItem(item.getItemId(), 3, userId);
 
         // then
         assertThat(inv.getQuantity()).isEqualTo(5);

@@ -4,6 +4,7 @@ import io.rapa.backendcrossing.inventory.entity.Inventories;
 import io.rapa.backendcrossing.inventory.repository.InventoriesRepository;
 import io.rapa.backendcrossing.inventory.response.InventoriesResponse;
 import io.rapa.backendcrossing.items.entity.Items;
+import io.rapa.backendcrossing.items.repository.ItemsRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,6 +41,9 @@ public class InventoriesServiceTests {
     @Mock
     private InventoriesRepository inventoriesRepository;
 
+    @Mock
+    private ItemsRepository itemsRepository;
+
     @InjectMocks
     private InventoriesService inventoriesService;
 
@@ -67,12 +71,14 @@ public class InventoriesServiceTests {
     void pickupItem_newItem() {
         // given
         Long userId = 1L;
-        Items item = Items.builder().itemId(1L).itemName("연습용 검").price(100).build();
+        Long itemId = 1L;
+        Items item = Items.builder().itemId(itemId).itemName("연습용 검").price(100).build();
 
-        given(inventoriesRepository.findByUserIdAndItem(userId, item)).willReturn(Optional.empty());
+        given(itemsRepository.findByIdOrThrow(itemId)).willReturn(item);
+        given(inventoriesRepository.findByUserIdAndItemItemId(userId, itemId)).willReturn(Optional.empty());
 
         // when
-        inventoriesService.pickupItem(item, 2, userId);
+        inventoriesService.pickupItem(itemId, 2, userId);
 
         // then
         verify(inventoriesRepository, times(1)).save(any(Inventories.class));
@@ -83,13 +89,15 @@ public class InventoriesServiceTests {
     void pickupItem_existingItem() {
         // given
         Long userId = 1L;
-        Items item = Items.builder().itemId(1L).itemName("연습용 검").price(100).build();
+        Long itemId = 1L;
+        Items item = Items.builder().itemId(itemId).itemName("연습용 검").price(100).build();
         Inventories existing = Inventories.builder().userItemId(1L).userId(userId).item(item).quantity(3).equipped(false).build();
 
-        given(inventoriesRepository.findByUserIdAndItem(userId, item)).willReturn(Optional.of(existing));
+        given(itemsRepository.findByIdOrThrow(itemId)).willReturn(item);
+        given(inventoriesRepository.findByUserIdAndItemItemId(userId, itemId)).willReturn(Optional.of(existing));
 
         // when
-        inventoriesService.pickupItem(item, 2, userId);
+        inventoriesService.pickupItem(itemId, 2, userId);
 
         // then
         assertThat(existing.getQuantity()).isEqualTo(5);
