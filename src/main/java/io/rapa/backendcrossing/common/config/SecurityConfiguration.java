@@ -3,18 +3,20 @@ package io.rapa.backendcrossing.common.config;
 
 import io.rapa.backendcrossing.common.constants.EndPoints;
 import io.rapa.backendcrossing.common.eventhandler.OauthSuccessHandler;
+import io.rapa.backendcrossing.common.filter.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfiguration {
+    private final JwtFilter jwtFilter;
     private final OauthSuccessHandler oauthSuccessHandler;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity){
@@ -46,6 +48,7 @@ public class SecurityConfiguration {
                             .anyRequest()
                             .denyAll()
                 )
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 }
