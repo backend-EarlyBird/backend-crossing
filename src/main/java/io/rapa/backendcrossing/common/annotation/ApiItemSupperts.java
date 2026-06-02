@@ -5,6 +5,11 @@ import io.swagger.v3.oas.annotations.media.*;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.*;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * packageName    : io.rapa.backendcrossing.common.annotation
  * fileName       : ApiItemsSupperts
@@ -18,6 +23,8 @@ import io.swagger.v3.oas.annotations.responses.*;
  */
 public interface ApiItemSupperts {
 
+    @Target({ElementType.METHOD})
+    @Retention(RetentionPolicy.RUNTIME)
     @Operation(
             summary = "전체 아이템 목록 조회",
             description = "게임 내 모든 아이템 카탈로그를 조회합니다. 게임 시작 시 카탈로그 로드 용도. [인증: 불필요]"
@@ -78,6 +85,8 @@ public interface ApiItemSupperts {
     public @interface ApiFindAllItems { }
 
 
+    @Target({ElementType.METHOD})
+    @Retention(RetentionPolicy.RUNTIME)
     @Operation(
             summary = "아이템 단건 조회",
             description = "특정 아이템의 상세 정보를 조회합니다. [인증: 불필요]"
