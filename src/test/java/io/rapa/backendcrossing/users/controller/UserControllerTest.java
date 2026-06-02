@@ -2,11 +2,9 @@ package io.rapa.backendcrossing.users.controller;
 
 import io.rapa.backendcrossing.common.constants.SuccessMessage;
 import io.rapa.backendcrossing.users.domain.dto.request.UserCreateRequest;
-import io.rapa.backendcrossing.users.domain.dto.response.UserCreateResponse;
 import io.rapa.backendcrossing.users.domain.entity.Users;
 import io.rapa.backendcrossing.users.repository.UserRepository;
 import io.rapa.util.UserUtils;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,7 +20,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
