@@ -54,6 +54,15 @@ public class Users extends BaseEntity{
         this.nickName = nickName;
         userStatus = UserStatus.ACTIVE;
         role = Role.USER;
-        provider = "LOCAL";
+        provider = extractProvider(email);
+    }
+    public String extractProvider(String email){
+        String[] s1 = email.split("@");
+        String[] s2 = s1[1].split("\\.");
+        return s2[0];
+    }
+    public Users switchToSuperAdmin(){
+        role = Role.SUPER_ADMIN;
+        return this;
     }
 }

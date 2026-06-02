@@ -29,4 +29,19 @@ spring:
             scope:
               - email
 custom:
-  baseUrl: ${baseUrl}
+  baseUrl: http://localhost:3000/
+  jwt:
+    payloads:
+      issuer: wjdtn747@naver.com
+      subjectAccessToken: access-token
+      subjectRefreshToken: refresh-token
+      audiance: service-user
+    secrets:
+      secretKey: ${jwtSecretKey}
+      vanillaKey: ${vanillaKey}
+    validations:
+      access: 900000
+      refresh: 1209600000
+
+
+
