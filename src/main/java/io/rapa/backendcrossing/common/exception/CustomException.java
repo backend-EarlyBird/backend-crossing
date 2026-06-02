@@ -1,7 +1,9 @@
 package io.rapa.backendcrossing.common.exception;
 
 import io.rapa.backendcrossing.common.constants.ErrorCode;
+import lombok.Getter;
 
+@Getter
 public class CustomException extends RuntimeException {
     private final ErrorCode errorCode;
     public CustomException(ErrorCode errorCode){
@@ -12,4 +14,5 @@ public class CustomException extends RuntimeException {
         super(message);
         this.errorCode = errorCode;
     }
+
 }
