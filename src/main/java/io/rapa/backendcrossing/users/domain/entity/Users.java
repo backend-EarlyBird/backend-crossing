@@ -1,5 +1,6 @@
 package io.rapa.backendcrossing.users.domain.entity;
 
+import io.rapa.backendcrossing.users.constants.Provider;
 import io.rapa.backendcrossing.users.constants.Role;
 import io.rapa.backendcrossing.users.constants.UserStatus;
 import jakarta.persistence.*;
@@ -9,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -35,13 +37,17 @@ public class Users extends BaseEntity{
     @Column(nullable = false, length = 50)
     private Role role;
 
+    @Enumerated(value = EnumType.STRING)
     @Column(nullable = false, length = 50)
-    private String provider;
+    private Provider provider;
+
+    @Column(nullable = false, length = 50)
+    private String emailDomain;
 
     @Column(length = 255)
     private String profileImageUrl;
 
-    private Instant lastLoginAt;
+    private LocalDateTime lastLoginAt;
 
     @Builder
     public Users(
@@ -52,11 +58,13 @@ public class Users extends BaseEntity{
         this.email = email;
         this.password = password;
         this.nickName = nickName;
-        userStatus = UserStatus.ACTIVE;
+        userStatus = UserStatus.ACTIVATED;
         role = Role.USER;
-        provider = extractProvider(email);
+        emailDomain = extractProvider(email);
+        if(emailDomain.equals("gmail")) provider = Provider.GOOGLE;
+        else provider = Provider.LOCAL;
     }
-    public String extractProvider(String email){
+    private String extractProvider(String email){
         String[] s1 = email.split("@");
         String[] s2 = s1[1].split("\\.");
         return s2[0];
