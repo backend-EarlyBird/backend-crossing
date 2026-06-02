@@ -2,6 +2,7 @@ package io.rapa.backendcrossing.common.annotation;
 
 import io.swagger.v3.oas.annotations.*;
 import io.swagger.v3.oas.annotations.media.*;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.*;
 
 /**
@@ -74,8 +75,8 @@ public interface ApiItemSupperts {
               ]
             }
             """
-                    )
             )
+        )
     )
     @ApiResponse(responseCode = "404", description = "아이템을 찾을 수 없습니다.")
     @ApiResponse(responseCode = "500", description = "서버 오류가 발생했습니다.")
