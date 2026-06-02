@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@DisplayName("Describe: 회원가입( POST /api/v1/users/register )")
+@DisplayName("Describe: 로그인( POST /api/v1/auth/login )")
 class AuthControllerTest {
 
     @Autowired

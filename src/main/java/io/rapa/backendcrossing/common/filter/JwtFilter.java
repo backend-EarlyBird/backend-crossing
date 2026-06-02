@@ -33,12 +33,10 @@ public class JwtFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
         String extractedToken = extractToken(request);
-
         if(extractedToken == null){
             filterChain.doFilter(request,response);
             return;
         }
-
         if(tokenService.validate(extractedToken)){
             TokenBody tokenBody = tokenService.parseJwt(extractedToken, TokenType.ACCESS_TOKEN);
             log.info(tokenBody.email());
@@ -50,10 +48,8 @@ public class JwtFilter extends OncePerRequestFilter {
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-
         filterChain.doFilter(request,response);
     }
-
     public String extractToken(HttpServletRequest request){
         String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (bearerToken != null && bearerToken.startsWith("Bearer")){
