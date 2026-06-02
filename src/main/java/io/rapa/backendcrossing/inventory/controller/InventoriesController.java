@@ -40,6 +40,7 @@ public class InventoriesController implements ApiInventoriesSupperts {
     private final InventoriesService service;
 
 
+    @ApiGetInventories
     @GetMapping("")
     public ResponseEntity<CommonResponse<List<InventoriesResponse>>> getInventories
             (@AuthenticationPrincipal CurrentUser currentUser) {
@@ -53,6 +54,7 @@ public class InventoriesController implements ApiInventoriesSupperts {
     }
 
 
+    @ApiPickupItem
     @PostMapping("/pickup")
     public ResponseEntity<CommonResponse<InventoriesResponse>> pickupItemAndInventory(
             @AuthenticationPrincipal CurrentUser currentUser,
@@ -67,6 +69,7 @@ public class InventoriesController implements ApiInventoriesSupperts {
     }
 
 
+    @ApiDiscardItem
     @DeleteMapping("{itemId}/discard")
     public ResponseEntity<CommonResponse<InventoriesResponse>> discardItem(
             @AuthenticationPrincipal CurrentUser currentUser,
