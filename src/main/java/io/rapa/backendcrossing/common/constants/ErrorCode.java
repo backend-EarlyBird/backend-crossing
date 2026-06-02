@@ -13,6 +13,7 @@ public enum ErrorCode {
 
     //items
     ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "아이템을 찾을 수 없습니다."),
+    ITEM_COUNT_FOUND(HttpStatus.BAD_REQUEST, "아이템 수량이 부족합니다."),
 
     //인증
     INVENTORY_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증이 필요합니다."),

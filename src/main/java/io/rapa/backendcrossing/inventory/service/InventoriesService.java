@@ -37,7 +37,7 @@ public class InventoriesService {
     * */
     public List<InventoriesResponse> getInventory(Long userId){
         return inventoriesRepository.findByUserIdOrThrow(userId).stream()
-                .map(this::convertToDto)
+                .map(InventoriesResponse::from)
                 .collect(Collectors.toList());
     }
 
@@ -45,37 +45,32 @@ public class InventoriesService {
     * 유저가 아이템 획득 시 인벤토리 변화
     * */
     @Transactional
-    public void pickupItem(Long itemId, int quantity, Long userId){
-        try {
-            Items item = itemsRepository.findByIdOrThrow(itemId);
-            inventoriesRepository.findByUserIdAndItemItemId(userId, itemId)
-                    .ifPresentOrElse(
-                            inv -> inv.addQuantity(quantity),
-                            () -> inventoriesRepository.save(
-                                    Inventories.builder()
-                                            .userId(userId)
-                                            .item(item)
-                                            .quantity(quantity)
-                                            .equipped(false)
-                                            .build()
-                            )
-                    );
-        } catch (CustomException e) {
-            throw e;
-        } catch (Exception e) {
-            //404에러
-            throw new CustomException(ErrorCode.INVALID_INPUT);
-        }
+    public InventoriesResponse pickupItem(Long itemId, int quantity, Long userId) {
+        Items item = itemsRepository.findByIdOrThrow(itemId);
+        Inventories inventory = inventoriesRepository.findByUserIdAndItemItemId(userId, itemId)
+                .map(inv -> { inv.addQuantity(quantity); return inv; })
+                .orElseGet(() -> inventoriesRepository.save(
+                        Inventories.builder()
+                                .userId(userId)
+                                .item(item)
+                                .quantity(quantity)
+                                .equipped(false)
+                                .build()
+                ));
+        return InventoriesResponse.from(inventory);
     }
 
+    /*
+    * 사용자가 아이템을 버림
+    * */
+    @Transactional
+    public InventoriesResponse discardItem(Long itemId, int quantity, Long userId) {
+        Inventories inventory = inventoriesRepository.findByUserIdAndItemItemId(userId, itemId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
+        if (inventory.getQuantity() < quantity) throw new CustomException(ErrorCode.ITEM_COUNT_FOUND);
+        if (inventory.getQuantity() == quantity) inventoriesRepository.delete(inventory);
+        else inventory.addQuantity(-quantity);
 
-    private InventoriesResponse convertToDto(Inventories inventory) {
-        return InventoriesResponse.builder()
-                .userItemId(inventory.getUserItemId())
-                .item(inventory.getItem())
-                .quantity(inventory.getQuantity())
-                .equipped(inventory.isEquipped())
-                .acquiredAt(inventory.getAcquiredAt())
-                .build();
+        return InventoriesResponse.from(inventory);
     }
 }

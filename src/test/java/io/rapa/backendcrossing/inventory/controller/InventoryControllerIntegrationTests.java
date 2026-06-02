@@ -2,11 +2,8 @@ package io.rapa.backendcrossing.inventory.controller;
 
 import io.rapa.backendcrossing.inventory.entity.Inventories;
 import io.rapa.backendcrossing.inventory.repository.InventoriesRepository;
-import io.rapa.backendcrossing.items.constants.ItemGrade;
-import io.rapa.backendcrossing.items.constants.ItemType;
-import io.rapa.backendcrossing.items.entity.Items;
-import io.rapa.backendcrossing.items.repository.ItemsRepository;
 import io.rapa.backendcrossing.security.domain.CurrentUser;
+import io.rapa.backendcrossing.support.BaseIntegrationTest;
 import io.rapa.backendcrossing.users.constants.Role;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,10 +18,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.rapa.backendcrossing.inventory.request.ItemPickupRequest;
 
 /**
  * packageName    : io.rapa.backendcrossing.inventory.controller
@@ -42,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @DisplayName("InventoriesController 통합 테스트")
 @Slf4j
-public class InventoryControllerIntegrationTests {
+public class InventoryControllerIntegrationTests extends BaseIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -50,11 +50,7 @@ public class InventoryControllerIntegrationTests {
     @Autowired
     private InventoriesRepository inventoriesRepository;
 
-    @Autowired
-    private ItemsRepository itemsRepository;
-
     private static final Long USER_ID = 1L;
-    private Items savedItem;
 
     @BeforeEach
     void setUp() {
@@ -68,15 +64,6 @@ public class InventoryControllerIntegrationTests {
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(currentUser, null, currentUser.getAuthorities())
         );
-
-        savedItem = itemsRepository.save(Items.builder()
-                .rId("sword_001")
-                .itemName("연습용 검")
-                .price(100)
-                .sellPrice(10)
-                .itemGrade(ItemGrade.COMMON)
-                .itemType(ItemType.WEAPON)
-                .build());
     }
 
     @Test
@@ -109,8 +96,7 @@ public class InventoryControllerIntegrationTests {
     @DisplayName("아이템 획득 - 새 아이템 저장")
     void pickupItem_newItem() throws Exception {
         mockMvc.perform(post("/api/v1/users/me/inventory/pickup")
-                        .param("itemId", savedItem.getItemId().toString())
-                        .param("quantity", "2")
+                        .content(new ObjectMapper().writeValueAsString(ItemPickupRequest.builder().itemId(savedItem.getItemId()).quantity(2).build()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
@@ -120,7 +106,46 @@ public class InventoryControllerIntegrationTests {
     @DisplayName("아이템 획득 - 존재하지 않는 아이템 ID")
     void pickupItem_itemNotFound() throws Exception {
         mockMvc.perform(post("/api/v1/users/me/inventory/pickup")
-                        .param("itemId", "9999")
+                        .content(new ObjectMapper().writeValueAsString(ItemPickupRequest.builder().itemId(9999L).quantity(1).build()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.success").value(false));
+    }
+
+    @Test
+    @DisplayName("아이템 버림 - 전체 수량 버림 (인벤토리 삭제)")
+    void discardItem_fullQuantity() throws Exception {
+        // given
+        Inventories inventory = inventoriesRepository.save(
+                Inventories.builder().userId(USER_ID).item(savedItem).quantity(3).equipped(false).build());
+
+        // when & then
+        mockMvc.perform(delete("/api/v1/users/me/inventory/discard/" + inventory.getUserItemId())
+                        .param("quantity", "3")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true));
+    }
+
+    @Test
+    @DisplayName("아이템 버림 - 일부 수량 버림")
+    void discardItem_partialQuantity() throws Exception {
+        // given
+        Inventories inventory = inventoriesRepository.save(
+                Inventories.builder().userId(USER_ID).item(savedItem).quantity(5).equipped(false).build());
+
+        // when & then
+        mockMvc.perform(delete("/api/v1/users/me/inventory/discard/" + inventory.getUserItemId())
+                        .param("quantity", "2")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true));
+    }
+
+    @Test
+    @DisplayName("아이템 버림 - 존재하지 않는 인벤토리 아이템")
+    void discardItem_itemNotFound() throws Exception {
+        mockMvc.perform(delete("/api/v1/users/me/inventory/discard/9999")
                         .param("quantity", "1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
