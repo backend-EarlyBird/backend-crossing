@@ -4,33 +4,48 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.rapa.backendcrossing.common.constants.ErrorCode;
 import io.rapa.backendcrossing.common.exception.CustomException;
-import io.rapa.backendcrossing.security.dto.JwtProperties;
-import io.rapa.backendcrossing.security.dto.KeyPair;
-import io.rapa.backendcrossing.security.dto.TokenBody;
+import io.rapa.backendcrossing.infra.RefreshTokenRepository;
+import io.rapa.backendcrossing.infra.domain.entity.RefreshToken;
+import io.rapa.backendcrossing.security.constants.TokenType;
+import io.rapa.backendcrossing.security.domain.dto.JwtProperties;
+import io.rapa.backendcrossing.security.domain.dto.KeyPair;
+import io.rapa.backendcrossing.security.domain.dto.TokenBody;
 import io.rapa.backendcrossing.users.constants.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class TokenService {
     private final JwtProperties jwtProperties;
+    private final RefreshTokenRepository repository;
     private SecretKey getSecretKey(){
         return Keys.hmacShaKeyFor(jwtProperties.getSecrets().getSecretKey().getBytes());
     }
 
+
     private String issueRefreshToken(String email){
-        return Jwts
+        String refreshToken = Jwts
                 .builder()
                 .subject(jwtProperties.getPayLoads().getSubjectRefreshToken())
                 .issuer(jwtProperties.getPayLoads().getIssuer())
+                .claim("email", email)
                 .issuedAt(new Date())
                 .expiration(new Date(new Date().getTime() + jwtProperties.getValidations().getRefresh()))
                 .signWith(getSecretKey())
                 .compact();
+        repository.save(
+            RefreshToken.builder()
+                    .refreshToken(refreshToken)
+                    .email(email)
+                    .build()
+        );
+        return refreshToken;
     }
 
     private String issueAccessToken(
@@ -41,7 +56,7 @@ public class TokenService {
                 .builder()
                 .subject(jwtProperties.getPayLoads().getSubjectAccessToken())
                 .issuer(jwtProperties.getPayLoads().getIssuer())
-                .claim("aud", email)
+                .claim("email", email)
                 .claim("role", role)
                 .issuedAt(new Date())
                 .expiration(new Date(new Date().getTime() + jwtProperties.getValidations().getRefresh()))
@@ -81,11 +96,16 @@ public class TokenService {
                 .build()
                 .parseSignedClaims(token);
     }
-    public TokenBody parseJwt(String token){
+    public TokenBody parseJwt(String token, TokenType tokenType){
         Jws<Claims> claimsJws = parseClaims(token);
-        return TokenBody.builder()
-            .email(String.valueOf(claimsJws.getPayload().get("aud")))
-            .role(Role.valueOf(claimsJws.getPayload().get("role").toString()))
-            .build();
+        return switch (tokenType){
+            case TokenType.ACCESS_TOKEN -> TokenBody.builder()
+                    .email(String.valueOf(claimsJws.getPayload().get("email")))
+                    .role(Role.valueOf(claimsJws.getPayload().get("role").toString()))
+                    .build();
+            case TokenType.REFRESH_TOKEN -> TokenBody.builder()
+                    .email(String.valueOf(claimsJws.getPayload().get("email")))
+                    .build();
+        };
     }
 }
