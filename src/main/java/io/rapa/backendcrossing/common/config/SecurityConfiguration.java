@@ -32,7 +32,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(
                     auth -> auth
 
-                            .requestMatchers("/login/**","/swagger-ui/**", "/v3/api-docs/**" ).permitAll()
+                            .requestMatchers("/login/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**" ).permitAll()
 
                             .requestMatchers(HttpMethod.POST, EndPoints.POST_ANONYMOUS).anonymous()
                             .requestMatchers(HttpMethod.POST, EndPoints.POST_PERMITALL).permitAll()
