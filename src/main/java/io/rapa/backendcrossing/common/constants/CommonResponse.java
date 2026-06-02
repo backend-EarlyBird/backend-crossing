@@ -39,6 +39,16 @@ public class CommonResponse<T> {
                 .build();
     }
 
+    // 성공 시
+    @Operation(summary = "성공 응답 생성", hidden = true)
+    public static <T> CommonResponse<T> successWithMessage(T data, String message) {
+        return CommonResponse.<T>builder()
+                .success(true)
+                .message(message)
+                .data(data)
+                .build();
+    }
+
     // 실패 시
     @Operation(summary = "실패 응답 생성", hidden = true)
     public static <T> CommonResponse<T> fail(String message) {
