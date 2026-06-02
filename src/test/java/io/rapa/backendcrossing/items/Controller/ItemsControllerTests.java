@@ -1,32 +1,19 @@
 package io.rapa.backendcrossing.items.Controller;
 
-import io.rapa.backendcrossing.common.constants.CommonResponse;
 import io.rapa.backendcrossing.common.constants.ErrorCode;
 import io.rapa.backendcrossing.common.exception.CustomException;
-import io.rapa.backendcrossing.items.constants.ItemGrade;
-import io.rapa.backendcrossing.items.constants.ItemType;
 import io.rapa.backendcrossing.items.controller.ItemsController;
-import io.rapa.backendcrossing.items.entity.Items;
-import io.rapa.backendcrossing.items.repository.ItemRepository;
-import io.rapa.backendcrossing.items.response.ItemResponse;
+import io.rapa.backendcrossing.items.response.ItemsResponse;
 import io.rapa.backendcrossing.items.service.ItemsService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Arrays;
 
@@ -66,8 +53,8 @@ public class ItemsControllerTests {
     void readAllItems() throws Exception {
         //given
         given(itemsService.findAllItems()).willReturn(Arrays.asList(
-                ItemResponse.builder().itemName("연습용 검").build(),
-                ItemResponse.builder().itemName("나무 방패").build()
+                ItemsResponse.builder().itemName("연습용 검").build(),
+                ItemsResponse.builder().itemName("나무 방패").build()
         ));
 
         //when / then
@@ -86,7 +73,7 @@ public class ItemsControllerTests {
     void readItemById() throws Exception {
         // given
         given(itemsService.findItemById(3L))
-                .willReturn(ItemResponse.builder().itemName("테스트 아이템").build());
+                .willReturn(ItemsResponse.builder().itemName("테스트 아이템").build());
 
         // when & then
         mockMvc.perform(get("/api/v1/items/3")

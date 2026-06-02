@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemRequest {
+public class ItemsRequest {
 
     private Long itemId;
 
@@ -31,7 +31,5 @@ public class ItemRequest {
     private String description;
     private int price;
     private int sellPrice;
-
-
 
 }

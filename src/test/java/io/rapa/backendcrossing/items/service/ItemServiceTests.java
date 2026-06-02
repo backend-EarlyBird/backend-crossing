@@ -3,8 +3,8 @@ package io.rapa.backendcrossing.items.service;
 import io.rapa.backendcrossing.common.constants.ErrorCode;
 import io.rapa.backendcrossing.common.exception.CustomException;
 import io.rapa.backendcrossing.items.entity.Items;
-import io.rapa.backendcrossing.items.repository.ItemRepository;
-import io.rapa.backendcrossing.items.response.ItemResponse;
+import io.rapa.backendcrossing.items.repository.ItemsRepository;
+import io.rapa.backendcrossing.items.response.ItemsResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ public class ItemServiceTests {
 
 
     @Mock
-    private ItemRepository itemRepository;
+    private ItemsRepository itemsRepository;
 
     @InjectMocks
     private ItemsService itemsService;
@@ -52,15 +52,15 @@ public class ItemServiceTests {
         Items item1 = Items.builder().itemId(1L).itemName("연습용 검").price(100).build();
         Items item2 = Items.builder().itemId(2L).itemName("나무 방패").price(50).build();
 
-        given(itemRepository.findAll()).willReturn(Arrays.asList(item1, item2));
+        given(itemsRepository.findAll()).willReturn(Arrays.asList(item1, item2));
 
         // when: Service 메서드 실행
-        List<ItemResponse> result = itemsService.findAllItems();
+        List<ItemsResponse> result = itemsService.findAllItems();
 
         // then: 반환된 DTO 결과 검증
         assertThat(result).hasSize(2);
         assertThat(result.get(0).getItemName()).isEqualTo("연습용 검");
-        verify(itemRepository, times(1)).findAll();
+        verify(itemsRepository, times(1)).findAll();
     }
 
     @Test
@@ -70,10 +70,10 @@ public class ItemServiceTests {
         Long targetId = 1L;
         Items item = Items.builder().itemId(targetId).itemName("연습용 검").price(100).build();
 
-        given(itemRepository.findByIdOrThrow(targetId)).willReturn(item);
+        given(itemsRepository.findByIdOrThrow(targetId)).willReturn(item);
 
         // when
-        ItemResponse result = itemsService.findItemById(targetId);
+        ItemsResponse result = itemsService.findItemById(targetId);
 
         // then
         assertThat(result).isNotNull();
@@ -87,7 +87,7 @@ public class ItemServiceTests {
         // given
         Long invalidId = 999L;
 
-        given(itemRepository.findByIdOrThrow(invalidId))
+        given(itemsRepository.findByIdOrThrow(invalidId))
                 .willThrow(new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
         // when / then: 예외가 정상적으로 Service 밖으로 던져지는지 확인

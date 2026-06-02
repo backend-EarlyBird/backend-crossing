@@ -9,8 +9,6 @@ public enum ErrorCode {
     //500에러 공통
     INVALID_INPUT(HttpStatus.BAD_REQUEST, "서버 오류가 발생했습니다."),
 
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 계정을 찾을 수 없습니다."),
-
     //items
     ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "아이템을 찾을 수 없습니다."),
 

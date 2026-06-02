@@ -17,7 +17,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * 26. 6. 1.        Admin       최초 생성
  */
 
-public interface ItemRepository extends JpaRepository<Items, Long> {
+public interface ItemsRepository extends JpaRepository<Items, Long> {
     // Repository에서 예외 처리까지 공통화!
     default Items findByIdOrThrow(Long id) {
         return findById(id).orElseThrow(
