@@ -50,7 +50,7 @@ class UserServiceTest {
         class Context_with_available_data{
             @Test
             @DisplayName("It: User 저장 성공")
-            void It_User_저장_실패(){
+            void It_User_저장_성공(){
                 // given
                 UserCreateRequest userCreateRequest =  UserUtils.makeCreateRequest("testUser@naver.com");
                 // when

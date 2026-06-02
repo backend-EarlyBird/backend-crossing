@@ -2,6 +2,8 @@ package io.rapa.backendcrossing.common.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityScheme;
@@ -16,6 +18,13 @@ import org.springframework.context.annotation.Configuration;
                 version = "0.0.1",
                 description = "백엔드의 숲 API 명세"
         )
+)
+@ApiResponses(
+        value = {
+                @ApiResponse(responseCode = "200", description = "요청 성공"),
+                @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+                @ApiResponse(responseCode = "500", description = "백엔드 서버 오류 - 관리자 문의")
+        }
 )
 public class SwaggerConfiguration {
     @Bean
