@@ -2,9 +2,11 @@ package io.rapa.backendcrossing.npcs.controller;
 
 import io.rapa.backendcrossing.common.annotation.ApiNpcsSupperts;
 import io.rapa.backendcrossing.common.constants.CommonResponse;
-import io.rapa.backendcrossing.items.response.ItemsResponse;
+import io.rapa.backendcrossing.npcs.response.NpcsResponse;
+import io.rapa.backendcrossing.npcs.service.NpcService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,27 +25,30 @@ import java.util.List;
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
- * 26. 6. 1.        Admin       최초 생성
+ * 26. 6. 2.        Admin       최초 생성
  */
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/npcs")
 @Tag(name = "Npc API", description = "Npc 관련 API 명세서")
 public class NpcController implements ApiNpcsSupperts {
 
+    private final NpcService npcService;
 
-    /*//npc 목록조회(전체)
+    //npc 목록조회(전체)
+    @ApiNpcsSupperts.ApiFindAllNpcs
     @GetMapping("/")
-    public ResponseEntity<CommonResponse<List<ItemsResponse>>> findAllNpcs() {
-        return ResponseEntity.ok(CommonResponse.builder().build());
+    public ResponseEntity<CommonResponse<List<NpcsResponse>>> findAllNpcs() {
+        return ResponseEntity.ok(CommonResponse.success(npcService.findAllNpcs()));
     }
 
     //npc 목록조회(단일)
+    @ApiNpcsSupperts.ApiGetNpcInfo
     @GetMapping("/{npcId}")
-    public ResponseEntity<CommonResponse<List<ItemsResponse>>> getNpcInfo(
+    public ResponseEntity<CommonResponse<NpcsResponse>> getNpcInfo(
             @Parameter(description = "Npc ID") @PathVariable("npcId") Long npcId
     ) {
-        return ResponseEntity.ok(CommonResponse.builder().build());
-    }*/
-
+        return ResponseEntity.ok(CommonResponse.success(npcService.getNpcInfo(npcId)));
+    }
 }
