@@ -5,6 +5,8 @@ import io.rapa.backendcrossing.common.exception.CustomException;
 import io.rapa.backendcrossing.items.controller.ItemsController;
 import io.rapa.backendcrossing.items.response.ItemsResponse;
 import io.rapa.backendcrossing.items.service.ItemsService;
+import io.rapa.backendcrossing.security.service.TokenService;
+import io.rapa.backendcrossing.users.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,6 +46,12 @@ public class ItemsControllerTests {
 
     @MockitoBean
     private ItemsService itemsService;
+
+    @MockitoBean
+    private TokenService tokenService;
+
+    @MockitoBean
+    private UserService userService;
 
 
 
