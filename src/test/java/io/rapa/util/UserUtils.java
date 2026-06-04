@@ -1,6 +1,6 @@
 package io.rapa.util;
 
-import io.rapa.backendcrossing.users.domain.dto.request.AuthLoginRequest;
+import io.rapa.backendcrossing.auth.dto.request.AuthLoginRequest;
 import io.rapa.backendcrossing.users.domain.dto.request.UserCreateRequest;
 import io.rapa.backendcrossing.users.domain.entity.Users;
 

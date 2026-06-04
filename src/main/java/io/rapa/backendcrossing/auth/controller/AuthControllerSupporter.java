@@ -1,9 +1,9 @@
-package io.rapa.backendcrossing.users.controller;
+package io.rapa.backendcrossing.auth.controller;
 
 import io.rapa.backendcrossing.common.constants.CommonResponse;
-import io.rapa.backendcrossing.users.domain.dto.request.AuthLoginRequest;
-import io.rapa.backendcrossing.users.domain.dto.request.AuthRefreshRequest;
-import io.rapa.backendcrossing.users.domain.dto.response.AuthLoginResponse;
+import io.rapa.backendcrossing.auth.dto.request.AuthLoginRequest;
+import io.rapa.backendcrossing.auth.dto.request.AuthRefreshRequest;
+import io.rapa.backendcrossing.auth.dto.response.AuthLoginResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;

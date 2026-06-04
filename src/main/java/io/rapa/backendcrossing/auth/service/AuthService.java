@@ -1,4 +1,4 @@
-package io.rapa.backendcrossing.users.service;
+package io.rapa.backendcrossing.auth.service;
 
 import io.rapa.backendcrossing.common.constants.ErrorCode;
 import io.rapa.backendcrossing.common.exception.CustomException;
@@ -7,9 +7,9 @@ import io.rapa.backendcrossing.security.domain.RefreshToken;
 import io.rapa.backendcrossing.security.repository.RefreshTokenRepository;
 import io.rapa.backendcrossing.security.domain.dto.KeyPair;
 import io.rapa.backendcrossing.users.constants.UserStatus;
-import io.rapa.backendcrossing.users.domain.dto.request.AuthLoginRequest;
+import io.rapa.backendcrossing.auth.dto.request.AuthLoginRequest;
 import io.rapa.backendcrossing.security.service.TokenService;
-import io.rapa.backendcrossing.users.domain.dto.request.AuthRefreshRequest;
+import io.rapa.backendcrossing.auth.dto.request.AuthRefreshRequest;
 import io.rapa.backendcrossing.users.domain.entity.Users;
 import io.rapa.backendcrossing.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
