@@ -20,8 +20,6 @@ import org.hibernate.annotations.CreationTimestamp;
  */
 @Entity
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // JPA 규약에 따른 기본 생성자
 public class Inventories {
 
@@ -40,9 +38,9 @@ public class Inventories {
     private int price;
     private int sellPrice;*/
 
-    private Long userId; // 시큐리티에서 가져온 정보 매핑용
+    private Long subUserId; // 시큐리티에서 가져온 정보 매핑용
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private Items item; // Items 엔티티와 관계 설정
 
@@ -73,8 +71,19 @@ public class Inventories {
         this.quantity += quantity;
     }
 
+    //생성자
+    @Builder
+    public Inventories(Long userItemId, Long userId, Items item, int quantity, boolean equipped, String acquiredAt) {
+        this.userItemId = userItemId;
+        this.userId = userId;
+        this.item = item;
+        this.quantity = quantity;
+        this.equipped = equipped;
+        this.acquiredAt = acquiredAt;
+    }
 
-    /*
+
+/*
     {
     "userItemId": 1,
     "itemId": 1,
