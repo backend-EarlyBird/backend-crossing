@@ -45,7 +45,7 @@ public class CurrentUser implements OAuth2User {
     public static CurrentUser from(Users user){
         if(user == null) throw new CustomException(ErrorCode.USER_NOT_FOUND, "계정이 없어 UserDetails의 생성이 불가능합니다.");
         return CurrentUser.builder()
-                .nickName(user.getNickName())
+                .nickName(user.getNickname())
                 .email(user.getEmail())
                 .build()
                 .setId(user.getUserId())

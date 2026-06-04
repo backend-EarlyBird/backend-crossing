@@ -19,7 +19,7 @@ public record UserCreateResponse(
         return UserCreateResponse.builder()
                 .userId(user.getUserId())
                 .email(user.getEmail())
-                .nickname(user.getNickName())
+                .nickname(user.getNickname())
                 .role(user.getRole().name())
                 .status(user.getUserStatus().name())
                 .provider(user.getProvider().name())

@@ -19,7 +19,7 @@ public record MeDetailResponse(
         return MeDetailResponse.builder()
                 .userId(user.getUserId())
                 .email(user.getEmail())
-                .nickname(user.getNickName())
+                .nickname(user.getNickname())
                 .role(user.getRole().toString())
                 .status(user.getUserStatus().toString())
                 .provider(user.getProvider().toString())

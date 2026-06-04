@@ -17,7 +17,7 @@ import io.rapa.backendcrossing.common.exception.CustomException;
 import io.rapa.backendcrossing.inventory.entity.Inventories;
 import io.rapa.backendcrossing.inventory.repository.InventoriesRepository;
 import io.rapa.backendcrossing.npcs.entity.NpcItems;
-import io.rapa.backendcrossing.npcs.entity.Wallets;
+import io.rapa.backendcrossing.wallets.domain.entity.Wallets;
 import io.rapa.backendcrossing.npcs.repository.NpcItemsRepository;
 import io.rapa.backendcrossing.npcs.repository.NpcsRepository;
 import io.rapa.backendcrossing.npcs.repository.WalletRepository;

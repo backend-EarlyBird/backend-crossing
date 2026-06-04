@@ -26,7 +26,7 @@ public class DataInitConfig {
                         Users.builder()
                                 .email("wjdtn747@naver.com")
                                 .password(passwordEncoder.encode("1234"))
-                                .nickName("닉네임")
+                                .nickname("닉네임")
                                 .build()
                                 .switchToSuperAdmin()
                 );
@@ -34,7 +34,7 @@ public class DataInitConfig {
                         Users.builder()
                                 .email("wjdtn747@gmail.com")
                                 .password(passwordEncoder.encode("1234"))
-                                .nickName("닉네임")
+                                .nickname("닉네임")
                                 .build()
                                 .switchToSuperAdmin()
                 );

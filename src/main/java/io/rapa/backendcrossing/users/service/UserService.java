@@ -38,7 +38,7 @@ public class UserService {
                 Users.builder()
                         .email(request.email())
                         .password(passwordEncoder.encode(request.password()))
-                        .nickName(request.nickname())
+                        .nickname(request.nickname())
                         .build()
         );
         return UserCreateResponse.from(savedUser);

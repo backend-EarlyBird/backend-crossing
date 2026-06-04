@@ -1,6 +1,7 @@
 package io.rapa.backendcrossing.inventory.entity;
 
 import io.rapa.backendcrossing.items.entity.Items;
+import io.rapa.backendcrossing.users.domain.entity.Users;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -57,9 +58,21 @@ public class Inventories {
     @Column(nullable = false, updatable = false) // 수정 불가
     private String acquiredAt;
 
+    @ManyToOne
+    @JoinColumn(
+            name = "user_id",
+            nullable = false,
+            foreignKey = @ForeignKey(
+                    name = "fk_users_inventories",
+                    foreignKeyDefinition = "FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE"
+            )
+    )
+    private Users user;
+
     public void addQuantity(int quantity) {
         this.quantity += quantity;
     }
+
 
     /*
     {
