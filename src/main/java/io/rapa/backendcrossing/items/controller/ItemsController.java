@@ -39,7 +39,7 @@ public class ItemsController implements ApiItemSupperts {
     }
 
     // 전체 아이템 조회
-    @GetMapping("")
+    @GetMapping(value = {"", "/", })
     @ApiFindAllItems
     public ResponseEntity<CommonResponse<List<ItemsResponse>>> findAllItems() {
         //return ResponseEntity.ok(itemsService.findAllItems());

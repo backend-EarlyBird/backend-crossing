@@ -41,7 +41,7 @@ public class InventoriesController implements ApiInventoriesSupperts {
 
 
     @ApiGetInventories
-    @GetMapping("")
+    @GetMapping(value = {"", "/", })
     public ResponseEntity<CommonResponse<List<InventoriesResponse>>> getInventories
             (@AuthenticationPrincipal CurrentUser currentUser) {
         // 보안 정보에서 유저 ID를 꺼냄
