@@ -53,7 +53,7 @@ public class Users extends BaseEntity{
 
     private LocalDateTime lastLoginAt;
 
-    @OneToMany(mappedBy = "user_id")
+    @OneToMany(mappedBy = "user")
     private List<Inventories> inventories = new ArrayList<>();
 
     @Builder

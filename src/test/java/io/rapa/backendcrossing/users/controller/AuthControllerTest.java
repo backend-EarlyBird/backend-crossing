@@ -200,7 +200,7 @@ class AuthControllerTest {
                         new TestingAuthenticationToken(
                                 CurrentUser.builder()
                                         .email(userEmail)
-                                        .nickName(testUser.getNickName())
+                                        .nickName(testUser.getNickname())
                                         .build(),
                                 null,
                                 "ROLE_" + Role.USER.toString()

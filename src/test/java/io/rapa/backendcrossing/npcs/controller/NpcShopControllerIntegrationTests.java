@@ -97,7 +97,7 @@ public class NpcShopControllerIntegrationTests {
 
     private org.springframework.test.web.servlet.request.RequestPostProcessor auth() {
         CurrentUser currentUser = CurrentUser.builder()
-                .email(testUser.getEmail()).nickName(testUser.getNickName()).build()
+                .email(testUser.getEmail()).nickName(testUser.getNickname()).build()
                 .setId(testUser.getUserId())
                 .setRole(testUser.getRole());
         return SecurityMockMvcRequestPostProcessors.authentication(

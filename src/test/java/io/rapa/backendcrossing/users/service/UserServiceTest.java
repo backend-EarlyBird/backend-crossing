@@ -104,7 +104,7 @@ class UserServiceTest {
                         new TestingAuthenticationToken(
                                 CurrentUser.builder()
                                         .email(testUser.getEmail())
-                                        .nickName(testUser.getNickName())
+                                        .nickName(testUser.getNickname())
                                         .build(),
                                 null,
                                 "ROLE_" + Role.USER

@@ -17,6 +17,8 @@ import io.rapa.backendcrossing.common.exception.CustomException;
 import io.rapa.backendcrossing.inventory.entity.Inventories;
 import io.rapa.backendcrossing.inventory.repository.InventoriesRepository;
 import io.rapa.backendcrossing.npcs.entity.NpcItems;
+import io.rapa.backendcrossing.users.domain.entity.Users;
+import io.rapa.backendcrossing.users.repository.UserRepository;
 import io.rapa.backendcrossing.wallets.domain.entity.Wallets;
 import io.rapa.backendcrossing.npcs.repository.NpcItemsRepository;
 import io.rapa.backendcrossing.npcs.repository.NpcsRepository;
@@ -37,6 +39,7 @@ public class NpcShopService {
     private final NpcItemsRepository npcItemsRepository;
     private final WalletRepository walletRepository;
     private final InventoriesRepository inventoriesRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public NpcPurchaseResponse purchase(Long userId, Long npcId, Long npcItemId, NpcPurchaseRequest request) {
@@ -70,17 +73,20 @@ public class NpcShopService {
         }
         wallet.deductGold(totalPrice);
 
+        Users foundedUser = userRepository.findByIdOrThrow(userId);
+
         // 인벤토리에 아이템 추가 (기존 보유 시 수량 증가)
         Inventories inventory = inventoriesRepository
-                .findByUserIdAndItemItemId(userId, npcItem.getItem().getItemId())
+                .findBySubUserIdAndItemItemId(userId, npcItem.getItem().getItemId())
                 .map(existing -> {
                     existing.addQuantity(request.getQuantity());
                     return existing;
                 })
                 .orElseGet(() -> inventoriesRepository.save(
                         Inventories.builder()
-                                .userId(userId)
+                                .subUserId(userId)
                                 .item(npcItem.getItem())
+                                .user(foundedUser)
                                 .quantity(request.getQuantity())
                                 .build()
                 ));

@@ -9,7 +9,7 @@ public class UserUtils {
         return Users.builder()
                 .email(email)
                 .password(password)
-                .nickName("닉네임")
+                .nickname("닉네임")
                 .build();
     }
 

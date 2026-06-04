@@ -9,6 +9,8 @@ import io.rapa.backendcrossing.items.constants.ItemType;
 import io.rapa.backendcrossing.items.entity.Items;
 import io.rapa.backendcrossing.npcs.entity.NpcItems;
 import io.rapa.backendcrossing.npcs.entity.Npcs;
+import io.rapa.backendcrossing.users.domain.entity.Users;
+import io.rapa.backendcrossing.users.repository.UserRepository;
 import io.rapa.backendcrossing.wallets.domain.entity.Wallets;
 import io.rapa.backendcrossing.npcs.repository.NpcItemsRepository;
 import io.rapa.backendcrossing.npcs.repository.NpcsRepository;
@@ -30,8 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * packageName    : io.rapa.backendcrossing.npcs.service
@@ -54,6 +55,9 @@ public class NpcShopServiceTests {
     @Mock private WalletRepository walletRepository;
     @Mock private InventoriesRepository inventoriesRepository;
 
+    @Mock
+    Users user = mock();
+
     @InjectMocks
     private NpcShopService npcShopService;
 
@@ -62,6 +66,9 @@ public class NpcShopServiceTests {
     private NpcItems npcItem;
     private Wallets wallet;
     private NpcPurchaseRequest request;
+
+    @Mock
+    UserRepository userRepository;
 
     @BeforeEach
     void setUp() {
@@ -75,7 +82,7 @@ public class NpcShopServiceTests {
 
         npcItem = NpcItems.builder().npcItemId(1L).npc(npc).item(item).quantity(99).sortOrder(1).build();
 
-        wallet = Wallets.builder().walletId(1L).gold(5000L).gem(10L).build();
+        wallet = Wallets.builder().userId(1L).gold(5000L).gem(10L).build();
 
         request = new NpcPurchaseRequest();
         try {
@@ -95,11 +102,14 @@ public class NpcShopServiceTests {
         given(npcsRepository.findByIdOrThrow(1L)).willReturn(npc);
         given(npcItemsRepository.findByIdWithDetails(1L)).willReturn(Optional.of(npcItem));
         given(walletRepository.findByUserIdOrThrow(userId)).willReturn(wallet);
-        given(inventoriesRepository.findByUserIdAndItemItemId(userId, item.getItemId())).willReturn(Optional.empty());
+        given(inventoriesRepository.findBySubUserIdAndItemItemId(userId, item.getItemId())).willReturn(Optional.empty());
 
         Inventories savedInventory = Inventories.builder()
-                .userItemId(1L).item(item).quantity(3).build();
+                .userItemId(1L).user(user).item(item).quantity(3).build();
         given(inventoriesRepository.save(any())).willReturn(savedInventory);
+
+        given(userRepository.findByIdOrThrow(userId))
+                .willReturn(user);
 
         // when
         NpcPurchaseResponse result = npcShopService.purchase(userId, 1L, 1L, request);
@@ -116,12 +126,15 @@ public class NpcShopServiceTests {
         // given
         Long userId = 1L;
         Inventories existingInventory = Inventories.builder()
-                .userItemId(1L).item(item).quantity(5).build();
+                .userItemId(1L).user(user).item(item).quantity(5).build();
+
+        given(userRepository.findByIdOrThrow(userId))
+                .willReturn(user);
 
         given(npcsRepository.findByIdOrThrow(1L)).willReturn(npc);
         given(npcItemsRepository.findByIdWithDetails(1L)).willReturn(Optional.of(npcItem));
         given(walletRepository.findByUserIdOrThrow(userId)).willReturn(wallet);
-        given(inventoriesRepository.findByUserIdAndItemItemId(userId, item.getItemId())).willReturn(Optional.of(existingInventory));
+        given(inventoriesRepository.findBySubUserIdAndItemItemId(userId, item.getItemId())).willReturn(Optional.of(existingInventory));
 
         // when
         NpcPurchaseResponse result = npcShopService.purchase(userId, 1L, 1L, request);
@@ -136,7 +149,7 @@ public class NpcShopServiceTests {
     void purchase_Fail_InsufficientGold() {
         // given
         Long userId = 1L;
-        Wallets poorWallet = Wallets.builder().walletId(1L).gold(10L).gem(0L).build(); // 30*3=90 필요
+        Wallets poorWallet = Wallets.builder().userId(1L).gold(10L).gem(0L).build(); // 30*3=90 필요
 
         given(npcsRepository.findByIdOrThrow(1L)).willReturn(npc);
         given(npcItemsRepository.findByIdWithDetails(1L)).willReturn(Optional.of(npcItem));
