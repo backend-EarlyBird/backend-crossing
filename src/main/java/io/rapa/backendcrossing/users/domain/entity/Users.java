@@ -85,4 +85,7 @@ public class Users extends BaseEntity{
     public void setLoginTimeNow(){
         this.lastLoginAt = LocalDateTime.now();
     }
+    public void addInventory(Inventories inventories){
+        this.inventories.add(inventories);
+    }
 }

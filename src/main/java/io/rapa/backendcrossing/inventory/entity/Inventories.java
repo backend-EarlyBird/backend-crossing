@@ -73,13 +73,23 @@ public class Inventories {
 
     //생성자
     @Builder
-    public Inventories(Long userItemId, Long userId, Items item, int quantity, boolean equipped, String acquiredAt) {
+    public Inventories(
+            Long userItemId,
+            Long subUserId,
+            Items item,
+            int quantity,
+            boolean equipped,
+            String acquiredAt,
+            Users user
+    ) {
         this.userItemId = userItemId;
-        this.userId = userId;
+        this.subUserId = subUserId;
         this.item = item;
         this.quantity = quantity;
         this.equipped = equipped;
         this.acquiredAt = acquiredAt;
+        this.user = user;
+        this.user.addInventory(this);
     }
 
 
