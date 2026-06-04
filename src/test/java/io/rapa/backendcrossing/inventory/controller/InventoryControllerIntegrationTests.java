@@ -74,7 +74,7 @@ public class InventoryControllerIntegrationTests extends BaseIntegrationTest {
                 .userId(USER_ID).item(savedItem).quantity(3).equipped(false).build());
 
         // when & then
-        mockMvc.perform(get("/api/v1/users/me/inventory/")
+        mockMvc.perform(get("/api/v1/users/me/inventory")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
@@ -85,7 +85,7 @@ public class InventoryControllerIntegrationTests extends BaseIntegrationTest {
     @Test
     @DisplayName("인벤토리 조회 - 빈 인벤토리")
     void getInventories_empty() throws Exception {
-        mockMvc.perform(get("/api/v1/users/me/inventory/")
+        mockMvc.perform(get("/api/v1/users/me/inventory")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
@@ -116,11 +116,11 @@ public class InventoryControllerIntegrationTests extends BaseIntegrationTest {
     @DisplayName("아이템 버림 - 전체 수량 버림 (인벤토리 삭제)")
     void discardItem_fullQuantity() throws Exception {
         // given
-        Inventories inventory = inventoriesRepository.save(
+        inventoriesRepository.save(
                 Inventories.builder().userId(USER_ID).item(savedItem).quantity(3).equipped(false).build());
 
         // when & then
-        mockMvc.perform(delete("/api/v1/users/me/inventory/discard/" + inventory.getUserItemId())
+        mockMvc.perform(delete("/api/v1/users/me/inventory/" + savedItem.getItemId() + "/discard")
                         .param("quantity", "3")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -131,11 +131,11 @@ public class InventoryControllerIntegrationTests extends BaseIntegrationTest {
     @DisplayName("아이템 버림 - 일부 수량 버림")
     void discardItem_partialQuantity() throws Exception {
         // given
-        Inventories inventory = inventoriesRepository.save(
+        inventoriesRepository.save(
                 Inventories.builder().userId(USER_ID).item(savedItem).quantity(5).equipped(false).build());
 
         // when & then
-        mockMvc.perform(delete("/api/v1/users/me/inventory/discard/" + inventory.getUserItemId())
+        mockMvc.perform(delete("/api/v1/users/me/inventory/" + savedItem.getItemId() + "/discard")
                         .param("quantity", "2")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -145,7 +145,7 @@ public class InventoryControllerIntegrationTests extends BaseIntegrationTest {
     @Test
     @DisplayName("아이템 버림 - 존재하지 않는 인벤토리 아이템")
     void discardItem_itemNotFound() throws Exception {
-        mockMvc.perform(delete("/api/v1/users/me/inventory/discard/9999")
+        mockMvc.perform(delete("/api/v1/users/me/inventory/9999/discard")
                         .param("quantity", "1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())

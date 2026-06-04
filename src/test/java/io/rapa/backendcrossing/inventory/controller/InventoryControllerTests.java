@@ -86,7 +86,7 @@ public class InventoryControllerTests {
         ));
 
         // when & then
-        mockMvc.perform(get("/api/v1/users/me/inventory/")
+        mockMvc.perform(get("/api/v1/users/me/inventory")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
@@ -111,10 +111,12 @@ public class InventoryControllerTests {
     @DisplayName("아이템 버림 - 성공")
     void discardItem_success() throws Exception {
         // given
-        doNothing().when(inventoriesService).discardItem(1L, 2, 1L);
+        given(inventoriesService.discardItem(1L, 2, 1L)).willReturn(
+                InventoriesResponse.builder().userItemId(1L).quantity(0).equipped(false).build()
+        );
 
         // when & then
-        mockMvc.perform(delete("/api/v1/users/me/inventory/discard/1")
+        mockMvc.perform(delete("/api/v1/users/me/inventory/1/discard")
                         .param("quantity", "2")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -127,7 +129,7 @@ public class InventoryControllerTests {
     @DisplayName("아이템 버림 - 서비스 호출 확인")
     void discardItem_verifiesServiceCall() throws Exception {
         // when & then
-        mockMvc.perform(delete("/api/v1/users/me/inventory/discard/5")
+        mockMvc.perform(delete("/api/v1/users/me/inventory/5/discard")
                         .param("quantity", "3")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
