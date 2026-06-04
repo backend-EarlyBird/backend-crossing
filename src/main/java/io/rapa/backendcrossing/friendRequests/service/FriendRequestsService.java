@@ -187,7 +187,7 @@ public class FriendRequestsService {
                         userId,
                         FriendRequestsStatus.ACCEPTED
                 ))
-                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT, "친구 관계를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FRIEND_RELATION));
 
         friendRequestsRepository.delete(friendRequest);
     }

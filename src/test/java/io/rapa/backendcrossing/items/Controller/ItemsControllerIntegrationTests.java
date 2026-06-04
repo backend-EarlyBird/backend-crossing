@@ -26,9 +26,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * -----------------------------------------------------------
  * 26. 6. 1.        Admin       최초 생성
  */
-@SpringBootTest //전체 테스트
-@AutoConfigureMockMvc // MockMvc 설정
-@Transactional // DB에 테스트 데이터가 남지 않게 자동 롤백
+@SpringBootTest
+@AutoConfigureMockMvc(addFilters = false)
+@Transactional
 @DisplayName("ItemsController 통합 테스트")
 @Slf4j
 public class ItemsControllerIntegrationTests {

@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * 26. 6. 3.        Admin       최초 생성
  */
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @Transactional
 @Slf4j
 @DisplayName("Describe: NPC 조회 ( GET /api/v1/npcs )")
