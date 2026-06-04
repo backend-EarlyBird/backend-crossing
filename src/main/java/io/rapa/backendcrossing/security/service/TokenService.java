@@ -4,8 +4,8 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.rapa.backendcrossing.common.constants.ErrorCode;
 import io.rapa.backendcrossing.common.exception.CustomException;
-import io.rapa.backendcrossing.infra.RefreshTokenRepository;
-import io.rapa.backendcrossing.infra.domain.entity.RefreshToken;
+import io.rapa.backendcrossing.security.repository.RefreshTokenRepository;
+import io.rapa.backendcrossing.security.domain.RefreshToken;
 import io.rapa.backendcrossing.security.constants.TokenType;
 import io.rapa.backendcrossing.security.domain.dto.JwtProperties;
 import io.rapa.backendcrossing.security.domain.dto.KeyPair;
@@ -96,16 +96,10 @@ public class TokenService {
                 .build()
                 .parseSignedClaims(token);
     }
-    public TokenBody parseJwt(String token, TokenType tokenType){
+    public TokenBody parseJwt(String token){
         Jws<Claims> claimsJws = parseClaims(token);
-        return switch (tokenType){
-            case TokenType.ACCESS_TOKEN -> TokenBody.builder()
-                    .email(String.valueOf(claimsJws.getPayload().get("email")))
-                    .role(Role.valueOf(claimsJws.getPayload().get("role").toString()))
-                    .build();
-            case TokenType.REFRESH_TOKEN -> TokenBody.builder()
-                    .email(String.valueOf(claimsJws.getPayload().get("email")))
-                    .build();
-        };
+        return  TokenBody.builder()
+                .email(String.valueOf(claimsJws.getPayload().get("email")))
+                .build();
     }
 }

@@ -38,7 +38,7 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
         if(tokenService.validate(extractedToken)){
-            TokenBody tokenBody = tokenService.parseJwt(extractedToken, TokenType.ACCESS_TOKEN);
+            TokenBody tokenBody = tokenService.parseJwt(extractedToken);
             log.info(tokenBody.email());
             CurrentUser currentUser = userService.loadCurrentUserByEmail(tokenBody.email());
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(

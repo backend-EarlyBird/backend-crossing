@@ -1,6 +1,6 @@
 package io.rapa.backendcrossing.common.config;
 
-import io.rapa.backendcrossing.infra.domain.dto.RedisProperties;
+import io.rapa.backendcrossing.security.domain.RedisProperties;
 import lombok.RequiredArgsConstructor;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
