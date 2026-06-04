@@ -99,7 +99,7 @@ public class InventoriesServiceTests {
         Items item = Items.builder().itemId(1L).itemName("연습용 검").price(100).build();
         Inventories inv = Inventories.builder().userItemId(1L).userId(userId).item(item).quantity(5).equipped(false).build();
 
-        given(inventoriesRepository.findById(1L)).willReturn(Optional.of(inv));
+        given(inventoriesRepository.findByUserIdAndItemItemId(userId, 1L)).willReturn(Optional.of(inv));
 
         // when
         inventoriesService.discardItem(1L, 2, userId);
@@ -117,7 +117,7 @@ public class InventoriesServiceTests {
         Items item = Items.builder().itemId(1L).itemName("연습용 검").price(100).build();
         Inventories inv = Inventories.builder().userItemId(1L).userId(userId).item(item).quantity(3).equipped(false).build();
 
-        given(inventoriesRepository.findById(1L)).willReturn(Optional.of(inv));
+        given(inventoriesRepository.findByUserIdAndItemItemId(userId, 1L)).willReturn(Optional.of(inv));
 
         // when
         inventoriesService.discardItem(1L, 3, userId);
@@ -134,7 +134,7 @@ public class InventoriesServiceTests {
         Items item = Items.builder().itemId(1L).itemName("연습용 검").price(100).build();
         Inventories inv = Inventories.builder().userItemId(1L).userId(userId).item(item).quantity(1).equipped(false).build();
 
-        given(inventoriesRepository.findById(1L)).willReturn(Optional.of(inv));
+        given(inventoriesRepository.findByUserIdAndItemItemId(userId, 1L)).willReturn(Optional.of(inv));
 
         // when & then
         assertThrows(CustomException.class, () -> inventoriesService.discardItem(1L, 5, userId));

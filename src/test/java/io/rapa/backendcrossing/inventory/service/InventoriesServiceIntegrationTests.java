@@ -84,7 +84,7 @@ public class InventoriesServiceIntegrationTests extends BaseIntegrationTest {
                 Inventories.builder().userId(userId).item(savedItem).quantity(5).equipped(false).build());
 
         // when
-        inventoriesService.discardItem(inv.getUserItemId(), 2, userId);
+        inventoriesService.discardItem(savedItem.getItemId(), 2, userId);
 
         // then
         assertThat(inv.getQuantity()).isEqualTo(3);
@@ -97,13 +97,12 @@ public class InventoriesServiceIntegrationTests extends BaseIntegrationTest {
         Long userId = 1L;
         Inventories inv = inventoriesRepository.save(
                 Inventories.builder().userId(userId).item(savedItem).quantity(3).equipped(false).build());
-        Long userItemId = inv.getUserItemId();
 
         // when
-        inventoriesService.discardItem(userItemId, 3, userId);
+        inventoriesService.discardItem(savedItem.getItemId(), 3, userId);
 
         // then
-        assertThat(inventoriesRepository.findById(userItemId)).isEmpty();
+        assertThat(inventoriesRepository.findByUserIdAndItemItemId(userId, savedItem.getItemId())).isEmpty();
     }
 
 }
