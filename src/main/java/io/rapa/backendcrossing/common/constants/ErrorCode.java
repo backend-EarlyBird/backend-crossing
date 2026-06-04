@@ -28,7 +28,10 @@ public enum ErrorCode {
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "해당 Refrsh Token이 서버에 존재하지 않습니다."),
     TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 토큰을 찾을 수 없습니다."),
     PASSWORD_LENGTH_NOT_VALID(HttpStatus.BAD_REQUEST, "비밀번호는 8~64자여야 합니다."),
-    VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "입력값이 잘못되었습니다.")
+    VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "입력값이 잘못되었습니다."),
+
+    // AUTH 관련
+    AUTHORIZE_NEEDED(HttpStatus.UNAUTHORIZED, "인증이 필요합니다.")
     ;
 
 

@@ -2,19 +2,25 @@ package io.rapa.backendcrossing.users.controller;
 
 import io.rapa.backendcrossing.common.constants.ErrorCode;
 import io.rapa.backendcrossing.common.constants.SuccessMessage;
-import io.rapa.backendcrossing.infra.domain.entity.RefreshToken;
-import io.rapa.backendcrossing.infra.repository.RefreshTokenRepository;
+import io.rapa.backendcrossing.common.exception.CustomException;
+import io.rapa.backendcrossing.security.domain.CurrentUser;
+import io.rapa.backendcrossing.security.repository.RefreshTokenRepository;
 import io.rapa.backendcrossing.security.service.TokenService;
+import io.rapa.backendcrossing.users.constants.Role;
 import io.rapa.backendcrossing.users.domain.dto.request.AuthLoginRequest;
 import io.rapa.backendcrossing.users.domain.dto.request.AuthRefreshRequest;
 import io.rapa.backendcrossing.users.domain.entity.Users;
 import io.rapa.backendcrossing.users.repository.UserRepository;
+import io.rapa.backendcrossing.users.service.AuthService;
 import io.rapa.util.UserUtils;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -22,6 +28,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -39,6 +46,8 @@ class AuthControllerTest {
     @Autowired
     TokenService tokenService;
     @Autowired
+    AuthService authService;
+    @Autowired
     RefreshTokenRepository refreshTokenRepository;
     @Autowired
     MockMvc mockMvc;
@@ -49,7 +58,7 @@ class AuthControllerTest {
     String BASE_ENDPOINT = "/api/v1/auth";
 
     @BeforeEach
-    void setUp(){
+     void setUp(){
         testUser = userRepository.save(
                 UserUtils.makeUsers(userEmail, passwordEncoder.encode(userPassword))
         );
@@ -86,7 +95,7 @@ class AuthControllerTest {
 
     @Nested
     @DisplayName("Describe: RefreshToken 재발급 ( POST /api/v1/auth/refresh )")
-    class Describe_with_refreshToken{
+     class Describe_with_refreshToken{
 
         String refreshToken;
 
@@ -135,6 +144,7 @@ class AuthControllerTest {
         @Nested
         @DisplayName("Context: 유효하지 않은 Refresh Token이 주어진 경우")
         class Context_with_invalid_data{
+
             @Test
             @DisplayName("It: Refresh Token을 전달 후 401 에러 발생")
             void It_Refresh_success_with_200_OK() throws Exception{
@@ -162,6 +172,83 @@ class AuthControllerTest {
 
     }
 
+    @Nested
+    @DisplayName("Describe: 로그아웃 ( POST /api/v1/auth/logout )")
+    class Describe_with_logout{
 
 
+        String refreshToken;
+
+        @BeforeEach
+        void setUp(){
+            refreshToken = tokenService.issueKeyPair(
+                            testUser.getEmail(),
+                            testUser.getRole()
+                    )
+                    .refreshToken();
+        }
+
+        @Nested
+        @DisplayName("Context: 올바른 Refresh Token이 주어지는 경우")
+        class Context_with_valid_data{
+
+            @Test
+            @DisplayName("It: 로그아웃 성공 및 200 OK 응답")
+            void It_logout_success() throws Exception {
+                // given
+                SecurityContextHolder.getContext().setAuthentication(
+                        new TestingAuthenticationToken(
+                                CurrentUser.builder()
+                                        .email(userEmail)
+                                        .nickName(testUser.getNickName())
+                                        .build(),
+                                null,
+                                "ROLE_" + Role.USER.toString()
+                        )
+                );
+
+                // when
+                ResultActions actions = mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .post(BASE_ENDPOINT + "/logout")
+                                .header("Authorization", "Bearer " + refreshToken)
+                );
+
+                // then
+                actions.andExpect(status().isOk())
+                        .andExpect(jsonPath("$.success").value(true))
+                        .andExpect(jsonPath("$.message").value(SuccessMessage.LOGOUT_SUCCESS.getMessage()))
+                        .andExpect(jsonPath("$.data").isEmpty());
+
+                Assertions.assertThat(refreshTokenRepository.existsById(refreshToken)).isFalse();
+
+                // Refresh Token 재발급 차단
+                Assertions.assertThatThrownBy(
+                        ()-> authService.refreshToken(new AuthRefreshRequest(refreshToken))
+                )
+                        .isInstanceOf(CustomException.class)
+                        .hasMessageContaining(ErrorCode.REFRESH_TOKEN_NOT_FOUND.getDescription());
+            }
+        }
+
+        @Nested
+        @DisplayName("Context: 잘못된 인증이나 토큰이 주어진 경우")
+        class Context_with_invalid_data{
+
+            @Test
+            @DisplayName("It: 인증이 포함되어있지 않아 로그아웃 실패 및 302 에러 발생")
+            void It_logout_success() throws Exception {
+                // when
+                ResultActions actions = mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .post(BASE_ENDPOINT + "/logout")
+                );
+
+                // then
+                actions.andExpect(status().is3xxRedirection());
+
+                Assertions.assertThat(refreshTokenRepository.existsById(refreshToken)).isTrue();
+            }
+        }
+    }
 }

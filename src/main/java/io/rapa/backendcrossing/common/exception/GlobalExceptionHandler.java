@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -42,6 +43,20 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(CommonResponse.fail("알 수 없는 서버 오류가 발생했습니다."));
+    }
+
+    @ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
+    public ResponseEntity<CommonResponse<Void>> handleAuthenticationNotFound(
+            MethodArgumentNotValidException e
+    ) {
+        return  ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(
+                        CommonResponse
+                                .fail(
+                                        ErrorCode.AUTHORIZE_NEEDED.getDescription()
+                                )
+                );
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

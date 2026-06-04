@@ -3,8 +3,8 @@ package io.rapa.backendcrossing.users.service;
 import io.rapa.backendcrossing.common.constants.ErrorCode;
 import io.rapa.backendcrossing.common.exception.CustomException;
 import io.rapa.backendcrossing.common.util.PreConditions;
-import io.rapa.backendcrossing.infra.domain.entity.RefreshToken;
-import io.rapa.backendcrossing.infra.repository.RefreshTokenRepository;
+import io.rapa.backendcrossing.security.domain.RefreshToken;
+import io.rapa.backendcrossing.security.repository.RefreshTokenRepository;
 import io.rapa.backendcrossing.security.domain.dto.KeyPair;
 import io.rapa.backendcrossing.users.constants.UserStatus;
 import io.rapa.backendcrossing.users.domain.dto.request.AuthLoginRequest;
@@ -14,6 +14,9 @@ import io.rapa.backendcrossing.users.domain.entity.Users;
 import io.rapa.backendcrossing.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@EnableMethodSecurity(prePostEnabled = true)
 @Transactional(readOnly = true)
 public class AuthService {
     private final TokenService tokenService;
@@ -81,5 +85,12 @@ public class AuthService {
                 foundedUser.getEmail(),
                 foundedUser.getRole()
         );
+    }
+
+    @Transactional
+    @PreAuthorize("isAuthenticated()")
+    public void signOut(String refreshToken){
+        if(Strings.isBlank(refreshToken)) throw new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
+        refreshTokenRepository.deleteById(refreshToken);
     }
 }

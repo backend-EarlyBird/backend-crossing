@@ -7,9 +7,11 @@ import io.rapa.backendcrossing.users.domain.dto.request.AuthLoginRequest;
 import io.rapa.backendcrossing.users.domain.dto.request.AuthRefreshRequest;
 import io.rapa.backendcrossing.users.domain.dto.response.AuthLoginResponse;
 import io.rapa.backendcrossing.users.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -50,5 +52,25 @@ public class AuthController implements AuthControllerSupporter{
                         SuccessMessage.REFRESH_TOKEN_SUCCESS.getMessage()
                 )
         );
+    }
+
+    @PostMapping("logout")
+    public ResponseEntity<CommonResponse<Void>> logOut(
+            HttpServletRequest request
+    ){
+        authService.signOut(extractToken(request));
+        return ResponseEntity.ok(
+                CommonResponse.successWithMessage(
+                        null,
+                        SuccessMessage.LOGOUT_SUCCESS.getMessage()
+                )
+        );
+    }
+
+    public String extractToken(HttpServletRequest request){
+        String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+        // 단락평가 이용하여  Bearer 제거 및 가공
+        if(bearerToken != null && bearerToken.startsWith("Bearer")) return bearerToken.substring(7);
+        return null;
     }
 }

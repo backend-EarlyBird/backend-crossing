@@ -1,4 +1,4 @@
-package io.rapa.backendcrossing.infra.domain.dto;
+package io.rapa.backendcrossing.security.domain;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
