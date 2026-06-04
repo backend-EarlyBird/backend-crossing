@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<CommonResponse<?>> handleException(Exception e) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(CommonResponse.fail("알 수 없는 서버 오류가 발생했습니다."));
+                .body(CommonResponse.fail("서버 오류가 발생했습니다."));
     }
 
     @ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
