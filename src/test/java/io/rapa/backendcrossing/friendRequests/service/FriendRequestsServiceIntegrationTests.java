@@ -6,12 +6,14 @@ import io.rapa.backendcrossing.friendRequests.entity.FriendRequests;
 import io.rapa.backendcrossing.friendRequests.repository.FriendRequestsRepository;
 import io.rapa.backendcrossing.users.domain.entity.Users;
 import io.rapa.backendcrossing.users.repository.UserRepository;
+import io.rapa.util.UserUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -46,6 +48,9 @@ public class FriendRequestsServiceIntegrationTests {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     private Users userA;
     private Users userB;
 
@@ -54,7 +59,12 @@ public class FriendRequestsServiceIntegrationTests {
 
     @BeforeEach
     void setUp() {
-        // DB에 실제 유저 데이터 저장
+        //userA = userRepository.save(UserUtils.makeUsers("test1@naver.com", passwordEncoder.encode("1234")));
+        //userId = userA.getUserId();
+
+        //userB = userRepository.save(UserUtils.makeUsers("test2@naver.com", passwordEncoder.encode("1234")));
+        //targetId = userB.getUserId();
+
         userA = Users.builder()
                 .email("test1@naver.com")
                 .password("1234")
@@ -70,7 +80,7 @@ public class FriendRequestsServiceIntegrationTests {
                 .nickName("닉네임2")
                 .build();
         userB = userRepository.save(userB);
-        targetId = userB.getUserId(); // DB가 생성한 실제 ID 할당
+        targetId = userB.getUserId();
     }
 
     @Test
@@ -103,6 +113,7 @@ public class FriendRequestsServiceIntegrationTests {
         request.setFromUser(userB);
         request.setToUser(userA);
         request.setStatus(FriendRequestsStatus.PENDING);
+        request.setNickname(userB.getNickName());
         friendRepository.save(request);
 
         // when
@@ -145,6 +156,7 @@ public class FriendRequestsServiceIntegrationTests {
         request.setFromUser(userA);
         request.setToUser(userB);
         request.setStatus(FriendRequestsStatus.ACCEPTED);
+        request.setNickname(userA.getNickName());
         friendRepository.save(request);
 
         // when & then: 다시 요청 시 예외 발생
@@ -161,6 +173,7 @@ public class FriendRequestsServiceIntegrationTests {
         request.setFromUser(userB);
         request.setToUser(userA);   // 내가(userA) 받은 요청
         request.setStatus(FriendRequestsStatus.PENDING);
+        request.setNickname(userB.getNickName());
         FriendRequests savedRequest = friendRepository.save(request);
         Long requestId = savedRequest.getFriendRequestId(); // DB에 저장된 실제 요청 ID 획득
 
@@ -194,6 +207,7 @@ public class FriendRequestsServiceIntegrationTests {
         request.setFromUser(userB);
         request.setToUser(userA);
         request.setStatus(FriendRequestsStatus.PENDING);
+        request.setNickname(userB.getNickName());
         FriendRequests savedRequest = friendRepository.save(request);
         Long requestId = savedRequest.getFriendRequestId();
 
@@ -213,6 +227,7 @@ public class FriendRequestsServiceIntegrationTests {
         request.setFromUser(userA); // A가 보냄
         request.setToUser(userB);
         request.setStatus(FriendRequestsStatus.PENDING);
+        request.setNickname(userA.getNickName());
         FriendRequests savedRequest = friendRepository.save(request);
         Long requestId = savedRequest.getFriendRequestId();
 
@@ -232,6 +247,7 @@ public class FriendRequestsServiceIntegrationTests {
         request.setFromUser(userA);
         request.setToUser(userB);
         request.setStatus(FriendRequestsStatus.ACCEPTED);
+        request.setNickname(userA.getNickName());
         friendRepository.save(request);
 
         // when: A가 B를 친구 삭제 (targetId 사용)

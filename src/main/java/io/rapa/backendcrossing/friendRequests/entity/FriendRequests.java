@@ -43,6 +43,6 @@ public class FriendRequests {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false) // This forces the "cannot be null" constraint
     private String nickname;
 }

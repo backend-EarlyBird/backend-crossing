@@ -3,6 +3,7 @@ package io.rapa.backendcrossing.friendRequests.repository;
 import io.rapa.backendcrossing.friendRequests.constants.FriendRequestsStatus;
 import io.rapa.backendcrossing.friendRequests.entity.FriendRequests;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,9 +19,10 @@ import java.util.Optional;
  * -----------------------------------------------------------
  * 26. 6. 4.        Admin       최초 생성
  */
+@Repository
 public interface FriendRequestsRepository extends JpaRepository<FriendRequests, Long> {
 
-    List<FriendRequests> findByFromUserUserIdAndStatus(Long fromUserId, FriendRequestsStatus status);
+    List<FriendRequests> findByFromUser_UserIdAndToUser_UserIdAndStatus(Long fromUser_userId, Long toUser_userId, FriendRequestsStatus status);
 
     List<FriendRequests> findByToUserUserIdAndStatus(Long toUserId, FriendRequestsStatus status);
 
