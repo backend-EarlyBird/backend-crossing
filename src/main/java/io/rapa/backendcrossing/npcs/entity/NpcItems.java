@@ -21,6 +21,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "npcitems")
 public class NpcItems {
 
     @Id

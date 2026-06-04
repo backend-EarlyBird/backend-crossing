@@ -21,7 +21,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Wallet {
+public class Wallets {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

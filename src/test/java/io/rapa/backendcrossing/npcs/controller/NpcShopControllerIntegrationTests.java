@@ -8,7 +8,7 @@ import io.rapa.backendcrossing.items.entity.Items;
 import io.rapa.backendcrossing.items.repository.ItemsRepository;
 import io.rapa.backendcrossing.npcs.entity.NpcItems;
 import io.rapa.backendcrossing.npcs.entity.Npcs;
-import io.rapa.backendcrossing.npcs.entity.Wallet;
+import io.rapa.backendcrossing.npcs.entity.Wallets;
 import io.rapa.backendcrossing.npcs.repository.NpcItemsRepository;
 import io.rapa.backendcrossing.npcs.repository.NpcsRepository;
 import io.rapa.backendcrossing.npcs.repository.WalletRepository;
@@ -78,7 +78,7 @@ public class NpcShopControllerIntegrationTests {
                 UserUtils.makeUsers("npc_shop_test@naver.com", passwordEncoder.encode("1234"))
         );
 
-        walletRepository.save(Wallet.builder().user(testUser).gold(5000L).gem(10L).build());
+        walletRepository.save(Wallets.builder().user(testUser).gold(5000L).gem(10L).build());
 
         Items item = itemsRepository.save(Items.builder()
                 .rId("potion_hp_001").itemName("HP 포션")
@@ -140,7 +140,7 @@ public class NpcShopControllerIntegrationTests {
         @Test
         @DisplayName("It: 400 BAD REQUEST 반환")
         void It_골드부족_실패() throws Exception {
-            Wallet wallet = walletRepository.findByUserIdOrThrow(testUser.getUserId());
+            Wallets wallet = walletRepository.findByUserIdOrThrow(testUser.getUserId());
             wallet.deductGold(4990L); // 5000 -> 10
             walletRepository.flush();
 

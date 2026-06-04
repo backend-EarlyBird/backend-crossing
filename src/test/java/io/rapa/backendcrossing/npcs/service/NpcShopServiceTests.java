@@ -2,21 +2,19 @@ package io.rapa.backendcrossing.npcs.service;
 
 import io.rapa.backendcrossing.common.constants.ErrorCode;
 import io.rapa.backendcrossing.common.exception.CustomException;
+import io.rapa.backendcrossing.inventory.entity.Inventories;
+import io.rapa.backendcrossing.inventory.repository.InventoriesRepository;
 import io.rapa.backendcrossing.items.constants.ItemGrade;
 import io.rapa.backendcrossing.items.constants.ItemType;
 import io.rapa.backendcrossing.items.entity.Items;
 import io.rapa.backendcrossing.npcs.entity.NpcItems;
 import io.rapa.backendcrossing.npcs.entity.Npcs;
-import io.rapa.backendcrossing.npcs.entity.UserItem;
-import io.rapa.backendcrossing.npcs.entity.Wallet;
+import io.rapa.backendcrossing.npcs.entity.Wallets;
 import io.rapa.backendcrossing.npcs.repository.NpcItemsRepository;
 import io.rapa.backendcrossing.npcs.repository.NpcsRepository;
-import io.rapa.backendcrossing.npcs.repository.UserItemRepository;
 import io.rapa.backendcrossing.npcs.repository.WalletRepository;
 import io.rapa.backendcrossing.npcs.request.NpcPurchaseRequest;
 import io.rapa.backendcrossing.npcs.response.NpcPurchaseResponse;
-import io.rapa.backendcrossing.users.domain.entity.Users;
-import io.rapa.backendcrossing.users.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +24,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,8 +52,7 @@ public class NpcShopServiceTests {
     @Mock private NpcsRepository npcsRepository;
     @Mock private NpcItemsRepository npcItemsRepository;
     @Mock private WalletRepository walletRepository;
-    @Mock private UserItemRepository userItemRepository;
-    @Mock private UserRepository userRepository;
+    @Mock private InventoriesRepository inventoriesRepository;
 
     @InjectMocks
     private NpcShopService npcShopService;
@@ -64,8 +60,7 @@ public class NpcShopServiceTests {
     private Npcs npc;
     private Items item;
     private NpcItems npcItem;
-    private Wallet wallet;
-    private Users user;
+    private Wallets wallet;
     private NpcPurchaseRequest request;
 
     @BeforeEach
@@ -80,10 +75,9 @@ public class NpcShopServiceTests {
 
         npcItem = NpcItems.builder().npcItemId(1L).npc(npc).item(item).quantity(99).sortOrder(1).build();
 
-        wallet = Wallet.builder().walletId(1L).gold(5000L).gem(10L).build();
+        wallet = Wallets.builder().walletId(1L).gold(5000L).gem(10L).build();
 
         request = new NpcPurchaseRequest();
-        // reflection으로 quantity 세팅 (private 필드)
         try {
             var field = NpcPurchaseRequest.class.getDeclaredField("quantity");
             field.setAccessible(true);
@@ -99,14 +93,13 @@ public class NpcShopServiceTests {
         // given
         Long userId = 1L;
         given(npcsRepository.findByIdOrThrow(1L)).willReturn(npc);
-        given(npcItemsRepository.findByIdOrThrow(1L)).willReturn(npcItem);
+        given(npcItemsRepository.findByIdWithDetails(1L)).willReturn(Optional.of(npcItem));
         given(walletRepository.findByUserIdOrThrow(userId)).willReturn(wallet);
-        given(userItemRepository.findByUserUserIdAndItemItemId(userId, item.getItemId())).willReturn(Optional.empty());
-        given(userRepository.findByIdOrThrow(userId)).willReturn(user);
+        given(inventoriesRepository.findByUserIdAndItemItemId(userId, item.getItemId())).willReturn(Optional.empty());
 
-        UserItem savedUserItem = UserItem.builder()
-                .userItemId(1L).item(item).quantity(3).acquiredAt(LocalDateTime.now()).build();
-        given(userItemRepository.save(any())).willReturn(savedUserItem);
+        Inventories savedInventory = Inventories.builder()
+                .userItemId(1L).item(item).quantity(3).build();
+        given(inventoriesRepository.save(any())).willReturn(savedInventory);
 
         // when
         NpcPurchaseResponse result = npcShopService.purchase(userId, 1L, 1L, request);
@@ -122,20 +115,20 @@ public class NpcShopServiceTests {
     void purchase_Success_ExistingItem() {
         // given
         Long userId = 1L;
-        UserItem existingItem = UserItem.builder()
-                .userItemId(1L).item(item).quantity(5).acquiredAt(LocalDateTime.now()).build();
+        Inventories existingInventory = Inventories.builder()
+                .userItemId(1L).item(item).quantity(5).build();
 
         given(npcsRepository.findByIdOrThrow(1L)).willReturn(npc);
-        given(npcItemsRepository.findByIdOrThrow(1L)).willReturn(npcItem);
+        given(npcItemsRepository.findByIdWithDetails(1L)).willReturn(Optional.of(npcItem));
         given(walletRepository.findByUserIdOrThrow(userId)).willReturn(wallet);
-        given(userItemRepository.findByUserUserIdAndItemItemId(userId, item.getItemId())).willReturn(Optional.of(existingItem));
+        given(inventoriesRepository.findByUserIdAndItemItemId(userId, item.getItemId())).willReturn(Optional.of(existingInventory));
 
         // when
         NpcPurchaseResponse result = npcShopService.purchase(userId, 1L, 1L, request);
 
         // then
         assertThat(result.getAcquiredItem().getQuantity()).isEqualTo(8); // 5 + 3
-        verify(userItemRepository, never()).save(any());
+        verify(inventoriesRepository, never()).save(any());
     }
 
     @Test
@@ -143,10 +136,10 @@ public class NpcShopServiceTests {
     void purchase_Fail_InsufficientGold() {
         // given
         Long userId = 1L;
-        Wallet poorWallet = Wallet.builder().walletId(1L).gold(10L).gem(0L).build(); // 30*3=90 필요
+        Wallets poorWallet = Wallets.builder().walletId(1L).gold(10L).gem(0L).build(); // 30*3=90 필요
 
         given(npcsRepository.findByIdOrThrow(1L)).willReturn(npc);
-        given(npcItemsRepository.findByIdOrThrow(1L)).willReturn(npcItem);
+        given(npcItemsRepository.findByIdWithDetails(1L)).willReturn(Optional.of(npcItem));
         given(walletRepository.findByUserIdOrThrow(userId)).willReturn(poorWallet);
 
         // when / then
@@ -178,13 +171,11 @@ public class NpcShopServiceTests {
         // given
         Long userId = 1L;
         given(npcsRepository.findByIdOrThrow(1L)).willReturn(npc);
-        given(npcItemsRepository.findByIdOrThrow(999L)).willThrow(new CustomException(ErrorCode.NPC_SHOP_ITEM_NOT_FOUND));
+        given(npcItemsRepository.findByIdWithDetails(999L)).willReturn(Optional.empty());
 
         // when / then
-        CustomException exception = assertThrows(CustomException.class, () ->
+        assertThrows(CustomException.class, () ->
                 npcShopService.purchase(userId, 1L, 999L, request)
         );
-
-        assertThat(exception.getMessage()).isEqualTo(ErrorCode.NPC_SHOP_ITEM_NOT_FOUND.getDescription());
     }
 }

@@ -8,11 +8,11 @@ import io.rapa.backendcrossing.items.entity.Items;
 import io.rapa.backendcrossing.items.repository.ItemsRepository;
 import io.rapa.backendcrossing.npcs.entity.NpcItems;
 import io.rapa.backendcrossing.npcs.entity.Npcs;
-import io.rapa.backendcrossing.npcs.entity.UserItem;
-import io.rapa.backendcrossing.npcs.entity.Wallet;
+import io.rapa.backendcrossing.npcs.entity.Wallets;
 import io.rapa.backendcrossing.npcs.repository.NpcItemsRepository;
 import io.rapa.backendcrossing.npcs.repository.NpcsRepository;
-import io.rapa.backendcrossing.npcs.repository.UserItemRepository;
+import io.rapa.backendcrossing.inventory.entity.Inventories;
+import io.rapa.backendcrossing.inventory.repository.InventoriesRepository;
 import io.rapa.backendcrossing.npcs.repository.WalletRepository;
 import io.rapa.backendcrossing.npcs.request.NpcPurchaseRequest;
 import io.rapa.backendcrossing.npcs.response.NpcPurchaseResponse;
@@ -52,7 +52,7 @@ public class NpcShopServiceIntegrationTests {
     @Autowired private NpcsRepository npcsRepository;
     @Autowired private NpcItemsRepository npcItemsRepository;
     @Autowired private WalletRepository walletRepository;
-    @Autowired private UserItemRepository userItemRepository;
+    @Autowired private InventoriesRepository inventoriesRepository;
     @Autowired private UserRepository userRepository;
     @Autowired private ItemsRepository itemsRepository;
 
@@ -68,7 +68,7 @@ public class NpcShopServiceIntegrationTests {
         );
         userId = user.getUserId();
 
-        walletRepository.save(Wallet.builder().user(user).gold(5000L).gem(10L).build());
+        walletRepository.save(Wallets.builder().user(user).gold(5000L).gem(10L).build());
 
         Items item = itemsRepository.save(Items.builder()
                 .rId("potion_hp_001").itemName("HP 포션")
@@ -103,7 +103,7 @@ public class NpcShopServiceIntegrationTests {
         assertThat(result.getAcquiredItem().getQuantity()).isEqualTo(3);
         assertThat(result.getAcquiredItem().getRId()).isEqualTo("potion_hp_001");
 
-        Optional<UserItem> saved = userItemRepository.findByUserUserIdAndItemItemId(userId, result.getAcquiredItem().getItemId());
+        Optional<Inventories> saved = inventoriesRepository.findByUserIdAndItemItemId(userId, result.getAcquiredItem().getItemId());
         assertThat(saved).isPresent();
         assertThat(saved.get().getQuantity()).isEqualTo(3);
     }
@@ -120,7 +120,7 @@ public class NpcShopServiceIntegrationTests {
         // then
         assertThat(result.getAcquiredItem().getQuantity()).isEqualTo(6); // 3 + 3
 
-        Optional<UserItem> saved = userItemRepository.findByUserUserIdAndItemItemId(userId, result.getAcquiredItem().getItemId());
+        Optional<Inventories> saved = inventoriesRepository.findByUserIdAndItemItemId(userId, result.getAcquiredItem().getItemId());
         assertThat(saved.get().getQuantity()).isEqualTo(6);
     }
 
@@ -128,8 +128,8 @@ public class NpcShopServiceIntegrationTests {
     @DisplayName("아이템 구매 - 실패 (골드 부족)")
     void purchase_Fail_InsufficientGold() throws Exception {
         // given: 골드를 10으로 줄임 (30*3=90 필요)
-        Wallet wallet = walletRepository.findByUserIdOrThrow(userId);
-        var goldField = Wallet.class.getDeclaredField("gold");
+        Wallets wallet = walletRepository.findByUserIdOrThrow(userId);
+        var goldField = Wallets.class.getDeclaredField("gold");
         goldField.setAccessible(true);
         goldField.set(wallet, 10L);
 

@@ -74,7 +74,7 @@ public class InventoryControllerIntegrationTests extends BaseIntegrationTest {
                 .userId(USER_ID).item(savedItem).quantity(3).equipped(false).build());
 
         // when & then
-        mockMvc.perform(get("/api/v1/users/me/inventory/")
+        mockMvc.perform(get("/api/v1/users/me/inventory")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
