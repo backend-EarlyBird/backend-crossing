@@ -38,7 +38,7 @@ public class NpcController implements ApiNpcsSupperts {
 
     //npc 목록조회(전체)
     @ApiNpcsSupperts.ApiFindAllNpcs
-    @GetMapping("/")
+    @GetMapping(value = {"", "/", })
     public ResponseEntity<CommonResponse<List<NpcsResponse>>> findAllNpcs() {
         return ResponseEntity.ok(CommonResponse.success(npcService.findAllNpcs()));
     }

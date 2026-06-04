@@ -24,9 +24,11 @@ import io.rapa.backendcrossing.npcs.repository.WalletRepository;
 import io.rapa.backendcrossing.npcs.request.NpcPurchaseRequest;
 import io.rapa.backendcrossing.npcs.response.NpcPurchaseResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class NpcShopService {
@@ -41,6 +43,8 @@ public class NpcShopService {
         // NPC, 상점 아이템 유효성 검증
         npcsRepository.findByIdOrThrow(npcId);
         //NpcItems npcItem = npcItemsRepository.findByIdOrThrow(npcItemId);
+
+        log.info("NPC ID: {}, Item ID: {}, Quantity: {}", npcId, npcItemId, request.getQuantity());
 
         // Fetch Join을 사용하여 NpcItems + Npc + Item 을 한 번에 로딩
         // 1+N 관련 해결용

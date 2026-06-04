@@ -45,6 +45,7 @@ public class NpcShopController {
             @Parameter(description = "NPC 상점 아이템 ID") @PathVariable("npcItemId") Long npcItemId,
             @Valid @RequestBody NpcPurchaseRequest request
     ) {
+        log.info("NPC 상점 아이템 구매 요청: userId={}, npcId={}, npcItemId={}", currentUser.getId(), npcId, npcItemId);
         NpcPurchaseResponse response = npcShopService.purchase(currentUser.getId(), npcId, npcItemId, request);
         return ResponseEntity.ok(CommonResponse.successWithMessage(response, SuccessMessage.NPC_PURCHASE_SUCCESS.getMessage()));
     }

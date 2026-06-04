@@ -58,7 +58,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class NpcShopControllerIntegrationTests {
 
     @Autowired MockMvc mockMvc;
-    @Autowired ObjectMapper objectMapper;
+    ObjectMapper objectMapper = new ObjectMapper();
     @Autowired UserRepository userRepository;
     @Autowired WalletRepository walletRepository;
     @Autowired NpcsRepository npcsRepository;
@@ -122,7 +122,7 @@ public class NpcShopControllerIntegrationTests {
 
         @Test
         @DisplayName("It: 200 OK와 함께 구매 결과 반환")
-        void It_구매_성공() throws Exception {
+        void It_purchase_success() throws Exception {
             purchase(3)
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.success").value(true))
@@ -139,7 +139,7 @@ public class NpcShopControllerIntegrationTests {
 
         @Test
         @DisplayName("It: 400 BAD REQUEST 반환")
-        void It_골드부족_실패() throws Exception {
+        void It_purchase_fail_insufficientGold() throws Exception {
             Wallets wallet = walletRepository.findByUserIdOrThrow(testUser.getUserId());
             wallet.deductGold(4990L); // 5000 -> 10
             walletRepository.flush();
@@ -157,7 +157,7 @@ public class NpcShopControllerIntegrationTests {
 
         @Test
         @DisplayName("It: 404 NOT FOUND 반환")
-        void It_NPC없음_실패() throws Exception {
+        void It_purchase_fail_npcNotFound() throws Exception {
             String body = objectMapper.writeValueAsString(Map.of("quantity", 1));
             mockMvc.perform(
                     MockMvcRequestBuilders
@@ -178,7 +178,7 @@ public class NpcShopControllerIntegrationTests {
 
         @Test
         @DisplayName("It: 404 NOT FOUND 반환")
-        void It_상점아이템없음_실패() throws Exception {
+        void It_purchase_fail_shopItemNotFound() throws Exception {
             String body = objectMapper.writeValueAsString(Map.of("quantity", 1));
             mockMvc.perform(
                     MockMvcRequestBuilders
@@ -199,7 +199,7 @@ public class NpcShopControllerIntegrationTests {
 
         @Test
         @DisplayName("It: 인증 없이 접근 시 리다이렉트 또는 401 반환")
-        void It_인증없음_실패() throws Exception {
+        void It_purchase_fail_unauthorized() throws Exception {
             String body = objectMapper.writeValueAsString(Map.of("quantity", 1));
 
             ResultActions actions = mockMvc.perform(

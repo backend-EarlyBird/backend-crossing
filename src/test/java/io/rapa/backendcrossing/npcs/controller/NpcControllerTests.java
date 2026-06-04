@@ -61,7 +61,7 @@ public class NpcControllerTests {
                 NpcsResponse.builder().npcId(2L).name("상인").rId("npc_merchant").locationKey("market").active(true).build()
         ));
 
-        mockMvc.perform(get("/api/v1/npcs/"))
+        mockMvc.perform(get("/api/v1/npcs"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.length()").value(2))

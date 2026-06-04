@@ -58,7 +58,7 @@ public class NpcControllerIntegrationTests {
 
         @Test
         @DisplayName("It: 200 OK와 함께 NPC 목록 반환")
-        void It_전체조회_성공() throws Exception {
+        void It_findAllNpcs_success() throws Exception {
             ResultActions actions = mockMvc.perform(
                     MockMvcRequestBuilders.get(BASE_ENDPOINT + "/")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -77,7 +77,7 @@ public class NpcControllerIntegrationTests {
 
         @Test
         @DisplayName("It: 올바른 npcId - 200 OK와 함께 NPC 정보 반환")
-        void It_단건조회_성공() throws Exception {
+        void It_getNpcInfo_success() throws Exception {
             ResultActions actions = mockMvc.perform(
                     MockMvcRequestBuilders.get(BASE_ENDPOINT + "/" + testNpc.getNpcId())
                             .contentType(MediaType.APPLICATION_JSON)
@@ -93,7 +93,7 @@ public class NpcControllerIntegrationTests {
 
         @Test
         @DisplayName("It: 존재하지 않는 npcId - 404 NOT FOUND 반환")
-        void It_단건조회_실패_NPC없음() throws Exception {
+        void It_getNpcInfo_fail_npcNotFound() throws Exception {
             ResultActions actions = mockMvc.perform(
                     MockMvcRequestBuilders.get(BASE_ENDPOINT + "/999999")
                             .contentType(MediaType.APPLICATION_JSON)
