@@ -41,7 +41,7 @@ class UserServiceTest {
         @BeforeEach
         void setUp(){
             testUser = userRepository.save(
-                    UserUtils.makeUsers("wrong@email.com", passwordEncoder.encode("1234"))
+                    UserUtils.makeUsers("wrong@email.com", passwordEncoder.encode("wjdtn747"))
             );
         }
 
@@ -52,7 +52,7 @@ class UserServiceTest {
             @DisplayName("It: User 저장 성공")
             void It_User_저장_성공(){
                 // given
-                UserCreateRequest userCreateRequest =  UserUtils.makeCreateRequest("testUser@naver.com");
+                UserCreateRequest userCreateRequest =  UserUtils.makeCreateRequest("testUser@naver.com", "wjdtn747");
                 // when
                 UserCreateResponse response = userService.registerUser(userCreateRequest);
                 // then
@@ -68,7 +68,7 @@ class UserServiceTest {
             @DisplayName("It: 이미 존재하는 이메일인 경우 User 저장 실패")
             void It_이메일_중복_시_User_저장_실패(){
                 // given
-                UserCreateRequest userCreateRequest =  UserUtils.makeCreateRequest(testUser.getEmail());
+                UserCreateRequest userCreateRequest =  UserUtils.makeCreateRequest(testUser.getEmail(),"wjdtn747");
                 // then
                 Assertions.assertThatThrownBy(
                         // when

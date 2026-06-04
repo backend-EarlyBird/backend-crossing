@@ -4,7 +4,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.rapa.backendcrossing.common.constants.ErrorCode;
 import io.rapa.backendcrossing.common.exception.CustomException;
-import io.rapa.backendcrossing.infra.RefreshTokenRepository;
+import io.rapa.backendcrossing.infra.repository.RefreshTokenRepository;
 import io.rapa.backendcrossing.infra.domain.entity.RefreshToken;
 import io.rapa.backendcrossing.security.constants.TokenType;
 import io.rapa.backendcrossing.security.domain.dto.JwtProperties;

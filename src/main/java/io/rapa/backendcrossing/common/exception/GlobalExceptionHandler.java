@@ -1,9 +1,13 @@
 package io.rapa.backendcrossing.common.exception;
 
 import io.rapa.backendcrossing.common.constants.CommonResponse;
+import io.rapa.backendcrossing.common.constants.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -38,6 +42,47 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(CommonResponse.fail("알 수 없는 서버 오류가 발생했습니다."));
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<CommonResponse<Void>> handleValidation(
+            MethodArgumentNotValidException e
+    ){
+
+        for (FieldError error : e.getBindingResult().getFieldErrors()) {
+
+            if (Strings.isNotBlank(error.getField())){
+
+                return switch ( error.getField() ){
+                    case "password" ->  ResponseEntity
+                                .badRequest()
+                                .body(
+                                        CommonResponse
+                                                .fail(
+                                                    ErrorCode.PASSWORD_LENGTH_NOT_VALID.getDescription()
+                                                )
+                                );
+                    default -> ResponseEntity
+                                .badRequest()
+                                .body(
+                                        CommonResponse
+                                                .fail(
+                                                        ErrorCode.VALIDATION_ERROR.getDescription()
+                                                )
+                                );
+
+                };
+            }
+        }
+
+        return  ResponseEntity
+                .badRequest()
+                .body(
+                        CommonResponse
+                                .fail(
+                                        ErrorCode.VALIDATION_ERROR.getDescription()
+                                )
+                );
     }
 
 }

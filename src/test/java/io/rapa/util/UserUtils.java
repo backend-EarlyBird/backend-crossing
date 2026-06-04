@@ -20,10 +20,10 @@ public class UserUtils {
         );
     }
 
-    public static UserCreateRequest makeCreateRequest(String email){
+    public static UserCreateRequest makeCreateRequest(String email, String password){
         return new UserCreateRequest(
                 email,
-                "wjd747",
+                password,
                 "KF16"
         );
     }

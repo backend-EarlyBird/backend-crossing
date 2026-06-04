@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 
@@ -32,31 +33,83 @@ public interface UserControllerSupporter {
                     )
             )
     )
-    @ApiResponse(
-            responseCode = "200",
-            description = "회원가입 성공",
-            content = @Content(
-                    mediaType = "application/json",
-                    examples = @ExampleObject(
-                            """
-                                    {
-                                              "success": true,
-                                              "message": "가입되었습니다.",
-                                              "data": {
-                                                "userId": 5,
-                                                "email": "newgamer@test.com",
-                                                "nickname": "새싹게이머",
-                                                "role": "USER",
-                                                "status": "ACTIVE",
-                                                "provider": "LOCAL",
-                                                "profileImageUrl": null,
-                                                "createdAt": "2026-05-21T10:30:00",
-                                                "lastLoginAt": null
-                                              }
-                                    }
-                            """
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "회원가입 성공",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            """
+                                                    {
+                                                              "success": true,
+                                                              "message": "가입되었습니다.",
+                                                              "data": {
+                                                                "userId": 5,
+                                                                "email": "newgamer@test.com",
+                                                                "nickname": "새싹게이머",
+                                                                "role": "USER",
+                                                                "status": "ACTIVE",
+                                                                "provider": "LOCAL",
+                                                                "profileImageUrl": null,
+                                                                "createdAt": "2026-05-21T10:30:00",
+                                                                "lastLoginAt": null
+                                                              }
+                                                    }
+                                            """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "회원가입 실패 ( 비밀번호 조건 오류 )",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            """
+                                                { 
+                                                    "success": false, 
+                                                    "message": "비밀번호는 8~64자여야 합니다.", 
+                                                    "data": null 
+                                                }
+                                            """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "409",
+                            description = "회원가입 실패 ( 이메일 이미 존재 )",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            """
+                                { 
+                                    "success": false, 
+                                    "message": "이미 사용 중인 이메일입니다.", 
+                                    "data": null 
+                                }
+                                            """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "회원가입 실패 ( 서버 내부 오류 발생 )",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            """
+                                { 
+                                    "success": false, 
+                                    "message": "서버 오류가 발생했습니다.", 
+                                    "data": null 
+                                }
+                                            """
+                                    )
+                            )
                     )
-            )
+            }
     )
     ResponseEntity<CommonResponse<UserCreateResponse>> registerUser(UserCreateRequest request);
 }
