@@ -5,6 +5,7 @@ import io.rapa.backendcrossing.common.constants.SuccessMessage;
 import io.rapa.backendcrossing.users.domain.dto.request.UserCreateRequest;
 import io.rapa.backendcrossing.users.domain.dto.response.UserCreateResponse;
 import io.rapa.backendcrossing.users.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class UserController implements UserControllerSupporter{
 
     @PostMapping("/register")
     public ResponseEntity<CommonResponse<UserCreateResponse>> registerUser(
-            @RequestBody UserCreateRequest request
+            @Valid  @RequestBody UserCreateRequest request
     ){
         UserCreateResponse response = userService.registerUser(request);
         return ResponseEntity.status(HttpStatus.CREATED)

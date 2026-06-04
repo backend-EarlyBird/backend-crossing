@@ -1,4 +1,4 @@
-package io.rapa.backendcrossing.infra.domain.entity;
+package io.rapa.backendcrossing.security.domain;
 
 import org.springframework.data.annotation.Id;
 import lombok.*;
