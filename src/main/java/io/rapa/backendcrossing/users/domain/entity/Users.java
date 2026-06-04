@@ -60,7 +60,9 @@ public class Users extends BaseEntity{
         this.nickName = nickName;
         userStatus = UserStatus.ACTIVATED;
         role = Role.USER;
+        profileImageUrl = "";
         emailDomain = extractProvider(email);
+        lastLoginAt = LocalDateTime.now();
         if(emailDomain.equals("gmail")) provider = Provider.GOOGLE;
         else provider = Provider.LOCAL;
     }
@@ -72,5 +74,8 @@ public class Users extends BaseEntity{
     public Users switchToSuperAdmin(){
         role = Role.SUPER_ADMIN;
         return this;
+    }
+    public void setLoginTimeNow(){
+        this.lastLoginAt = LocalDateTime.now();
     }
 }

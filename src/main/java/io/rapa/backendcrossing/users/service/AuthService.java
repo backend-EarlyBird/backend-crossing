@@ -46,6 +46,8 @@ public class AuthService {
                 ErrorCode.USER_INACTIVATED
         );
 
+        foundedUser.setLoginTimeNow();
+
         return tokenService.issueKeyPair(
                 foundedUser.getEmail(),
                 foundedUser.getRole()
