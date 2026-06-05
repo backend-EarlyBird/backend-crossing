@@ -84,8 +84,8 @@ public class FriendRequestsServiceTests {
     // ===== getFriends =====
 
     @Test
-    @DisplayName("친구 목록 조회 - 성공")
-    void will_getFriends() {
+    @DisplayName("친구 목록 조회 - 성공 (fromUser가 나인 경우 - 상대방 nickname 반환)")
+    void will_getFriends_asFromUser() {
         FriendRequests request = buildRequest(userA, userB, FriendRequestsStatus.ACCEPTED);
 
         when(friendRepository.findFriendsByUserIdAndStatus(userId, FriendRequestsStatus.ACCEPTED))
@@ -95,7 +95,22 @@ public class FriendRequestsServiceTests {
 
         assertNotNull(response);
         assertEquals(1, response.size());
-        assertEquals(FriendRequestsStatus.ACCEPTED, response.get(0).getStatus());
+        assertEquals("닉네임2", response.get(0).getNickname()); // userB 닉네임
+    }
+
+    @Test
+    @DisplayName("친구 목록 조회 - 성공 (toUser가 나인 경우 - 상대방 nickname 반환)")
+    void will_getFriends_asToUser() {
+        FriendRequests request = buildRequest(userB, userA, FriendRequestsStatus.ACCEPTED);
+
+        when(friendRepository.findFriendsByUserIdAndStatus(userId, FriendRequestsStatus.ACCEPTED))
+                .thenReturn(List.of(request));
+
+        List<FriendRequestResponse> response = friendService.getFriends(userId);
+
+        assertNotNull(response);
+        assertEquals(1, response.size());
+        assertEquals("닉네임2", response.get(0).getNickname()); // userB 닉네임
     }
 
     @Test

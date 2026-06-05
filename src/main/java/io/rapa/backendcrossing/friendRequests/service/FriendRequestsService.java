@@ -34,7 +34,7 @@ public class FriendRequestsService {
 
     /**
      * 친구 목록 조회
-     * 내가 보냈거나 받은 요청 중 ACCEPTED 상태인 요청 목록 조회
+     * 내가 보냈거나 받은 요청 중 ACCEPTED 상태인 요청 목록 조회 (상대방 정보 기준)
      */
     @Transactional(readOnly = true)
     public List<FriendRequestResponse> getFriends(Long userId) {
@@ -42,7 +42,7 @@ public class FriendRequestsService {
 
         return friendRequestsRepository.findFriendsByUserIdAndStatus(userId, FriendRequestsStatus.ACCEPTED)
                 .stream()
-                .map(this::toResponse)
+                .map(req -> toFriendResponse(req, userId))
                 .toList();
     }
 
@@ -198,11 +198,26 @@ public class FriendRequestsService {
     private FriendRequestResponse toResponse(FriendRequests friendRequest) {
         return new FriendRequestResponse(
                 friendRequest.getFriendRequestId(),
-                friendRequest.getFromUser().getUserId(), // ID만 넘기거나
-                friendRequest.getToUser().getUserId(),   // ID만 넘기거나
+                friendRequest.getFromUser().getUserId(),
+                friendRequest.getToUser().getUserId(),
                 friendRequest.getStatus(),
                 friendRequest.getCreatedAt(),
-                friendRequest.getToUser().getNickname()   // 닉네임을 따로 넘겨줍니다
+                friendRequest.getToUser().getNickname()
+        );
+    }
+
+    // 친구 목록 조회 시 상대방 기준으로 닉네임 반환
+    private FriendRequestResponse toFriendResponse(FriendRequests friendRequest, Long userId) {
+        Users opponent = friendRequest.getFromUser().getUserId().equals(userId)
+                ? friendRequest.getToUser()
+                : friendRequest.getFromUser();
+        return new FriendRequestResponse(
+                friendRequest.getFriendRequestId(),
+                friendRequest.getFromUser().getUserId(),
+                friendRequest.getToUser().getUserId(),
+                friendRequest.getStatus(),
+                friendRequest.getCreatedAt(),
+                opponent.getNickname()
         );
     }
 }
