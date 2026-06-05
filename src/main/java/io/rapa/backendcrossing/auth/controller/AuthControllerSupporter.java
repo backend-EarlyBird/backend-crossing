@@ -10,8 +10,9 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
-
+@SecurityRequirement(name = "Bearer Authentication")
 public interface AuthControllerSupporter {
     @Operation(
             summary = "이메일 로그인",
@@ -22,7 +23,7 @@ public interface AuthControllerSupporter {
                     examples = @ExampleObject(
                             value = """
                                     {
-                                      "email": "gamer@test.com",
+                                      "email": "newgamer@test.com",
                                       "password": "mypassword123"
                                     }
                                     """

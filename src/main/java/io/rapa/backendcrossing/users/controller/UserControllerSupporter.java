@@ -16,7 +16,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 
-
+@SecurityRequirement(name = "Bearer Authentication")
 @Tag(name = "Users" , description = "유저 관련 API")
 public interface UserControllerSupporter {
     @Operation(
@@ -154,5 +154,5 @@ public interface UserControllerSupporter {
                     )
             }
     )
-    ResponseEntity<CommonResponse<MeDetailResponse>> geMeDetails(CurrentUser currentUser);
+    ResponseEntity<CommonResponse<MeDetailResponse>> getMeDetails(CurrentUser currentUser);
 }

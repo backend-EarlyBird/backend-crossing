@@ -33,12 +33,21 @@ public class Wallets {
     private Users user;
 
     @Column(nullable = false)
-    @Builder.Default
-    private Long gold = 0L;
+    private Long gold;
 
     @Column(nullable = false)
-    @Builder.Default
-    private Long gem = 0L;
+    private Long gem;
+
+    @Builder
+    public Wallets(
+            Long gold,
+            Long gem,
+            Users user
+    ){
+        this.gold = gold;
+        this.gem = gem;
+        this.user = user;
+    }
 
     public void deductGold(long amount) {
         this.gold -= amount;

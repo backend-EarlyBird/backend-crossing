@@ -31,10 +31,12 @@ public class Profiles {
     public Profiles(
             Integer level,
             Long exp,
-            Long totalPlaySeconds
+            Long totalPlaySeconds,
+            Users user
     ){
         this.exp = exp;
         this.level = level;
         this.totalPlaySeconds = totalPlaySeconds;
+        this.user = user;
     }
 }

@@ -1,5 +1,6 @@
 package io.rapa.backendcrossing.users.repository;
 
+import io.rapa.backendcrossing.profiles.domain.entity.Profiles;
 import io.rapa.backendcrossing.users.domain.entity.Users;
 import io.rapa.backendcrossing.wallets.domain.entity.Wallets;
 import org.springframework.stereotype.Repository;
@@ -17,4 +18,7 @@ public interface UserBoundaryRepository {
 
 
     Wallets findWalletByUserIdOrThrow(Long userId);
+    Wallets saveWallet(Wallets wallet);
+
+    Profiles saveProfile(Profiles profiles);
 }

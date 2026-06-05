@@ -1,18 +1,10 @@
 package io.rapa.backendcrossing.wallets.service;
 
-import io.rapa.backendcrossing.common.constants.ErrorCode;
-import io.rapa.backendcrossing.common.util.PreConditions;
-import io.rapa.backendcrossing.security.domain.dto.TokenBody;
 import io.rapa.backendcrossing.security.service.TokenService;
-import io.rapa.backendcrossing.users.domain.entity.Users;
 import io.rapa.backendcrossing.users.repository.UserBoundaryRepository;
-import io.rapa.backendcrossing.users.repository.UserBoundaryRepositoryImpl;
 import io.rapa.backendcrossing.wallets.domain.dto.WalletDetailResponse;
 import io.rapa.backendcrossing.wallets.domain.entity.Wallets;
-import io.rapa.backendcrossing.wallets.repository.WalletRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.stereotype.Service;

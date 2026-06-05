@@ -6,9 +6,11 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -69,7 +71,7 @@ public class SwaggerConfiguration {
     public GroupedOpenApi userApi(){
         return GroupedOpenApi.builder()
                 .pathsToMatch("/api/v1/users/**")
-                .pathsToExclude("/api/v1/users/me/friends/**", "/api/v1/users/me/npcs/**", "/api/v1/users/me/inventory/**")
+                .pathsToExclude("/api/v1/users/me/friends/**", "/api/v1/users/me/npcs/**", "/api/v1/users/me/inventory/**", "/api/v1/users/me/wallet/**")
                 .group("유저")
                 .build();
     }

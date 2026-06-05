@@ -35,7 +35,7 @@ public class AuthController implements AuthControllerSupporter{
         KeyPair keyPair = authService.signIn(request);
         return ResponseEntity.ok(
                 CommonResponse.successWithMessage(
-                        AuthLoginResponse.of(keyPair, ACCESS_TOKEN_EXPIRE_TIME),
+                        AuthLoginResponse.of(keyPair, ACCESS_TOKEN_EXPIRE_TIME / 1000),
                         SuccessMessage.LOGIN_SUCCESS.getMessage()
                 )
         );

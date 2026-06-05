@@ -1,6 +1,7 @@
 package io.rapa.backendcrossing.users.domain.entity;
 
 import io.rapa.backendcrossing.inventory.entity.Inventories;
+import io.rapa.backendcrossing.profiles.domain.entity.Profiles;
 import io.rapa.backendcrossing.users.constants.Provider;
 import io.rapa.backendcrossing.users.constants.Role;
 import io.rapa.backendcrossing.users.constants.UserStatus;
@@ -10,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.context.annotation.Profile;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -53,6 +55,12 @@ public class Users extends BaseEntity{
 
     private LocalDateTime lastLoginAt;
 
+    @OneToOne(mappedBy = "user")
+    private Wallets wallet;
+
+    @OneToOne(mappedBy = "user")
+    private Profiles profile;
+
     @OneToMany(mappedBy = "user")
     private List<Inventories> inventories = new ArrayList<>();
 
@@ -65,14 +73,16 @@ public class Users extends BaseEntity{
         this.email = email;
         this.password = password;
         this.nickname = nickname;
+
         userStatus = UserStatus.ACTIVATED;
         role = Role.USER;
         profileImageUrl = "";
         emailDomain = extractProvider(email);
         lastLoginAt = LocalDateTime.now();
+
         if(emailDomain.equals("gmail")) provider = Provider.GOOGLE;
         else provider = Provider.LOCAL;
-    }
+   }
     private String extractProvider(String email){
         String[] s1 = email.split("@");
         String[] s2 = s1[1].split("\\.");
@@ -85,6 +95,7 @@ public class Users extends BaseEntity{
     public void setLoginTimeNow(){
         this.lastLoginAt = LocalDateTime.now();
     }
+
     public void addInventory(Inventories inventories){
         this.inventories.add(inventories);
     }
