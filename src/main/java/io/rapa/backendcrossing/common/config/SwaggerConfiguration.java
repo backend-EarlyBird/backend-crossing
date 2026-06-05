@@ -69,8 +69,7 @@ public class SwaggerConfiguration {
     public GroupedOpenApi userApi(){
         return GroupedOpenApi.builder()
                 .pathsToMatch("/api/v1/users/**")
-                .pathsToExclude("/api/v1/users/me/friends/**")
-                .pathsToExclude("/api/v1/users/me/npcs/**")
+                .pathsToExclude("/api/v1/users/me/friends/**", "/api/v1/users/me/npcs/**", "/api/v1/users/me/inventory/**")
                 .group("유저")
                 .build();
     }
@@ -118,8 +117,7 @@ public class SwaggerConfiguration {
     @Bean
     public GroupedOpenApi npcApi(){
         return GroupedOpenApi.builder()
-                .pathsToMatch("/api/v1/npcs/**")
-                .pathsToMatch("/api/v1/users/me/npcs/**")
+                .pathsToMatch("/api/v1/npcs/**", "/api/v1/users/me/npcs/**")
                 .group("NPC")
                 .build();
     }

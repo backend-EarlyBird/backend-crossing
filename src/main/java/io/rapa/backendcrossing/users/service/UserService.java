@@ -7,6 +7,7 @@ import io.rapa.backendcrossing.users.domain.dto.request.UserCreateRequest;
 import io.rapa.backendcrossing.users.domain.dto.response.MeDetailResponse;
 import io.rapa.backendcrossing.users.domain.dto.response.UserCreateResponse;
 import io.rapa.backendcrossing.users.domain.entity.Users;
+import io.rapa.backendcrossing.users.repository.UserBoundaryRepository;
 import io.rapa.backendcrossing.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,17 +25,17 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @EnableMethodSecurity(prePostEnabled = true)
 public class UserService {
-    private final UserRepository userRepository;
+    private final UserBoundaryRepository userBoundaryRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public UserCreateResponse registerUser(UserCreateRequest request){
 
-        Optional<Users> foundedUser = userRepository.findByEmail(request.email());
+        Optional<Users> foundedUser = userBoundaryRepository.findUserByEmail(request.email());
 
-        if (foundedUser.isPresent()) throw new CustomException(ErrorCode.EMAIL_ALREAY_EXISTS);
+        if (foundedUser.isPresent()) throw new CustomException(ErrorCode.EMAIL_ALREDY_EXISTS);
 
-        Users savedUser = userRepository.save(
+        Users savedUser = userBoundaryRepository.saveUser(
                 Users.builder()
                         .email(request.email())
                         .password(passwordEncoder.encode(request.password()))
@@ -46,13 +47,13 @@ public class UserService {
 
     public CurrentUser loadCurrentUserByEmail(String email){
         return CurrentUser.from(
-                userRepository.findByEmailOrThrow(email)
+                userBoundaryRepository.findUserByEmailOrThrow(email)
         );
     }
 
-    @PreAuthorize("#userEmail == authentication.principal.email")
+    @PreAuthorize("#userEmail == authentication.principal.email and isAuthenticated()")
     public MeDetailResponse getDetailofMe(String userEmail){
-        Users founded = userRepository.findByEmailOrThrow(userEmail);
+        Users founded = userBoundaryRepository.findUserByEmailOrThrow(userEmail);
         return MeDetailResponse.from(founded);
     }
 

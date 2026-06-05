@@ -154,5 +154,5 @@ public interface UserControllerSupporter {
                     )
             }
     )
-    ResponseEntity<CommonResponse<MeDetailResponse>> getUserDetails(CurrentUser currentUser);
+    ResponseEntity<CommonResponse<MeDetailResponse>> geMeDetails(CurrentUser currentUser);
 }

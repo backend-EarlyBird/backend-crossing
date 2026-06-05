@@ -39,7 +39,7 @@ public class UserController implements UserControllerSupporter{
     }
 
     @GetMapping("/me")
-    public ResponseEntity<CommonResponse<MeDetailResponse>> getUserDetails(
+    public ResponseEntity<CommonResponse<MeDetailResponse>> geMeDetails(
             @AuthenticationPrincipal CurrentUser currentUser
     ){
         log.info("1");

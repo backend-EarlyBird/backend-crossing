@@ -138,7 +138,7 @@ class AuthServiceTest {
 
 
             @Test
-            @DisplayName("It: RefreshToken을 재발급 성공한다.")
+            @DisplayName("It: RefreshToken을 재발급 실패한다.")
             void It_RefreshToken_reissue_success(){
                 // given
                 AuthRefreshRequest request = new AuthRefreshRequest("invalidToken");

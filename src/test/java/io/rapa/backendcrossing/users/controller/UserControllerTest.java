@@ -113,7 +113,7 @@ class UserControllerTest {
                 // then
                 actions.
                         andExpect(status().is4xxClientError())
-                        .andExpect(jsonPath("$.message").value(ErrorCode.EMAIL_ALREAY_EXISTS.getDescription()))
+                        .andExpect(jsonPath("$.message").value(ErrorCode.EMAIL_ALREDY_EXISTS.getDescription()))
                         .andExpect(jsonPath("$.success").value(false))
                         .andExpect(jsonPath("$.data").doesNotExist());
             }

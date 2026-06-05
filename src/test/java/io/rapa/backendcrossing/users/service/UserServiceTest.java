@@ -84,7 +84,7 @@ class UserServiceTest {
                         () -> userService.registerUser(userCreateRequest)
                 )
                         .isInstanceOf(CustomException.class)
-                        .hasMessageContaining(ErrorCode.EMAIL_ALREAY_EXISTS.getDescription());
+                        .hasMessageContaining(ErrorCode.EMAIL_ALREDY_EXISTS.getDescription());
             }
         }
     }

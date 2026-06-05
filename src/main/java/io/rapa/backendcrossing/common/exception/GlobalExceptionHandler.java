@@ -59,6 +59,20 @@ public class GlobalExceptionHandler {
                 );
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<CommonResponse<Void>> handleAuthenticationArgumentError(
+            MethodArgumentNotValidException e
+    ) {
+        return  ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(
+                        CommonResponse
+                                .fail(
+                                        ErrorCode.AUTHORIZE_NEEDED.getDescription()
+                                )
+                );
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<CommonResponse<Void>> handleValidation(
             MethodArgumentNotValidException e
