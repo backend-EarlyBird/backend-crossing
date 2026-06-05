@@ -4,6 +4,7 @@ import io.rapa.backendcrossing.common.constants.ErrorCode;
 import io.rapa.backendcrossing.common.exception.CustomException;
 import io.rapa.backendcrossing.friendRequests.constants.FriendRequestsStatus;
 import io.rapa.backendcrossing.friendRequests.entity.FriendRequests;
+import io.rapa.backendcrossing.friendRequests.reponse.FriendRequestResponse;
 import io.rapa.backendcrossing.friendRequests.repository.FriendRequestsRepository;
 import io.rapa.backendcrossing.users.domain.entity.Users;
 import io.rapa.backendcrossing.users.repository.UserRepository;
@@ -71,20 +72,26 @@ public class FriendRequestsServiceTests {
         ReflectionTestUtils.setField(userB, "userId", targetId);
     }
 
+    private FriendRequests buildRequest(Users from, Users to, FriendRequestsStatus status) {
+        FriendRequests request = new FriendRequests();
+        request.setFromUser(from);
+        request.setToUser(to);
+        request.setStatus(status);
+        request.setNickname(to.getNickname());
+        return request;
+    }
+
     // ===== getFriends =====
 
     @Test
     @DisplayName("친구 목록 조회 - 성공")
     void will_getFriends() {
-        FriendRequests request = new FriendRequests();
-        request.setFromUser(userA);
-        request.setToUser(userB);
-        request.setStatus(FriendRequestsStatus.ACCEPTED);
+        FriendRequests request = buildRequest(userA, userB, FriendRequestsStatus.ACCEPTED);
 
-        when(friendRepository.findByFromUserUserIdOrToUserUserId(userId, userId))
+        when(friendRepository.findFriendsByUserIdAndStatus(userId, FriendRequestsStatus.ACCEPTED))
                 .thenReturn(List.of(request));
 
-        var response = friendService.getFriends(userId);
+        List<FriendRequestResponse> response = friendService.getFriends(userId);
 
         assertNotNull(response);
         assertEquals(1, response.size());
@@ -102,15 +109,12 @@ public class FriendRequestsServiceTests {
     @Test
     @DisplayName("받은 친구 요청 목록 조회 - 성공")
     void will_getReceivedRequests() {
-        FriendRequests request = new FriendRequests();
-        request.setFromUser(userB);
-        request.setToUser(userA);
-        request.setStatus(FriendRequestsStatus.PENDING);
+        FriendRequests request = buildRequest(userB, userA, FriendRequestsStatus.PENDING);
 
         when(friendRepository.findByToUserUserIdAndStatus(userId, FriendRequestsStatus.PENDING))
                 .thenReturn(List.of(request));
 
-        var response = friendService.getReceivedRequests(userId);
+        List<FriendRequestResponse> response = friendService.getReceivedRequests(userId);
 
         assertNotNull(response);
         assertEquals(1, response.size());
@@ -134,8 +138,9 @@ public class FriendRequestsServiceTests {
         when(friendRepository.existsByToUserUserIdAndFromUserUserIdAndStatus(any(), any(), any())).thenReturn(false);
         when(friendRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
 
-        assertDoesNotThrow(() -> friendService.sendFriendRequest(userId, targetId));
+        FriendRequestResponse response = friendService.sendFriendRequest(userId, targetId);
 
+        assertNotNull(response);
         verify(friendRepository, times(1)).save(any(FriendRequests.class));
     }
 
@@ -151,7 +156,7 @@ public class FriendRequestsServiceTests {
         when(userRepository.findByIdOrThrow(userId)).thenReturn(userA);
         when(userRepository.findByIdOrThrow(targetId)).thenReturn(userB);
         when(friendRepository.existsByFromUserUserIdAndToUserUserIdAndStatus(userId, targetId, FriendRequestsStatus.PENDING)).thenReturn(false);
-        when(friendRepository.existsByToUserUserIdAndFromUserUserIdAndStatus(userId, targetId, FriendRequestsStatus.PENDING)).thenReturn(false);
+        when(friendRepository.existsByToUserUserIdAndFromUserUserIdAndStatus(toUserId(), userId, FriendRequestsStatus.PENDING)).thenReturn(false);
         when(friendRepository.existsByFromUserUserIdAndToUserUserIdAndStatus(userId, targetId, FriendRequestsStatus.ACCEPTED)).thenReturn(true);
 
         assertThrows(CustomException.class, () -> friendService.sendFriendRequest(userId, targetId));
@@ -174,16 +179,13 @@ public class FriendRequestsServiceTests {
     @Test
     @DisplayName("친구 요청 수락 - 성공")
     void will_acceptFriendRequest_success() {
-        FriendRequests request = new FriendRequests();
-        request.setFromUser(userB);
-        request.setToUser(userA);
-        request.setStatus(FriendRequestsStatus.PENDING);
+        FriendRequests request = buildRequest(userB, userA, FriendRequestsStatus.PENDING);
 
         when(friendRepository.findByFriendRequestIdAndToUserUserId(requestId, userId))
                 .thenReturn(Optional.of(request));
         when(friendRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
 
-        var response = friendService.acceptFriendRequest(userId, requestId);
+        FriendRequestResponse response = friendService.acceptFriendRequest(userId, requestId);
 
         assertNotNull(response);
         assertEquals(FriendRequestsStatus.ACCEPTED, response.getStatus());
@@ -203,10 +205,7 @@ public class FriendRequestsServiceTests {
     @Test
     @DisplayName("친구 요청 수락 - 실패 (이미 수락된 요청)")
     void will_acceptFriendRequest_fail_alreadyAccepted() {
-        FriendRequests request = new FriendRequests();
-        request.setFromUser(userB);
-        request.setToUser(userA);
-        request.setStatus(FriendRequestsStatus.ACCEPTED);
+        FriendRequests request = buildRequest(userB, userA, FriendRequestsStatus.ACCEPTED);
 
         when(friendRepository.findByFriendRequestIdAndToUserUserId(requestId, userId))
                 .thenReturn(Optional.of(request));
@@ -220,10 +219,7 @@ public class FriendRequestsServiceTests {
     @Test
     @DisplayName("친구 요청 거절 - 성공")
     void will_declineFriendRequest_success() {
-        FriendRequests request = new FriendRequests();
-        request.setFromUser(userB);
-        request.setToUser(userA);
-        request.setStatus(FriendRequestsStatus.PENDING);
+        FriendRequests request = buildRequest(userB, userA, FriendRequestsStatus.PENDING);
 
         when(friendRepository.findByFriendRequestIdAndToUserUserId(requestId, userId))
                 .thenReturn(Optional.of(request));
@@ -248,12 +244,9 @@ public class FriendRequestsServiceTests {
     @Test
     @DisplayName("친구 요청 취소 - 성공")
     void will_cancelFriendRequest_success() {
-        FriendRequests request = new FriendRequests();
-        request.setFromUser(userA);
-        request.setToUser(userB);
-        request.setStatus(FriendRequestsStatus.PENDING);
+        FriendRequests request = buildRequest(userA, userB, FriendRequestsStatus.PENDING);
 
-        when(friendRepository.findByFriendRequestIdAndFromUserUserId(requestId, userId))
+        when(friendRepository.findByFriendRequestIdAndToUserUserId(requestId, userId))
                 .thenReturn(Optional.of(request));
 
         friendService.cancelFriendRequest(userId, requestId);
@@ -264,7 +257,7 @@ public class FriendRequestsServiceTests {
     @Test
     @DisplayName("친구 요청 취소 - 실패 (요청을 찾을 수 없음 404)")
     void will_cancelFriendRequest_fail_notFound() {
-        when(friendRepository.findByFriendRequestIdAndFromUserUserId(requestId, userId))
+        when(friendRepository.findByFriendRequestIdAndToUserUserId(requestId, userId))
                 .thenReturn(Optional.empty());
 
         assertThrows(CustomException.class, () -> friendService.cancelFriendRequest(userId, requestId));
@@ -275,10 +268,7 @@ public class FriendRequestsServiceTests {
     @Test
     @DisplayName("친구 삭제 - 성공")
     void will_deleteFriend_success() {
-        FriendRequests request = new FriendRequests();
-        request.setFromUser(userA);
-        request.setToUser(userB);
-        request.setStatus(FriendRequestsStatus.ACCEPTED);
+        FriendRequests request = buildRequest(userA, userB, FriendRequestsStatus.ACCEPTED);
 
         when(friendRepository.findByFromUserUserIdAndToUserUserIdAndStatus(userId, targetId, FriendRequestsStatus.ACCEPTED))
                 .thenReturn(Optional.of(request));
@@ -291,10 +281,7 @@ public class FriendRequestsServiceTests {
     @Test
     @DisplayName("친구 삭제 - 성공 (역방향 친구 관계)")
     void will_deleteFriend_success_reverse() {
-        FriendRequests request = new FriendRequests();
-        request.setFromUser(userB);
-        request.setToUser(userA);
-        request.setStatus(FriendRequestsStatus.ACCEPTED);
+        FriendRequests request = buildRequest(userB, userA, FriendRequestsStatus.ACCEPTED);
 
         when(friendRepository.findByFromUserUserIdAndToUserUserIdAndStatus(userId, targetId, FriendRequestsStatus.ACCEPTED))
                 .thenReturn(Optional.empty());
@@ -314,5 +301,9 @@ public class FriendRequestsServiceTests {
 
         CustomException ex = assertThrows(CustomException.class, () -> friendService.deleteFriend(userId, targetId));
         assertEquals(ErrorCode.NOT_FRIEND_RELATION, ex.getErrorCode());
+    }
+
+    private Long toUserId() {
+        return targetId;
     }
 }

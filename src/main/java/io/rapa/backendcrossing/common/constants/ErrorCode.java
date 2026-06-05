@@ -24,10 +24,6 @@ public enum ErrorCode {
     INSUFFICIENT_GOLD(HttpStatus.BAD_REQUEST, "골드가 부족합니다."),
 
     //친구
-    PENDING(HttpStatus.ACCEPTED, "친구 요청이 보냈습니다."),
-    ACCEPTED(HttpStatus.ACCEPTED, "친구 요청을 수락했습니다."),
-    DECLINED(HttpStatus.BAD_REQUEST, "친구 요청을 거부했습니다."),
-    CANCELED(HttpStatus.BAD_REQUEST, "친구 요청을 취소했습니다."),
     SELF_REQUEST(HttpStatus.BAD_REQUEST, "자기 자신에게 친구 요청을 보낼 수 없습니다."),
     INVALID_ACCEPT(HttpStatus.BAD_REQUEST, "본인에게 온 요청만 수락할 수 있습니다."),
     INVALID_DECLINED(HttpStatus.BAD_REQUEST, "본인에게 온 요청만 거절할 수 있습니다."),

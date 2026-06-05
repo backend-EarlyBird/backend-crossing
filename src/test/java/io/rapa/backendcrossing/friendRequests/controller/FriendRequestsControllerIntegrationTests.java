@@ -1,9 +1,11 @@
 package io.rapa.backendcrossing.friendRequests.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.rapa.backendcrossing.common.constants.ErrorCode;
 import io.rapa.backendcrossing.friendRequests.constants.FriendRequestsStatus;
 import io.rapa.backendcrossing.friendRequests.entity.FriendRequests;
 import io.rapa.backendcrossing.friendRequests.repository.FriendRequestsRepository;
+import io.rapa.backendcrossing.friendRequests.request.FriendRequestRequest;
 import io.rapa.backendcrossing.security.domain.CurrentUser;
 import io.rapa.backendcrossing.users.constants.Role;
 import io.rapa.backendcrossing.users.domain.entity.Users;
@@ -148,8 +150,8 @@ public class FriendRequestsControllerIntegrationTests {
     @DisplayName("친구 요청 전송 - 성공")
     void sendFriendRequest_success() throws Exception {
         mockMvc.perform(post(BASE_URL + "/requests")
-                        .param("toUserId", String.valueOf(targetId))
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(new FriendRequestRequest(targetId))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.status").value("PENDING"));
@@ -159,8 +161,8 @@ public class FriendRequestsControllerIntegrationTests {
     @DisplayName("친구 요청 전송 - 실패 (자기 자신에게 요청 400)")
     void sendFriendRequest_fail_self() throws Exception {
         mockMvc.perform(post(BASE_URL + "/requests")
-                        .param("toUserId", String.valueOf(userId))
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(new FriendRequestRequest(userId))))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value(ErrorCode.SELF_REQUEST.getDescription()));
@@ -172,8 +174,8 @@ public class FriendRequestsControllerIntegrationTests {
         saveFriendRequest(userA, userB, FriendRequestsStatus.ACCEPTED);
 
         mockMvc.perform(post(BASE_URL + "/requests")
-                        .param("toUserId", String.valueOf(targetId))
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(new FriendRequestRequest(targetId))))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value(ErrorCode.ALREADY_FRIEND_OR_REQUESTED.getDescription()));
@@ -238,14 +240,14 @@ public class FriendRequestsControllerIntegrationTests {
                 .andExpect(jsonPath("$.message").value(ErrorCode.REQUEST_NOT_FOUND.getDescription()));
     }
 
-    // ===== PATCH /friends/requests/{requestId}/cancel =====
+    // ===== PATCH /friends/requests/{requestId} =====
 
     @Test
     @DisplayName("친구 요청 취소 - 성공")
     void cancelFriendRequest_success() throws Exception {
-        FriendRequests saved = saveFriendRequest(userA, userB, FriendRequestsStatus.PENDING);
+        FriendRequests saved = saveFriendRequest(userB, userA, FriendRequestsStatus.PENDING);
 
-        mockMvc.perform(patch(BASE_URL + "/requests/" + saved.getFriendRequestId() + "/cancel")
+        mockMvc.perform(delete(BASE_URL + "/requests/" + saved.getFriendRequestId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
@@ -255,7 +257,7 @@ public class FriendRequestsControllerIntegrationTests {
     @Test
     @DisplayName("친구 요청 취소 - 실패 (요청 없음 404)")
     void cancelFriendRequest_fail_notFound() throws Exception {
-        mockMvc.perform(patch(BASE_URL + "/requests/999999/cancel")
+        mockMvc.perform(delete(BASE_URL + "/requests/999999")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success").value(false))
