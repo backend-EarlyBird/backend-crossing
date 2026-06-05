@@ -4,7 +4,10 @@ import io.rapa.backendcrossing.inventory.entity.Inventories;
 import io.rapa.backendcrossing.inventory.repository.InventoriesRepository;
 import io.rapa.backendcrossing.inventory.response.InventoriesResponse;
 import io.rapa.backendcrossing.support.BaseIntegrationTest;
+import io.rapa.backendcrossing.users.domain.entity.Users;
+import io.rapa.backendcrossing.users.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,14 +41,26 @@ public class InventoriesServiceIntegrationTests extends BaseIntegrationTest {
     @Autowired
     private InventoriesRepository inventoriesRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
+    Users foundedUser;
+    Long userId;
+
+    @BeforeEach
+    void setUp(){
+        userId = 1L;
+        foundedUser = userRepository.findByIdOrThrow(userId);
+    }
+
 
     @Test
     @DisplayName("인벤토리 조회 - 성공")
     void getInventory() {
         // given
-        Long userId = 1L;
         inventoriesRepository.save(Inventories.builder()
-                .userId(userId).item(savedItem).quantity(3).equipped(false).build());
+                .subUserId(foundedUser.getUserId())
+                .user(foundedUser).item(savedItem).quantity(3).equipped(false).build());
 
         // when
         List<InventoriesResponse> result = inventoriesService.getInventory(userId);
@@ -59,13 +74,12 @@ public class InventoriesServiceIntegrationTests extends BaseIntegrationTest {
     @DisplayName("아이템 획득 - 없으면 저장, 있으면 수량 증가")
     void pickupItem() {
         // given
-        Long userId = 1L;
 
         // when: 처음 획득
         inventoriesService.pickupItem(savedItem.getItemId(), 2, userId);
 
         // then
-        Inventories inv = inventoriesRepository.findByUserIdAndItemItemId(userId, savedItem.getItemId()).orElseThrow();
+        Inventories inv = inventoriesRepository.findBySubUserIdAndItemItemId(userId, savedItem.getItemId()).orElseThrow();
         assertThat(inv.getQuantity()).isEqualTo(2);
 
         // when: 두번째 획득
@@ -79,9 +93,9 @@ public class InventoriesServiceIntegrationTests extends BaseIntegrationTest {
     @DisplayName("아이템 버림 - 수량 차감")
     void discardItem_decreaseQuantity() {
         // given
-        Long userId = 1L;
         Inventories inv = inventoriesRepository.save(
-                Inventories.builder().userId(userId).item(savedItem).quantity(5).equipped(false).build());
+                Inventories.builder().subUserId(foundedUser.getUserId())
+                .user(foundedUser).item(savedItem).quantity(5).equipped(false).build());
 
         // when
         inventoriesService.discardItem(savedItem.getItemId(), 2, userId);
@@ -94,15 +108,15 @@ public class InventoriesServiceIntegrationTests extends BaseIntegrationTest {
     @DisplayName("아이템 버림 - 수량 일치 시 삭제")
     void discardItem_deleteWhenExact() {
         // given
-        Long userId = 1L;
         Inventories inv = inventoriesRepository.save(
-                Inventories.builder().userId(userId).item(savedItem).quantity(3).equipped(false).build());
+                Inventories.builder().subUserId(foundedUser.getUserId())
+                .user(foundedUser).item(savedItem).quantity(3).equipped(false).build());
 
         // when
         inventoriesService.discardItem(savedItem.getItemId(), 3, userId);
 
         // then
-        assertThat(inventoriesRepository.findByUserIdAndItemItemId(userId, savedItem.getItemId())).isEmpty();
+        assertThat(inventoriesRepository.findBySubUserIdAndItemItemId(userId, savedItem.getItemId())).isEmpty();
     }
 
 }

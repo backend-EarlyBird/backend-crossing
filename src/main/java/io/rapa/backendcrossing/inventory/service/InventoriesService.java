@@ -7,6 +7,8 @@ import io.rapa.backendcrossing.inventory.response.InventoriesResponse;
 import io.rapa.backendcrossing.inventory.entity.Inventories;
 import io.rapa.backendcrossing.items.entity.Items;
 import io.rapa.backendcrossing.items.repository.ItemsRepository;
+import io.rapa.backendcrossing.users.domain.entity.Users;
+import io.rapa.backendcrossing.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,7 @@ public class InventoriesService {
 
     private final InventoriesRepository inventoriesRepository;
     private final ItemsRepository itemsRepository;
+    private final UserRepository userRepository;
 
     /*
     * 유저 인벤토리 조회
@@ -46,12 +49,14 @@ public class InventoriesService {
     * */
     @Transactional
     public InventoriesResponse pickupItem(Long itemId, int quantity, Long userId) {
+        Users foundedUser = userRepository.findByIdOrThrow(userId);
         Items item = itemsRepository.findByIdOrThrow(itemId);
-        Inventories inventory = inventoriesRepository.findByUserIdAndItemItemId(userId, itemId)
+        Inventories inventory = inventoriesRepository.findBySubUserIdAndItemItemId(userId, itemId)
                 .map(inv -> { inv.addQuantity(quantity); return inv; })
                 .orElseGet(() -> inventoriesRepository.save(
                         Inventories.builder()
-                                .userId(userId)
+                                .subUserId(foundedUser.getUserId())
+                                .user(foundedUser)
                                 .item(item)
                                 .quantity(quantity)
                                 .equipped(false)
@@ -65,7 +70,7 @@ public class InventoriesService {
     * */
     @Transactional
     public InventoriesResponse discardItem(Long itemId, int quantity, Long userId) {
-        Inventories inventory = inventoriesRepository.findByUserIdAndItemItemId(userId, itemId)
+        Inventories inventory = inventoriesRepository.findBySubUserIdAndItemItemId(userId, itemId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
         if (inventory.getQuantity() < quantity) throw new CustomException(ErrorCode.ITEM_COUNT_FOUND);
         if (inventory.getQuantity() == quantity) inventoriesRepository.delete(inventory);

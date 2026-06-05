@@ -1,8 +1,10 @@
 package io.rapa.backendcrossing.users.domain.entity;
 
+import io.rapa.backendcrossing.inventory.entity.Inventories;
 import io.rapa.backendcrossing.users.constants.Provider;
 import io.rapa.backendcrossing.users.constants.Role;
 import io.rapa.backendcrossing.users.constants.UserStatus;
+import io.rapa.backendcrossing.wallets.domain.entity.Wallets;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -11,6 +13,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -27,7 +31,7 @@ public class Users extends BaseEntity{
     private String password;
 
     @Column(nullable = false, length = 50)
-    private String nickName;
+    private String nickname;
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false, length = 50)
@@ -49,18 +53,23 @@ public class Users extends BaseEntity{
 
     private LocalDateTime lastLoginAt;
 
+    @OneToMany(mappedBy = "user")
+    private List<Inventories> inventories = new ArrayList<>();
+
     @Builder
     public Users(
             String email,
             String password,
-            String nickName
+            String nickname
     ){
         this.email = email;
         this.password = password;
-        this.nickName = nickName;
+        this.nickname = nickname;
         userStatus = UserStatus.ACTIVATED;
         role = Role.USER;
+        profileImageUrl = "";
         emailDomain = extractProvider(email);
+        lastLoginAt = LocalDateTime.now();
         if(emailDomain.equals("gmail")) provider = Provider.GOOGLE;
         else provider = Provider.LOCAL;
     }
@@ -72,5 +81,11 @@ public class Users extends BaseEntity{
     public Users switchToSuperAdmin(){
         role = Role.SUPER_ADMIN;
         return this;
+    }
+    public void setLoginTimeNow(){
+        this.lastLoginAt = LocalDateTime.now();
+    }
+    public void addInventory(Inventories inventories){
+        this.inventories.add(inventories);
     }
 }

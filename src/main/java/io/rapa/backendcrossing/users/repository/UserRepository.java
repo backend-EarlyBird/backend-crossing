@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<Users, Long> {
-    Optional<Users> findById(Long id);
+    Optional<Users> findByUserId(Long userId);
     default Users findByIdOrThrow(Long id){
        return findById(id).orElseThrow(
                ()->new CustomException(ErrorCode.USER_NOT_FOUND, "해당 ID를 가진 사용자 계정을 찾을 수 없습니다.")

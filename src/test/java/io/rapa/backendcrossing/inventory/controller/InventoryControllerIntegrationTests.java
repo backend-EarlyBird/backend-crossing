@@ -5,6 +5,9 @@ import io.rapa.backendcrossing.inventory.repository.InventoriesRepository;
 import io.rapa.backendcrossing.security.domain.CurrentUser;
 import io.rapa.backendcrossing.support.BaseIntegrationTest;
 import io.rapa.backendcrossing.users.constants.Role;
+import io.rapa.backendcrossing.users.domain.entity.Users;
+import io.rapa.backendcrossing.users.repository.UserRepository;
+import io.rapa.util.UserUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -50,17 +53,22 @@ public class InventoryControllerIntegrationTests extends BaseIntegrationTest {
     @Autowired
     private InventoriesRepository inventoriesRepository;
 
-    private static final Long USER_ID = 1L;
+    @Autowired
+    private UserRepository userRepository;
+
+    Users foundedUser;
 
     @BeforeEach
     void setUp() {
+        foundedUser = userRepository.save(
+                UserUtils.makeUsers("wjdtn@naverrr.com", "123456789")
+        );
         CurrentUser currentUser = CurrentUser.builder()
                 .nickName("테스트유저")
                 .email("test@test.com")
                 .build()
-                .setId(USER_ID)
+                .setId(foundedUser.getUserId())
                 .setRole(Role.USER);
-
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(currentUser, null, currentUser.getAuthorities())
         );
@@ -71,7 +79,8 @@ public class InventoryControllerIntegrationTests extends BaseIntegrationTest {
     void getInventories() throws Exception {
         // given
         inventoriesRepository.save(Inventories.builder()
-                .userId(USER_ID).item(savedItem).quantity(3).equipped(false).build());
+                .subUserId(foundedUser.getUserId())
+                .user(foundedUser).item(savedItem).quantity(3).equipped(false).build());
 
         // when & then
         mockMvc.perform(get("/api/v1/users/me/inventory")
@@ -117,7 +126,8 @@ public class InventoryControllerIntegrationTests extends BaseIntegrationTest {
     void discardItem_fullQuantity() throws Exception {
         // given
         inventoriesRepository.save(
-                Inventories.builder().userId(USER_ID).item(savedItem).quantity(3).equipped(false).build());
+                Inventories.builder().subUserId(foundedUser.getUserId())
+                        .user(foundedUser).item(savedItem).quantity(3).equipped(false).build());
 
         // when & then
         mockMvc.perform(delete("/api/v1/users/me/inventory/" + savedItem.getItemId() + "/discard")
@@ -132,7 +142,8 @@ public class InventoryControllerIntegrationTests extends BaseIntegrationTest {
     void discardItem_partialQuantity() throws Exception {
         // given
         inventoriesRepository.save(
-                Inventories.builder().userId(USER_ID).item(savedItem).quantity(5).equipped(false).build());
+                Inventories.builder().subUserId(foundedUser.getUserId())
+                        .user(foundedUser).item(savedItem).quantity(5).equipped(false).build());
 
         // when & then
         mockMvc.perform(delete("/api/v1/users/me/inventory/" + savedItem.getItemId() + "/discard")

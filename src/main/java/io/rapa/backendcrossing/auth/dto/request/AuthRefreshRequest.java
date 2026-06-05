@@ -1,4 +1,4 @@
-package io.rapa.backendcrossing.users.domain.dto.request;
+package io.rapa.backendcrossing.auth.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
