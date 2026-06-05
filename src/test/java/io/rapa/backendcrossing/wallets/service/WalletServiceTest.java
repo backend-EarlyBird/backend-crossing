@@ -74,7 +74,7 @@ class WalletServiceTest {
     class Describe_with_getWalletDetail{
 
         @Nested
-        @DisplayName("Context : 로그인한 유저의 ID가 주어진 경우")
+        @DisplayName("Context : 로그인한 유저의 ID가 올바르게 주어진 경우")
         class Context_with_logged_userId{
 
             @Test

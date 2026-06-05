@@ -1,8 +1,8 @@
-package io.rapa.backendcrossing.wallets.service;
+package io.rapa.backendcrossing.profiles.service;
 
-import io.rapa.backendcrossing.security.service.TokenService;
+import io.rapa.backendcrossing.profiles.domain.dto.ProfileDetailResponse;
+import io.rapa.backendcrossing.profiles.domain.entity.Profiles;
 import io.rapa.backendcrossing.users.repository.UserBoundaryRepository;
-import io.rapa.backendcrossing.wallets.domain.dto.WalletDetailResponse;
 import io.rapa.backendcrossing.wallets.domain.entity.Wallets;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -10,24 +10,19 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @Service
-@Transactional(readOnly = true)
 @EnableMethodSecurity(prePostEnabled = true)
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class WalletService {
+public class ProfileService {
 
     private final UserBoundaryRepository userBoundaryRepository;
 
-    private final TokenService tokenService;
-
     @Transactional
-    @PreAuthorize("#userId == authentication.principal.id and isAuthenticated()")
-    public WalletDetailResponse getWalletDetails(Long userId){
-
-        Wallets foundedWallet = userBoundaryRepository.findWalletByUserIdOrThrow(userId);
-
-        return WalletDetailResponse.from(foundedWallet);
+    @PreAuthorize("#userId == authentication.principal.id")
+    public ProfileDetailResponse getDetail(Long userId){
+        return ProfileDetailResponse.from(
+                userBoundaryRepository.findProfileByUserIdOrThrow(userId)
+        );
     }
-
 }

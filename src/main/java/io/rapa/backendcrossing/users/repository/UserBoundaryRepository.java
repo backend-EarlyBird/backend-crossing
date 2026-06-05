@@ -21,4 +21,5 @@ public interface UserBoundaryRepository {
     Wallets saveWallet(Wallets wallet);
 
     Profiles saveProfile(Profiles profiles);
+    Profiles findProfileByUserIdOrThrow(Long userId);
 }

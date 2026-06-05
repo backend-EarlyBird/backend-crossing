@@ -99,4 +99,11 @@ public class Users extends BaseEntity{
     public void addInventory(Inventories inventories){
         this.inventories.add(inventories);
     }
+
+    public void setProfile(Profiles profiles){
+        this.profile = profiles;
+    }
+    public void setWallet(Wallets wallet){
+        this.wallet = wallet;
+    }
 }

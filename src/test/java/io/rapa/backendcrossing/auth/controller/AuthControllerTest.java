@@ -1,4 +1,4 @@
-package io.rapa.backendcrossing.users.controller;
+package io.rapa.backendcrossing.auth.controller;
 
 import io.rapa.backendcrossing.common.constants.ErrorCode;
 import io.rapa.backendcrossing.common.constants.SuccessMessage;

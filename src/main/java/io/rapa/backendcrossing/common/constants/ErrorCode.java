@@ -50,6 +50,9 @@ public enum ErrorCode {
 
     // 지갑 관련
     WALLET_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저의 지갑을 찾을 수 없습니다."),
+    
+    // 프로필 관련
+    PROFILE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저의 프로필을 찾을 수 없습니다."),
 
     // AUTH 관련
     AUTHORIZE_NEEDED(HttpStatus.UNAUTHORIZED, "인증이 필요합니다.")

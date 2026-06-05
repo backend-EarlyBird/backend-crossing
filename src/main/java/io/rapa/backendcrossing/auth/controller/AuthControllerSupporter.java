@@ -11,8 +11,10 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 @SecurityRequirement(name = "Bearer Authentication")
+@Tag(name = "Auth API" , description = "인증 관련 API 명세서")
 public interface AuthControllerSupporter {
     @Operation(
             summary = "이메일 로그인",

@@ -47,6 +47,7 @@ public class Wallets {
         this.gold = gold;
         this.gem = gem;
         this.user = user;
+        user.setWallet(this);
     }
 
     public void deductGold(long amount) {

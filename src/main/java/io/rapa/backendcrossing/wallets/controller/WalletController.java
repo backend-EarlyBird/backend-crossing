@@ -14,9 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@SecurityRequirement(name = "Bearer Authentication")
 @RequestMapping("/api/v1/users/me/wallet")
-public class WalletController {
+public class WalletController  implements WalletControllerSupporter{
 
     private final WalletService walletService;
 

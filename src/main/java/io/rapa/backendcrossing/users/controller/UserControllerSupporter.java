@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 
 @SecurityRequirement(name = "Bearer Authentication")
-@Tag(name = "Users" , description = "유저 관련 API")
+@Tag(name = "User API" , description = "유저 관련 API 명세서")
 public interface UserControllerSupporter {
     @Operation(
             summary = "회원가입",
@@ -95,6 +95,22 @@ public interface UserControllerSupporter {
                                             """
                                     )
                             )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "회원가입 실패 ( 서버 내부 오류 발생 )",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            """
+                                { 
+                                    "success": false, 
+                                    "message": "서버 오류가 발생했습니다.", 
+                                    "data": null 
+                                }
+                                            """
+                                    )
+                            )
                     )
             }
     )
@@ -148,6 +164,22 @@ public interface UserControllerSupporter {
                                                 "message": "인증이 필요합니다.", 
                                                 "data": null 
                                             }
+                                            """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "조회 실패 ( 서버 내부 오류 발생 )",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            """
+                                { 
+                                    "success": false, 
+                                    "message": "서버 오류가 발생했습니다.", 
+                                    "data": null 
+                                }
                                             """
                                     )
                             )

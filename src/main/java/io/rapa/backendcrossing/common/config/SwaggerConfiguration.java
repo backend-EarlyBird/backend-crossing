@@ -23,26 +23,6 @@ import org.springframework.context.annotation.Configuration;
                 description = "백엔드의 숲 API 명세"
         )
 )
-@ApiResponses(
-        value = {
-                @ApiResponse(
-                        responseCode = "500",
-                        description = "회원가입 실패 ( 서버 내부 오류 발생 )",
-                        content = @Content(
-                                mediaType = "application/json",
-                                examples = @ExampleObject(
-                                        """
-                            { 
-                                "success": false, 
-                                "message": "서버 오류가 발생했습니다.", 
-                                "data": null 
-                            }
-                                        """
-                                )
-                        )
-                )
-        }
-)
 public class SwaggerConfiguration {
     @Bean
     public OpenAPI openAPI(){

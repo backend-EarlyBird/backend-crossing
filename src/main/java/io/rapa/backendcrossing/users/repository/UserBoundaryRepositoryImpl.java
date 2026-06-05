@@ -51,4 +51,9 @@ public class UserBoundaryRepositoryImpl implements UserBoundaryRepository {
     public Profiles saveProfile(Profiles profiles) {
         return profilesRepository.save(profiles);
     }
+
+    @Override
+    public Profiles findProfileByUserIdOrThrow(Long userId) {
+        return profilesRepository.findByIdOrThrow(userId);
+    }
 }
