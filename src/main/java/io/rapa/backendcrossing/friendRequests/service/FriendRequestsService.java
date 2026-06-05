@@ -94,7 +94,7 @@ public class FriendRequestsService {
         friendRequest.setFromUser(fromUser);
         friendRequest.setToUser(toUser);
         friendRequest.setStatus(FriendRequestsStatus.PENDING);
-        friendRequest.setNickname(toUser.getNickName());
+        friendRequest.setNickname(toUser.getNickname());
 
         return toResponse(friendRequestsRepository.save(friendRequest));
     }

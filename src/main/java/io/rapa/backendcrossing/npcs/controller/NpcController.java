@@ -37,14 +37,14 @@ public class NpcController implements ApiNpcsSupperts {
     private final NpcService npcService;
 
     //npc 목록조회(전체)
-    @ApiNpcsSupperts.ApiFindAllNpcs
+    @ApiFindAllNpcs
     @GetMapping(value = {"", "/", })
     public ResponseEntity<CommonResponse<List<NpcsResponse>>> findAllNpcs() {
         return ResponseEntity.ok(CommonResponse.success(npcService.findAllNpcs()));
     }
 
     //npc 목록조회(단일)
-    @ApiNpcsSupperts.ApiGetNpcInfo
+    @ApiGetNpcInfo
     @GetMapping("/{npcId}")
     public ResponseEntity<CommonResponse<NpcsResponse>> getNpcInfo(
             @Parameter(description = "Npc ID") @PathVariable("npcId") Long npcId

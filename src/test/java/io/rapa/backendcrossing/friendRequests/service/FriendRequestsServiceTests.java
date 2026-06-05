@@ -59,14 +59,14 @@ public class FriendRequestsServiceTests {
         userA = Users.builder()
                 .email("test1@naver.com")
                 .password("1234")
-                .nickName("닉네임1")
+                .nickname("닉네임1")
                 .build();
         ReflectionTestUtils.setField(userA, "userId", userId);
 
         userB = Users.builder()
                 .email("test2@naver.com")
                 .password("1234")
-                .nickName("닉네임2")
+                .nickname("닉네임2")
                 .build();
         ReflectionTestUtils.setField(userB, "userId", targetId);
     }

@@ -56,14 +56,14 @@ public class FriendRequestsServiceIntegrationTests {
         userA = userRepository.save(Users.builder()
                 .email("test1@naver.com")
                 .password("1234")
-                .nickName("닉네임1")
+                .nickname("닉네임1")
                 .build());
         userId = userA.getUserId();
 
         userB = userRepository.save(Users.builder()
                 .email("test2@naver.com")
                 .password("1234")
-                .nickName("닉네임2")
+                .nickname("닉네임2")
                 .build());
         targetId = userB.getUserId();
     }
@@ -73,7 +73,7 @@ public class FriendRequestsServiceIntegrationTests {
         req.setFromUser(from);
         req.setToUser(to);
         req.setStatus(status);
-        req.setNickname(to.getNickName());
+        req.setNickname(to.getNickname());
         return friendRepository.save(req);
     }
 
