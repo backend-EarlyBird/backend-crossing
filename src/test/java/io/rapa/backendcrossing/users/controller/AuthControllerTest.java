@@ -7,17 +7,18 @@ import io.rapa.backendcrossing.security.domain.CurrentUser;
 import io.rapa.backendcrossing.security.repository.RefreshTokenRepository;
 import io.rapa.backendcrossing.security.service.TokenService;
 import io.rapa.backendcrossing.users.constants.Role;
-import io.rapa.backendcrossing.users.domain.dto.request.AuthLoginRequest;
-import io.rapa.backendcrossing.users.domain.dto.request.AuthRefreshRequest;
+import io.rapa.backendcrossing.auth.dto.request.AuthLoginRequest;
+import io.rapa.backendcrossing.auth.dto.request.AuthRefreshRequest;
 import io.rapa.backendcrossing.users.domain.entity.Users;
 import io.rapa.backendcrossing.users.repository.UserRepository;
-import io.rapa.backendcrossing.users.service.AuthService;
+import io.rapa.backendcrossing.auth.service.AuthService;
 import io.rapa.util.UserUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,7 +29,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -200,7 +200,7 @@ class AuthControllerTest {
                         new TestingAuthenticationToken(
                                 CurrentUser.builder()
                                         .email(userEmail)
-                                        .nickName(testUser.getNickName())
+                                        .nickName(testUser.getNickname())
                                         .build(),
                                 null,
                                 "ROLE_" + Role.USER.toString()
@@ -211,7 +211,7 @@ class AuthControllerTest {
                 ResultActions actions = mockMvc.perform(
                         MockMvcRequestBuilders
                                 .post(BASE_ENDPOINT + "/logout")
-                                .header("Authorization", "Bearer " + refreshToken)
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + refreshToken)
                 );
 
                 // then

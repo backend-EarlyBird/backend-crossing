@@ -8,7 +8,7 @@ import io.rapa.backendcrossing.items.entity.Items;
 import io.rapa.backendcrossing.items.repository.ItemsRepository;
 import io.rapa.backendcrossing.npcs.entity.NpcItems;
 import io.rapa.backendcrossing.npcs.entity.Npcs;
-import io.rapa.backendcrossing.npcs.entity.Wallets;
+import io.rapa.backendcrossing.wallets.domain.entity.Wallets;
 import io.rapa.backendcrossing.npcs.repository.NpcItemsRepository;
 import io.rapa.backendcrossing.npcs.repository.NpcsRepository;
 import io.rapa.backendcrossing.inventory.entity.Inventories;
@@ -64,7 +64,7 @@ public class NpcShopServiceIntegrationTests {
     @BeforeEach
     void setUp() throws Exception {
         Users user = userRepository.save(
-                Users.builder().email("test@test.com").password("password123").nickName("테스터").build()
+                Users.builder().email("test@test.com").password("password123").nickname("테스터").build()
         );
         userId = user.getUserId();
 
@@ -103,7 +103,7 @@ public class NpcShopServiceIntegrationTests {
         assertThat(result.getAcquiredItem().getQuantity()).isEqualTo(3);
         assertThat(result.getAcquiredItem().getRId()).isEqualTo("potion_hp_001");
 
-        Optional<Inventories> saved = inventoriesRepository.findByUserIdAndItemItemId(userId, result.getAcquiredItem().getItemId());
+        Optional<Inventories> saved = inventoriesRepository.findBySubUserIdAndItemItemId(userId, result.getAcquiredItem().getItemId());
         assertThat(saved).isPresent();
         assertThat(saved.get().getQuantity()).isEqualTo(3);
     }
@@ -120,7 +120,7 @@ public class NpcShopServiceIntegrationTests {
         // then
         assertThat(result.getAcquiredItem().getQuantity()).isEqualTo(6); // 3 + 3
 
-        Optional<Inventories> saved = inventoriesRepository.findByUserIdAndItemItemId(userId, result.getAcquiredItem().getItemId());
+        Optional<Inventories> saved = inventoriesRepository.findBySubUserIdAndItemItemId(userId, result.getAcquiredItem().getItemId());
         assertThat(saved.get().getQuantity()).isEqualTo(6);
     }
 

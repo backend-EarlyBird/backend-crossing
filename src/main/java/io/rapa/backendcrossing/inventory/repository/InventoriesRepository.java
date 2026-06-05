@@ -22,15 +22,15 @@ import java.util.Optional;
 public interface InventoriesRepository extends JpaRepository<Inventories, Long> {
 
     // 유저의 인벤토리 리스트 조회
-    List<Inventories> findByUserId(Long userId);
+    List<Inventories> findBySubUserId(Long userId);
 
     // 유저의 특정 아이템 조회
-    Optional<Inventories> findByUserIdAndItemItemId(Long userId, Long itemId);
+    Optional<Inventories> findBySubUserIdAndItemItemId(Long userId, Long itemId);
 
     // userId 없으면 401
     default List<Inventories> findByUserIdOrThrow(Long userId) {
         if (userId == null) throw new CustomException(ErrorCode.INVENTORY_UNAUTHORIZED);
-        return findByUserId(userId);
+        return findBySubUserId(userId);
     }
 
 }

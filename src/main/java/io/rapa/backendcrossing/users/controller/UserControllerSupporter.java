@@ -1,7 +1,9 @@
 package io.rapa.backendcrossing.users.controller;
 
 import io.rapa.backendcrossing.common.constants.CommonResponse;
+import io.rapa.backendcrossing.security.domain.CurrentUser;
 import io.rapa.backendcrossing.users.domain.dto.request.UserCreateRequest;
+import io.rapa.backendcrossing.users.domain.dto.response.MeDetailResponse;
 import io.rapa.backendcrossing.users.domain.dto.response.UserCreateResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -10,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 
@@ -92,24 +95,64 @@ public interface UserControllerSupporter {
                                             """
                                     )
                             )
-                    ),
+                    )
+            }
+    )
+    ResponseEntity<CommonResponse<UserCreateResponse>> registerUser(UserCreateRequest request);
+
+
+    @Operation(
+            summary = "내 계정 정보 조회",
+            description = "현재 로그인한 유저의 계정 정보를 조회하는 API",
+            security = {
+                    @SecurityRequirement(name = "Authorization Header : Bearer Token")
+            }
+    )
+    @ApiResponses(
+            value = {
                     @ApiResponse(
-                            responseCode = "500",
-                            description = "회원가입 실패 ( 서버 내부 오류 발생 )",
+                            responseCode = "200",
+                            description = "조회 성공",
                             content = @Content(
                                     mediaType = "application/json",
                                     examples = @ExampleObject(
                                             """
-                                { 
-                                    "success": false, 
-                                    "message": "서버 오류가 발생했습니다.", 
-                                    "data": null 
-                                }
+                                                    {
+                                                      "success": true,
+                                                      "message": null,
+                                                      "data": {
+                                                        "userId": 5,
+                                                        "email": "gamer@test.com",
+                                                        "nickname": "게이머",
+                                                        "role": "USER",
+                                                        "status": "ACTIVE",
+                                                        "provider": "LOCAL",
+                                                        "profileImageUrl": null,
+                                                        "createdAt": "2025-01-01T00:00:00",
+                                                        "lastLoginAt": "2026-05-21T10:00:00"
+                                                      }
+                                                    }
+                                            """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "조회 실패 ( 인증 필요 )",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            """
+                                            { 
+                                                "success": false, 
+                                                "message": "인증이 필요합니다.", 
+                                                "data": null 
+                                            }
                                             """
                                     )
                             )
                     )
             }
     )
-    ResponseEntity<CommonResponse<UserCreateResponse>> registerUser(UserCreateRequest request);
+    ResponseEntity<CommonResponse<MeDetailResponse>> getUserDetails(CurrentUser currentUser);
 }

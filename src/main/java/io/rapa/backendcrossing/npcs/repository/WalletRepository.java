@@ -14,7 +14,7 @@ package io.rapa.backendcrossing.npcs.repository;
 
 import io.rapa.backendcrossing.common.constants.ErrorCode;
 import io.rapa.backendcrossing.common.exception.CustomException;
-import io.rapa.backendcrossing.npcs.entity.Wallets;
+import io.rapa.backendcrossing.wallets.domain.entity.Wallets;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

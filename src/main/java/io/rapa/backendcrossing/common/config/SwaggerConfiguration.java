@@ -2,6 +2,8 @@ package io.rapa.backendcrossing.common.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.models.Components;
@@ -21,9 +23,22 @@ import org.springframework.context.annotation.Configuration;
 )
 @ApiResponses(
         value = {
-                @ApiResponse(responseCode = "200", description = "요청 성공"),
-                @ApiResponse(responseCode = "400", description = "잘못된 요청"),
-                @ApiResponse(responseCode = "500", description = "백엔드 서버 오류 - 관리자 문의")
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "회원가입 실패 ( 서버 내부 오류 발생 )",
+                        content = @Content(
+                                mediaType = "application/json",
+                                examples = @ExampleObject(
+                                        """
+                            { 
+                                "success": false, 
+                                "message": "서버 오류가 발생했습니다.", 
+                                "data": null 
+                            }
+                                        """
+                                )
+                        )
+                )
         }
 )
 public class SwaggerConfiguration {

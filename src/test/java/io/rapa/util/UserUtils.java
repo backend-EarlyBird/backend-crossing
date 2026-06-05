@@ -1,6 +1,6 @@
 package io.rapa.util;
 
-import io.rapa.backendcrossing.users.domain.dto.request.AuthLoginRequest;
+import io.rapa.backendcrossing.auth.dto.request.AuthLoginRequest;
 import io.rapa.backendcrossing.users.domain.dto.request.UserCreateRequest;
 import io.rapa.backendcrossing.users.domain.entity.Users;
 
@@ -9,7 +9,7 @@ public class UserUtils {
         return Users.builder()
                 .email(email)
                 .password(password)
-                .nickName("닉네임")
+                .nickname("닉네임")
                 .build();
     }
 

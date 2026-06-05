@@ -8,7 +8,7 @@ import io.rapa.backendcrossing.items.entity.Items;
 import io.rapa.backendcrossing.items.repository.ItemsRepository;
 import io.rapa.backendcrossing.npcs.entity.NpcItems;
 import io.rapa.backendcrossing.npcs.entity.Npcs;
-import io.rapa.backendcrossing.npcs.entity.Wallets;
+import io.rapa.backendcrossing.wallets.domain.entity.Wallets;
 import io.rapa.backendcrossing.npcs.repository.NpcItemsRepository;
 import io.rapa.backendcrossing.npcs.repository.NpcsRepository;
 import io.rapa.backendcrossing.npcs.repository.WalletRepository;
@@ -97,7 +97,7 @@ public class NpcShopControllerIntegrationTests {
 
     private org.springframework.test.web.servlet.request.RequestPostProcessor auth() {
         CurrentUser currentUser = CurrentUser.builder()
-                .email(testUser.getEmail()).nickName(testUser.getNickName()).build()
+                .email(testUser.getEmail()).nickName(testUser.getNickname()).build()
                 .setId(testUser.getUserId())
                 .setRole(testUser.getRole());
         return SecurityMockMvcRequestPostProcessors.authentication(

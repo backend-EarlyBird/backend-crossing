@@ -1,6 +1,7 @@
 package io.rapa.backendcrossing.inventory.entity;
 
 import io.rapa.backendcrossing.items.entity.Items;
+import io.rapa.backendcrossing.users.domain.entity.Users;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -37,7 +38,7 @@ public class Inventories {
     private int price;
     private int sellPrice;*/
 
-    private Long userId; // 시큐리티에서 가져온 정보 매핑용
+    private Long subUserId; // 시큐리티에서 가져온 정보 매핑용
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
@@ -55,19 +56,40 @@ public class Inventories {
     @Column(nullable = false, updatable = false) // 수정 불가
     private String acquiredAt;
 
+    @ManyToOne
+    @JoinColumn(
+            name = "user_id",
+            nullable = false,
+            foreignKey = @ForeignKey(
+                    name = "fk_users_inventories",
+                    foreignKeyDefinition = "FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE"
+            )
+    )
+    private Users user;
+
     public void addQuantity(int quantity) {
         this.quantity += quantity;
     }
 
     //생성자
     @Builder
-    public Inventories(Long userItemId, Long userId, Items item, int quantity, boolean equipped, String acquiredAt) {
+    public Inventories(
+            Long userItemId,
+            Long subUserId,
+            Items item,
+            int quantity,
+            boolean equipped,
+            String acquiredAt,
+            Users user
+    ) {
         this.userItemId = userItemId;
-        this.userId = userId;
+        this.subUserId = subUserId;
         this.item = item;
         this.quantity = quantity;
         this.equipped = equipped;
         this.acquiredAt = acquiredAt;
+        this.user = user;
+        this.user.addInventory(this);
     }
 
 

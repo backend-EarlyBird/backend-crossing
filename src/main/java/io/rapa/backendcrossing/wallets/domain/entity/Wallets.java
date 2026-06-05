@@ -1,4 +1,4 @@
-package io.rapa.backendcrossing.npcs.entity;
+package io.rapa.backendcrossing.wallets.domain.entity;
 
 /**
  * packageName    : io.rapa.backendcrossing.npcs.entity
@@ -25,8 +25,9 @@ public class Wallets {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long walletId;
+    private Long userId;
 
+    @MapsId
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private Users user;
