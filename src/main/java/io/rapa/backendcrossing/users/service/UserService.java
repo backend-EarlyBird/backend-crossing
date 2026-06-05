@@ -2,9 +2,12 @@ package io.rapa.backendcrossing.users.service;
 
 import io.rapa.backendcrossing.common.constants.ErrorCode;
 import io.rapa.backendcrossing.common.exception.CustomException;
+import io.rapa.backendcrossing.friendRequests.repository.FriendRepository;
+import io.rapa.backendcrossing.inventory.repository.InventoriesRepository;
 import io.rapa.backendcrossing.profiles.domain.entity.Profiles;
 import io.rapa.backendcrossing.security.domain.CurrentUser;
 import io.rapa.backendcrossing.users.domain.dto.request.UserCreateRequest;
+import io.rapa.backendcrossing.users.domain.dto.response.MeAllDataResponse;
 import io.rapa.backendcrossing.users.domain.dto.response.MeDetailResponse;
 import io.rapa.backendcrossing.users.domain.dto.response.UserCreateResponse;
 import io.rapa.backendcrossing.users.domain.entity.Users;
@@ -30,7 +33,8 @@ import java.util.Optional;
 public class UserService {
     private final UserBoundaryRepository userBoundaryRepository;
     private final PasswordEncoder passwordEncoder;
-    private final UserBoundaryRepositoryImpl userBoundaryRepositoryImpl;
+    private final InventoriesRepository inventoriesRepository;
+    private final FriendRepository friendRepository;
 
     @Transactional
     public UserCreateResponse registerUser(UserCreateRequest request){
@@ -74,5 +78,15 @@ public class UserService {
         return MeDetailResponse.from(founded);
     }
 
+    @PreAuthorize("#userId == authentication.principal.id and isAuthenticated()")
+    public MeAllDataResponse getAllDataOfMe(Long userId){
+        return MeAllDataResponse.from(
+                userBoundaryRepository.findUserByIdOrThrow(userId),
+                userBoundaryRepository.findProfileByUserIdOrThrow(userId),
+                userBoundaryRepository.findWalletByUserIdOrThrow(userId),
+                inventoriesRepository.findByUserIdOrThrow(userId),
+                friendRepository.countFriendByUserId(userId)
+        );
+    }
 
 }

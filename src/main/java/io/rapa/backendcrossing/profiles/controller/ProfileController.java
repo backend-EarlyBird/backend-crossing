@@ -25,7 +25,6 @@ public class ProfileController implements ProfileControllerSupporter {
     public ResponseEntity<CommonResponse<ProfileDetailResponse>> getProfile(
             @AuthenticationPrincipal CurrentUser currentUser
     ){
-        log.info("안녕안녕!");
         return ResponseEntity.ok().body(
                 CommonResponse.successWithMessage(
                         profileService.getDetail(currentUser.getId()),

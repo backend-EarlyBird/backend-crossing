@@ -22,7 +22,7 @@ import java.util.Optional;
  * 26. 6. 4.        Admin       최초 생성
  */
 @Repository
-public interface FriendRequestsRepository extends JpaRepository<FriendRequests, Long> {
+public interface FriendRequestsRepository extends JpaRepository<FriendRequests, Long>, FriendRepository {
 
     List<FriendRequests> findByFromUser_UserIdAndToUser_UserIdAndStatus(Long fromUser_userId, Long toUser_userId, FriendRequestsStatus status);
 
@@ -52,4 +52,6 @@ public interface FriendRequestsRepository extends JpaRepository<FriendRequests, 
             Long fromUserId,
             FriendRequestsStatus status
     );
+
+    Integer countFriendByUserId();
 }
