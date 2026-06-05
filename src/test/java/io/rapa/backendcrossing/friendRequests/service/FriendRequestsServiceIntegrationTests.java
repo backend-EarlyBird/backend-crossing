@@ -222,7 +222,7 @@ public class FriendRequestsServiceIntegrationTests {
     @Test
     @DisplayName("친구 요청 취소 - 성공")
     void will_cancelFriendRequest_success() {
-        FriendRequests saved = saveFriendRequest(userB, userA, FriendRequestsStatus.PENDING);
+        FriendRequests saved = saveFriendRequest(userA, userB, FriendRequestsStatus.PENDING);
         Long requestId = saved.getFriendRequestId();
 
         friendService.cancelFriendRequest(userId, requestId);
