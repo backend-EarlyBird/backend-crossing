@@ -1,6 +1,5 @@
 package io.rapa.backendcrossing.friendRequests.reponse;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.rapa.backendcrossing.friendRequests.constants.FriendRequestsStatus;
 import io.rapa.backendcrossing.users.domain.entity.Users;
 import java.time.LocalDateTime;
@@ -23,12 +22,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FriendRequestResponse {
-    Long friendRequestId;
-    Long fromUserId;
-    Long toUserId;
-    FriendRequestsStatus status;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    LocalDateTime createdAt;
-    String nickname;
-
+    private Long friendRequestId;
+    private Users fromUser;
+    private Users toUser;
+    private FriendRequestsStatus status;
+    private LocalDateTime createdAt;
 }

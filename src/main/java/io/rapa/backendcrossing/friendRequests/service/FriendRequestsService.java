@@ -40,8 +40,9 @@ public class FriendRequestsService {
     public List<FriendRequestResponse> getFriends(Long userId) {
         validateUserId(userId);
 
-        return friendRequestsRepository.findFriendsByUserIdAndStatus(userId, FriendRequestsStatus.ACCEPTED)
+        return friendRequestsRepository.findByFromUserUserIdOrToUserUserId(userId, userId)
                 .stream()
+                .filter(friendRequest -> friendRequest.getStatus() == FriendRequestsStatus.ACCEPTED)
                 .map(this::toResponse)
                 .toList();
     }
@@ -78,11 +79,11 @@ public class FriendRequestsService {
         boolean alreadyRequested = friendRequestsRepository.existsByFromUserUserIdAndToUserUserIdAndStatus(
                 fromUserId, toUserId, FriendRequestsStatus.PENDING);
         boolean alreadyReceived = friendRequestsRepository.existsByToUserUserIdAndFromUserUserIdAndStatus(
-                toUserId, fromUserId, FriendRequestsStatus.PENDING);
+                fromUserId, toUserId, FriendRequestsStatus.PENDING);
         boolean alreadyFriend = friendRequestsRepository.existsByFromUserUserIdAndToUserUserIdAndStatus(
                 fromUserId, toUserId, FriendRequestsStatus.ACCEPTED) ||
                 friendRequestsRepository.existsByToUserUserIdAndFromUserUserIdAndStatus(
-                        toUserId, fromUserId, FriendRequestsStatus.ACCEPTED);
+                        fromUserId, toUserId, FriendRequestsStatus.ACCEPTED);
 
         if (alreadyRequested || alreadyReceived || alreadyFriend) {
             throw new CustomException(ErrorCode.ALREADY_FRIEND_OR_REQUESTED);
@@ -137,11 +138,11 @@ public class FriendRequestsService {
                 .findByFriendRequestIdAndToUserUserId(requestId, userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REQUEST_NOT_FOUND));
 
-        // 대기 중인 상태인지 확인
-        if (friendRequest.getStatus() != FriendRequestsStatus.PENDING) {
+        // 이미 수락되었거나 잘못된 상태인 경우: 400 에러
+        // 본인에게 온 요청일경우
+        if (!friendRequest.getToUser().getUserId().equals(userId)) {
             throw new CustomException(ErrorCode.INVALID_DECLINED);
         }
-
 
         friendRequest.setStatus(FriendRequestsStatus.DECLINED);
 
@@ -157,13 +158,15 @@ public class FriendRequestsService {
 
         //404에러
         FriendRequests friendRequest = friendRequestsRepository
-                .findByFriendRequestIdAndToUserUserId(requestId, userId)
+                .findByFriendRequestIdAndFromUserUserId(requestId, userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REQUEST_NOT_FOUND));
 
-        // 대기 중인 상태인지 확인
-        if (friendRequest.getStatus() != FriendRequestsStatus.PENDING) {
+        // 이미 수락되었거나 잘못된 상태인 경우: 400 에러
+        // 본인에게 온 요청일경우
+        if (!friendRequest.getFromUser().getUserId().equals(userId)) {
             throw new CustomException(ErrorCode.INVALID_CANCEL);
         }
+
 
         friendRequest.setStatus(FriendRequestsStatus.CANCELED);
 
@@ -198,11 +201,10 @@ public class FriendRequestsService {
     private FriendRequestResponse toResponse(FriendRequests friendRequest) {
         return new FriendRequestResponse(
                 friendRequest.getFriendRequestId(),
-                friendRequest.getFromUser().getUserId(), // ID만 넘기거나
-                friendRequest.getToUser().getUserId(),   // ID만 넘기거나
+                friendRequest.getFromUser(),
+                friendRequest.getToUser(),
                 friendRequest.getStatus(),
-                friendRequest.getCreatedAt(),
-                friendRequest.getToUser().getNickName()   // 닉네임을 따로 넘겨줍니다
+                friendRequest.getCreatedAt()
         );
     }
 }
