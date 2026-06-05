@@ -101,7 +101,7 @@ public class FriendRequestsControllerIntegrationTests {
     // ===== GET /friends =====
 
     @Test
-    @DisplayName("친구 목록 조회 - 성공")
+    @DisplayName("친구 목록 조회 - 성공 (fromUser가 나인 경우)")
     void getFriends_success() throws Exception {
         saveFriendRequest(userA, userB, FriendRequestsStatus.ACCEPTED);
 
@@ -109,7 +109,21 @@ public class FriendRequestsControllerIntegrationTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.length()").value(1))
-                .andExpect(jsonPath("$.data[0].status").value("ACCEPTED"));
+                .andExpect(jsonPath("$.data[0].status").value("ACCEPTED"))
+                .andExpect(jsonPath("$.data[0].nickname").value("닉네임2"));
+    }
+
+    @Test
+    @DisplayName("친구 목록 조회 - 성공 (toUser가 나인 경우)")
+    void getFriends_success_asToUser() throws Exception {
+        saveFriendRequest(userB, userA, FriendRequestsStatus.ACCEPTED);
+
+        mockMvc.perform(get(BASE_URL).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.length()").value(1))
+                .andExpect(jsonPath("$.data[0].status").value("ACCEPTED"))
+                .andExpect(jsonPath("$.data[0].nickname").value("닉네임2"));
     }
 
     @Test

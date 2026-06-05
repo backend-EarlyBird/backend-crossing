@@ -89,6 +89,7 @@ public class FriendRequestsControllerTests {
     void getFriends_success() throws Exception {
         FriendRequestResponse response = new FriendRequestResponse();
         response.setStatus(FriendRequestsStatus.ACCEPTED);
+        response.setNickname("상대방닉네임");
 
         given(friendRequestsService.getFriends(USER_ID)).willReturn(List.of(response));
 
@@ -96,7 +97,8 @@ public class FriendRequestsControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.length()").value(1))
-                .andExpect(jsonPath("$.data[0].status").value("ACCEPTED"));
+                .andExpect(jsonPath("$.data[0].status").value("ACCEPTED"))
+                .andExpect(jsonPath("$.data[0].nickname").value("상대방닉네임"));
     }
 
     @Test
