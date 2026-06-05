@@ -1,5 +1,6 @@
 package io.rapa.backendcrossing.friendRequests.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.rapa.backendcrossing.friendRequests.constants.FriendRequestsStatus;
 import io.rapa.backendcrossing.users.domain.entity.Users;
 import jakarta.persistence.*;
@@ -41,6 +42,7 @@ public class FriendRequests {
     private FriendRequestsStatus status;
 
     @CreationTimestamp
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
 
     @Column(nullable = false) // This forces the "cannot be null" constraint

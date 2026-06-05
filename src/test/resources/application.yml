@@ -11,6 +11,12 @@ spring:
     url: jdbc:mysql://localhost:3306/${dbName}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
+      # HikariCP Connection Pool Size 최적화 가이드
+      # 100과 같이 과도하게 크게 설정하면 안 되는 이유:
+      # 1. 컨텍스트 스위칭 비용: 스레드 전환 오버헤드로 인한 CPU 성능 저하
+      # 2. DB 병목: DB 커넥션 생성/유지 비용 및 락(Lock) 경합 증가
+      # 3. 권장 공식: ((CPU Core * 2) + Disk Count) 기준 산정
+      # 결론: 작은 값으로 시작하여 모니터링 및 부하 테스트를 통해 최적값 도출
       maximum-pool-size: 5
   jpa:
     hibernate:

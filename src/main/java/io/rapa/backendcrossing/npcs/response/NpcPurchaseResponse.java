@@ -1,10 +1,12 @@
 package io.rapa.backendcrossing.npcs.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.rapa.backendcrossing.items.constants.ItemGrade;
 import io.rapa.backendcrossing.items.constants.ItemType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -66,6 +68,7 @@ public class NpcPurchaseResponse {
         @Schema(description = "장착 여부", example = "false")
         private boolean equipped;
         @Schema(description = "획득 시각", example = "2026-05-21T12:00:00")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
         private LocalDateTime acquiredAt;
     }
 }
