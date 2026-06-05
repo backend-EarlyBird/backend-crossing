@@ -259,7 +259,7 @@ public class FriendRequestsControllerIntegrationTests {
     @Test
     @DisplayName("친구 요청 취소 - 성공")
     void cancelFriendRequest_success() throws Exception {
-        FriendRequests saved = saveFriendRequest(userB, userA, FriendRequestsStatus.PENDING);
+        FriendRequests saved = saveFriendRequest(userA, userB, FriendRequestsStatus.PENDING);
 
         mockMvc.perform(delete(BASE_URL + "/requests/" + saved.getFriendRequestId())
                         .contentType(MediaType.APPLICATION_JSON))
