@@ -23,6 +23,15 @@ public enum ErrorCode {
     NPC_SHOP_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "상점 아이템을 찾을 수 없습니다."),
     INSUFFICIENT_GOLD(HttpStatus.BAD_REQUEST, "골드가 부족합니다."),
 
+    //친구
+    SELF_REQUEST(HttpStatus.BAD_REQUEST, "자기 자신에게 친구 요청을 보낼 수 없습니다."),
+    INVALID_ACCEPT(HttpStatus.BAD_REQUEST, "본인에게 온 요청만 수락할 수 있습니다."),
+    INVALID_DECLINED(HttpStatus.BAD_REQUEST, "본인에게 온 요청만 거절할 수 있습니다."),
+    INVALID_CANCEL(HttpStatus.BAD_REQUEST, "본인이 보낸 요청만 취소할 수 있습니다."),
+    REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "친구 요청을 찾을 수 없습니다."),
+    NOT_FRIEND_RELATION(HttpStatus.NOT_FOUND, "친구 관계가 아닙니다."),
+    ALREADY_FRIEND_OR_REQUESTED(HttpStatus.CONFLICT, "이미 친구 관계입니다. / 이미 보낸 친구 요청이 있습니다."),
+
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 계정을 찾을 수 없습니다."),
     NOT_REGISTERED_USER(HttpStatus.NOT_FOUND, "해당 계정은 가입되어 있지 않습니다."),
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "해당 토큰은 만료된 토큰입니다."),
