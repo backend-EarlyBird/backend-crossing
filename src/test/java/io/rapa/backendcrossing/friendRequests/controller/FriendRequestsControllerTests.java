@@ -2,7 +2,6 @@ package io.rapa.backendcrossing.friendRequests.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.rapa.backendcrossing.common.constants.ErrorCode;
-import io.rapa.backendcrossing.friendRequests.request.FriendRequestDto;
 import io.rapa.backendcrossing.common.exception.CustomException;
 import io.rapa.backendcrossing.friendRequests.constants.FriendRequestsStatus;
 import io.rapa.backendcrossing.friendRequests.reponse.FriendRequestResponse;
@@ -149,8 +148,8 @@ public class FriendRequestsControllerTests {
         given(friendRequestsService.sendFriendRequest(USER_ID, TARGET_ID)).willReturn(response);
 
         mockMvc.perform(post(BASE_URL + "/requests")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(new FriendRequestDto(TARGET_ID))))
+                        .param("toUserId", String.valueOf(TARGET_ID))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.status").value("PENDING"));
@@ -163,8 +162,8 @@ public class FriendRequestsControllerTests {
                 .willThrow(new CustomException(ErrorCode.SELF_REQUEST));
 
         mockMvc.perform(post(BASE_URL + "/requests")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(new FriendRequestDto(USER_ID))))
+                        .param("toUserId", String.valueOf(USER_ID))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value(ErrorCode.SELF_REQUEST.getDescription()));
@@ -177,8 +176,8 @@ public class FriendRequestsControllerTests {
                 .willThrow(new CustomException(ErrorCode.ALREADY_FRIEND_OR_REQUESTED));
 
         mockMvc.perform(post(BASE_URL + "/requests")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(new FriendRequestDto(TARGET_ID))))
+                        .param("toUserId", String.valueOf(TARGET_ID))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value(ErrorCode.ALREADY_FRIEND_OR_REQUESTED.getDescription()));
