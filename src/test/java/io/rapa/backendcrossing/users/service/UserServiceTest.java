@@ -3,12 +3,9 @@ package io.rapa.backendcrossing.users.service;
 import io.rapa.backendcrossing.common.constants.ErrorCode;
 import io.rapa.backendcrossing.common.exception.CustomException;
 import io.rapa.backendcrossing.friendRequests.constants.FriendRequestsStatus;
-import io.rapa.backendcrossing.friendRequests.entity.FriendRequests;
-import io.rapa.backendcrossing.friendRequests.repository.FriendRepository;
 import io.rapa.backendcrossing.friendRequests.repository.FriendRequestsRepository;
 import io.rapa.backendcrossing.inventory.entity.Inventories;
 import io.rapa.backendcrossing.inventory.repository.InventoriesRepository;
-import io.rapa.backendcrossing.items.entity.Items;
 import io.rapa.backendcrossing.profiles.domain.entity.Profiles;
 import io.rapa.backendcrossing.security.domain.CurrentUser;
 import io.rapa.backendcrossing.support.BaseIntegrationTest;
@@ -21,25 +18,18 @@ import io.rapa.backendcrossing.users.domain.entity.Users;
 import io.rapa.backendcrossing.users.repository.UserRepository;
 import io.rapa.backendcrossing.wallets.domain.entity.Wallets;
 import io.rapa.util.UserUtils;
-import org.aspectj.lang.annotation.Before;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.security.Security;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -246,8 +236,8 @@ class UserServiceTest extends BaseIntegrationTest {
         class Context_with_unlogged_or_invalid_data{
 
             @Test
-            @DisplayName("It : 인증 되지 않아 지갑 조회에 실패한다.")
-            void It_지갑_조회_실패__인증_안됨(){
+            @DisplayName("It : 인증 되지 않아 모든 정보 조회에 실패한다.")
+            void It_모든_정보_조회_실패__인증_안됨(){
 
                 // when
                 Assertions.assertThatThrownBy(
@@ -258,8 +248,8 @@ class UserServiceTest extends BaseIntegrationTest {
             }
 
             @Test
-            @DisplayName("It : 인증된 사용자와 다른 Email이 인자로 전달되어 지갑 조회에 실패한다.")
-            void It_지갑_조회_실패__잘못된_데이터(){
+            @DisplayName("It : 인증된 사용자와 다른 Email이 인자로 전달되어 모든 정보 조회에 실패한다.")
+            void It_모든_정보_조회_실패__잘못된_데이터(){
                 // given
                 SecurityContextHolder.getContext().setAuthentication(
                         new TestingAuthenticationToken(

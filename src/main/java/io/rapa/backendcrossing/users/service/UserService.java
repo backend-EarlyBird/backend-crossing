@@ -2,7 +2,6 @@ package io.rapa.backendcrossing.users.service;
 
 import io.rapa.backendcrossing.common.constants.ErrorCode;
 import io.rapa.backendcrossing.common.exception.CustomException;
-import io.rapa.backendcrossing.friendRequests.repository.FriendRepository;
 import io.rapa.backendcrossing.friendRequests.repository.FriendRequestsRepository;
 import io.rapa.backendcrossing.inventory.repository.InventoriesRepository;
 import io.rapa.backendcrossing.profiles.domain.entity.Profiles;
@@ -13,8 +12,6 @@ import io.rapa.backendcrossing.users.domain.dto.response.MeDetailResponse;
 import io.rapa.backendcrossing.users.domain.dto.response.UserCreateResponse;
 import io.rapa.backendcrossing.users.domain.entity.Users;
 import io.rapa.backendcrossing.users.repository.UserBoundaryRepository;
-import io.rapa.backendcrossing.users.repository.UserBoundaryRepositoryImpl;
-import io.rapa.backendcrossing.users.repository.UserRepository;
 import io.rapa.backendcrossing.wallets.domain.entity.Wallets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
