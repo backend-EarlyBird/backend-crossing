@@ -9,9 +9,9 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface UuidValidatorRepository extends CrudRepository<UuidValidator, UUID> {
-    boolean existsUuidValidatorById(UUID id);
-    default UuidValidator findByIdOrThrow(UUID id){
+public interface UuidValidatorRepository extends CrudRepository<UuidValidator, String> {
+    boolean existsById(String id);
+    default UuidValidator findByIdOrThrow(String id){
         return findById(id).orElseThrow(
                 ()-> new CustomException(ErrorCode.UUID_HISTORY_NOT_FOUND)
         );

@@ -2,7 +2,7 @@ package io.rapa.backendcrossing.common.constants;
 
 public class EndPoints {
     public static final String[] POST_ANONYMOUS = {
-            "/api/v1/auth/login", "/api/v1/users/register"
+            "/api/v1/auth/login", "/api/v1/users/register", "/api/v1/auth/google/**"
     };
     public static final String[] POST_PERMITALL ={
             "/api/v1/auth/refresh"
@@ -14,7 +14,7 @@ public class EndPoints {
 
     };
     public static final String[] GET_ANONYMOUS ={
-            "/api/v1/npcs/**"
+            "/api/v1/npcs/**", "/api/v1/auth/google/**"
     };
     public static final String[] GET_PERMITALL ={
             "/api/v1/items/**"

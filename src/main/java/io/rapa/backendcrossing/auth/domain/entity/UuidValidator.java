@@ -16,13 +16,13 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UuidValidator {
     @Id
-    @UuidGenerator
-    private UUID id;
-    
+    private String id;
     private String userEmail;
-
     @Builder
-    public UuidValidator(String email){
+    public UuidValidator(
+            String email
+    ){
+        this.id = UUID.randomUUID().toString();
         this.userEmail = email;
     }
 }

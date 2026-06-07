@@ -6,12 +6,14 @@ import io.rapa.backendcrossing.common.constants.ErrorCode;
 import io.rapa.backendcrossing.common.exception.CustomException;
 import io.rapa.backendcrossing.common.util.PreConditions;
 import io.rapa.backendcrossing.security.domain.CurrentUser;
+import io.rapa.backendcrossing.security.domain.OauthHolderSingleton;
 import io.rapa.backendcrossing.users.repository.UserRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -20,6 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class OauthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final UuidValidatorRepository uuidValidatorRepository;
@@ -30,9 +33,11 @@ public class OauthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
             Authentication authentication
     ) throws IOException, ServletException {
         CurrentUser principal;
-        HttpSession session = request.getSession();
-        String redirect_uri = (String) session.getAttribute("redirect_uri");
-        String state = (String) session.getAttribute("state");
+        OauthHolderSingleton instance = OauthHolderSingleton.getInstance();
+        String redirect_uri = instance.getRedirect_uri();
+        String state = instance.getState();
+        log.info(redirect_uri);
+        log.info(state);
         //
         if( authentication.getPrincipal() instanceof CurrentUser c ) principal = c;
         else{

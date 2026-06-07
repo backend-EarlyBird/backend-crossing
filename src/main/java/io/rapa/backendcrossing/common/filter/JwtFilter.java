@@ -37,26 +37,21 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request,response);
             return;
         }
-
-        log.info("구동1");
-
         if(tokenService.validate(extractedToken)){
             TokenBody tokenBody = tokenService.parseJwt(extractedToken);
-            log.info(tokenBody.email());
             CurrentUser currentUser = userService.loadCurrentUserByEmail(tokenBody.email());
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     currentUser,
                     null,
                     currentUser.getAuthorities()
             );
-            log.info("구동2");
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(request,response);
     }
     public String extractToken(HttpServletRequest request){
         String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (bearerToken != null && bearerToken.startsWith("Bearer")){
+        if (bearerToken != null && bearerToken.length() > 10 && bearerToken.startsWith("Bearer")){
             return bearerToken.substring(7);
         }
         return null;

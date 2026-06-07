@@ -14,8 +14,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
+
+import java.io.IOException;
 
 @SecurityRequirement(name = "Bearer Authentication")
 @Tag(name = "Auth API" , description = "인증 관련 API 명세서")
@@ -226,11 +229,11 @@ public interface AuthControllerSupporter {
     )
     ResponseEntity<CommonResponse<AuthLoginResponse>> refreshToken(AuthRefreshRequest request);
 
-    String redirectToGoogle(
+    void redirectToGoogle(
             String redirect_uri,
             String state,
-            HttpSession httpSession
-    );
+            HttpServletResponse httpServletResponse
+    ) throws IOException;
 
     ResponseEntity<CommonResponse<AuthLoginResponse>> googleLoginAccount(AuthGoogleExchangeRequest request);
 }

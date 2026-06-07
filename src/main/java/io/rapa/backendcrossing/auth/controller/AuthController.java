@@ -3,21 +3,27 @@ package io.rapa.backendcrossing.auth.controller;
 import io.rapa.backendcrossing.auth.domain.dto.request.AuthGoogleExchangeRequest;
 import io.rapa.backendcrossing.common.constants.CommonResponse;
 import io.rapa.backendcrossing.common.constants.SuccessMessage;
+import io.rapa.backendcrossing.security.domain.OauthHolderSingleton;
 import io.rapa.backendcrossing.security.domain.dto.KeyPair;
 import io.rapa.backendcrossing.auth.domain.dto.request.AuthLoginRequest;
 import io.rapa.backendcrossing.auth.domain.dto.request.AuthRefreshRequest;
 import io.rapa.backendcrossing.auth.domain.dto.response.AuthLoginResponse;
 import io.rapa.backendcrossing.auth.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
 public class AuthController implements AuthControllerSupporter{
@@ -71,20 +77,21 @@ public class AuthController implements AuthControllerSupporter{
 
     @Override
     @GetMapping("/google/login")
-    public String redirectToGoogle(
+    public void redirectToGoogle(
           @RequestParam(required = true) String redirect_uri,
           @RequestParam(required = true) String state,
-          HttpSession httpSession
-    ) {
-        httpSession.setAttribute("redirect_uri", redirect_uri);
-        httpSession.setAttribute("state", state);
-        return "redirect:/oauth2/authorization/google";
+          HttpServletResponse httpServletResponse
+    ) throws IOException {
+        OauthHolderSingleton instance = OauthHolderSingleton.getInstance();
+        instance.setRedirect_uri(redirect_uri);
+        instance.setState(state);
+        httpServletResponse.sendRedirect("/oauth2/authorization/google");
     }
 
     @Override
     @PostMapping("/google/exchange")
     public ResponseEntity<CommonResponse<AuthLoginResponse>> googleLoginAccount(
-            @Valid AuthGoogleExchangeRequest request
+            @Valid @RequestBody AuthGoogleExchangeRequest request
     ) {
         KeyPair keyPair = authService.googleSignIn(request);
         return ResponseEntity.ok(

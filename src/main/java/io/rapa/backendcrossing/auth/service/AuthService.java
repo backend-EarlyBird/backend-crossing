@@ -105,10 +105,10 @@ public class AuthService {
 
     @Transactional
     public KeyPair googleSignIn(AuthGoogleExchangeRequest request){
-        UUID code = UUID.fromString(request.code());
+        String code = UUID.fromString(request.code()).toString();
 
         PreConditions.validate(
-            uuidValidatorRepository.existsUuidValidatorById(code),
+            uuidValidatorRepository.existsById(code),
             ErrorCode.NO_GOOGLE_AUTH_HISTORY
         );
 

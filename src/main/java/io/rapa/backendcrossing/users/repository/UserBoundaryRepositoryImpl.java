@@ -39,7 +39,7 @@ public class UserBoundaryRepositoryImpl implements UserBoundaryRepository {
 
     @Override
     public boolean existsUserById(Long userId) {
-        return userRepository.existsUsersById(userId);
+        return userRepository.existsUsersByUserId(userId);
     }
 
     @Override
