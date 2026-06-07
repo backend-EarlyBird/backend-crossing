@@ -30,7 +30,6 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/items")
-@SecurityRequirement(name = "Bearer Authentication")
 @Tag(name = "Items API", description = "아이템 관련 API 명세서")
 public class ItemsController implements ApiItemSupperts {
 

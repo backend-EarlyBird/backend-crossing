@@ -20,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 
-@SecurityRequirement(name = "Bearer Authentication")
 @Tag(name = "Auth API" , description = "인증 관련 API 명세서")
 public interface AuthControllerSupporter {
     @Operation(
@@ -153,6 +152,7 @@ public interface AuthControllerSupporter {
                     )
             }
     )
+    @SecurityRequirement(name = "Bearer Authentication")
     ResponseEntity<CommonResponse<Void>> logOut(HttpServletRequest request);
 
 

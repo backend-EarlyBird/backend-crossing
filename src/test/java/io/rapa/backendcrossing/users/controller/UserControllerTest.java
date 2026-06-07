@@ -8,6 +8,7 @@ import io.rapa.backendcrossing.friendRequests.repository.FriendRequestsRepositor
 import io.rapa.backendcrossing.inventory.entity.Inventories;
 import io.rapa.backendcrossing.inventory.repository.InventoriesRepository;
 import io.rapa.backendcrossing.profiles.domain.entity.Profiles;
+import io.rapa.backendcrossing.profiles.repository.ProfileRepository;
 import io.rapa.backendcrossing.security.domain.CurrentUser;
 import io.rapa.backendcrossing.security.domain.dto.KeyPair;
 import io.rapa.backendcrossing.security.service.TokenService;
@@ -19,6 +20,7 @@ import io.rapa.backendcrossing.users.domain.entity.Users;
 import io.rapa.backendcrossing.users.repository.UserRepository;
 import io.rapa.backendcrossing.users.service.UserService;
 import io.rapa.backendcrossing.wallets.domain.entity.Wallets;
+import io.rapa.backendcrossing.wallets.repository.WalletRepository;
 import io.rapa.util.UserUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
@@ -44,8 +46,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@AutoConfigureMockMvc
 @Transactional
+@AutoConfigureMockMvc
 class UserControllerTest extends BaseIntegrationTest  {
 
     @Autowired
@@ -54,6 +56,10 @@ class UserControllerTest extends BaseIntegrationTest  {
     UserRepository userRepository;
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    WalletRepository walletRepository;
+    @Autowired
+    ProfileRepository profileRepository;
     @Autowired
     MockMvc mockMvc;
     @Autowired
@@ -73,10 +79,15 @@ class UserControllerTest extends BaseIntegrationTest  {
 
     @BeforeEach
     void setUp(){
-        userRepository.deleteAll();
-        testUser = userRepository.save(
-                UserUtils.makeUsers(userEmail, passwordEncoder.encode(userPassword))
+        Users mockUser = UserUtils.makeUsers(
+                userEmail, passwordEncoder.encode(userPassword)
         );
+        testUser = userRepository.save(mockUser);
+
+        walletRepository.save(Wallets.builder().gem(0L).gold(0L).user(testUser).build());
+        profileRepository.save(Profiles.builder().level(0).exp(0L).totalPlaySeconds(0L).user(testUser).build());
+
+        testUser = userRepository.findByEmailOrThrow(userEmail);
     }
 
     @Nested

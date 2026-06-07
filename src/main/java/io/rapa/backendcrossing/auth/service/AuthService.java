@@ -24,6 +24,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.UUID;
 
@@ -81,7 +83,7 @@ public class AuthService {
 
 
 
-        RefreshToken foundedRT = refreshTokenRepository.findRefreshTokenByRefreshToken(receivedRT)
+        RefreshToken foundedRT = refreshTokenRepository.findById(receivedRT)
                 .orElseThrow(
                         () -> new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND)
                 );
@@ -97,7 +99,7 @@ public class AuthService {
     }
 
     @Transactional
-    @PreAuthorize("isAuthenticated()")
+    @PostMapping()
     public void signOut(String refreshToken){
         if(Strings.isBlank(refreshToken)) throw new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
         refreshTokenRepository.deleteById(refreshToken);

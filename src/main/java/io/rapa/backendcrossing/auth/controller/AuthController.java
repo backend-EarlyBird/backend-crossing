@@ -55,14 +55,14 @@ public class AuthController implements AuthControllerSupporter{
         KeyPair keyPair = authService.refreshToken(request);
         return ResponseEntity.ok(
                 CommonResponse.successWithMessage(
-                        AuthLoginResponse.of(keyPair, ACCESS_TOKEN_EXPIRE_TIME),
+                        AuthLoginResponse.of(keyPair, ACCESS_TOKEN_EXPIRE_TIME / 1000),
                         SuccessMessage.REFRESH_TOKEN_SUCCESS.getMessage()
                 )
         );
     }
 
     @Override
-    @PostMapping("logout")
+    @PostMapping("/logout")
     public ResponseEntity<CommonResponse<Void>> logOut(
             HttpServletRequest request
     ){

@@ -51,7 +51,10 @@ public class SwaggerConfiguration {
     public GroupedOpenApi userApi(){
         return GroupedOpenApi.builder()
                 .pathsToMatch("/api/v1/users/**")
-                .pathsToExclude("/api/v1/users/me/friends/**", "/api/v1/users/me/npcs/**", "/api/v1/users/me/inventory/**", "/api/v1/users/me/wallet/**")
+                .pathsToExclude(
+                        "/api/v1/users/me/friends/**", "/api/v1/users/me/npcs/**", "/api/v1/users/me/inventory/**",
+                        "/api/v1/users/me/wallet/**","/api/v1/users/me/profile/**"
+                )
                 .group("유저")
                 .build();
     }
