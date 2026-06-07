@@ -38,6 +38,11 @@ public class UserBoundaryRepositoryImpl implements UserBoundaryRepository {
     }
 
     @Override
+    public boolean existsUserById(Long userId) {
+        return userRepository.existsUsersById(userId);
+    }
+
+    @Override
     public Wallets findWalletByUserIdOrThrow(Long userId) {
         return walletRepository.findByUserIdOrThrow(userId);
     }

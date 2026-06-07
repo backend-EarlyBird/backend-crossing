@@ -36,7 +36,6 @@ spring:
             scope:
               - email
 custom:
-  baseUrl: http://localhost:3000/
   jwt:
     payloads:
       issuer: wjdtn747@naver.com

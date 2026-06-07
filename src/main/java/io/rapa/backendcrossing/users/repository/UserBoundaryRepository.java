@@ -15,6 +15,7 @@ public interface UserBoundaryRepository {
     Optional<Users> findUserByEmail(String email);
     Users findUserByEmailOrThrow(String email);
     Users saveUser(Users user);
+    boolean existsUserById(Long userId);
 
 
     Wallets findWalletByUserIdOrThrow(Long userId);

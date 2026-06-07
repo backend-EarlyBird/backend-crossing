@@ -1,22 +1,21 @@
 package io.rapa.backendcrossing.auth.controller;
 
+import io.rapa.backendcrossing.auth.domain.dto.request.AuthGoogleExchangeRequest;
 import io.rapa.backendcrossing.common.constants.CommonResponse;
 import io.rapa.backendcrossing.common.constants.SuccessMessage;
 import io.rapa.backendcrossing.security.domain.dto.KeyPair;
-import io.rapa.backendcrossing.auth.dto.request.AuthLoginRequest;
-import io.rapa.backendcrossing.auth.dto.request.AuthRefreshRequest;
-import io.rapa.backendcrossing.auth.dto.response.AuthLoginResponse;
+import io.rapa.backendcrossing.auth.domain.dto.request.AuthLoginRequest;
+import io.rapa.backendcrossing.auth.domain.dto.request.AuthRefreshRequest;
+import io.rapa.backendcrossing.auth.domain.dto.response.AuthLoginResponse;
 import io.rapa.backendcrossing.auth.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,6 +27,7 @@ public class AuthController implements AuthControllerSupporter{
     @Value("${custom.jwt.validations.access}")
     private Integer ACCESS_TOKEN_EXPIRE_TIME;
 
+    @Override
     @PostMapping("/login")
     public ResponseEntity<CommonResponse<AuthLoginResponse>> logInAccount(
             @Valid @RequestBody AuthLoginRequest request
@@ -41,6 +41,7 @@ public class AuthController implements AuthControllerSupporter{
         );
     }
 
+    @Override
     @PostMapping("/refresh")
     public ResponseEntity<CommonResponse<AuthLoginResponse>> refreshToken(
             @Valid @RequestBody AuthRefreshRequest request
@@ -54,6 +55,7 @@ public class AuthController implements AuthControllerSupporter{
         );
     }
 
+    @Override
     @PostMapping("logout")
     public ResponseEntity<CommonResponse<Void>> logOut(
             HttpServletRequest request
@@ -66,6 +68,33 @@ public class AuthController implements AuthControllerSupporter{
                 )
         );
     }
+
+    @Override
+    @GetMapping("/google/login")
+    public String redirectToGoogle(
+          @RequestParam(required = true) String redirect_uri,
+          @RequestParam(required = true) String state,
+          HttpSession httpSession
+    ) {
+        httpSession.setAttribute("redirect_uri", redirect_uri);
+        httpSession.setAttribute("state", state);
+        return "redirect:/oauth2/authorization/google";
+    }
+
+    @Override
+    @PostMapping("/google/exchange")
+    public ResponseEntity<CommonResponse<AuthLoginResponse>> googleLoginAccount(
+            @Valid AuthGoogleExchangeRequest request
+    ) {
+        KeyPair keyPair = authService.googleSignIn(request);
+        return ResponseEntity.ok(
+                CommonResponse.successWithMessage(
+                        AuthLoginResponse.of(keyPair, ACCESS_TOKEN_EXPIRE_TIME / 1000),
+                        ""
+                )
+        );
+    }
+
 
     public String extractToken(HttpServletRequest request){
         String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
