@@ -33,7 +33,7 @@ public interface FriendRequestsRepository extends JpaRepository<FriendRequests, 
 
     Optional<FriendRequests> findByFriendRequestIdAndToUserUserId(Long friendRequestId, Long toUserId);
 
-    //Optional<FriendRequests> findByFriendRequestIdAndToUserUserId(Long friendRequestId, Long toUserId);
+    Optional<FriendRequests> findByFriendRequestIdAndFromUserUserId(Long friendRequestId, Long fromUserId);
 
     Optional<FriendRequests> findByFromUserUserIdAndToUserUserIdAndStatus(
             Long fromUserId,

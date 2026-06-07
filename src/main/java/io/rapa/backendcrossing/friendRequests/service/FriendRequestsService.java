@@ -157,7 +157,7 @@ public class FriendRequestsService {
 
         //404에러
         FriendRequests friendRequest = friendRequestsRepository
-                .findByFriendRequestIdAndToUserUserId(requestId, userId)
+                .findByFriendRequestIdAndFromUserUserId(requestId, userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REQUEST_NOT_FOUND));
 
         // 대기 중인 상태인지 확인

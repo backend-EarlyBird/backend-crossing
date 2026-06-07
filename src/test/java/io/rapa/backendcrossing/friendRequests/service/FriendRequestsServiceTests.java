@@ -261,7 +261,7 @@ public class FriendRequestsServiceTests {
     void will_cancelFriendRequest_success() {
         FriendRequests request = buildRequest(userA, userB, FriendRequestsStatus.PENDING);
 
-        when(friendRepository.findByFriendRequestIdAndToUserUserId(requestId, userId))
+        when(friendRepository.findByFriendRequestIdAndFromUserUserId(requestId, userId))
                 .thenReturn(Optional.of(request));
 
         friendService.cancelFriendRequest(userId, requestId);
@@ -272,7 +272,7 @@ public class FriendRequestsServiceTests {
     @Test
     @DisplayName("친구 요청 취소 - 실패 (요청을 찾을 수 없음 404)")
     void will_cancelFriendRequest_fail_notFound() {
-        when(friendRepository.findByFriendRequestIdAndToUserUserId(requestId, userId))
+        when(friendRepository.findByFriendRequestIdAndFromUserUserId(requestId, userId))
                 .thenReturn(Optional.empty());
 
         assertThrows(CustomException.class, () -> friendService.cancelFriendRequest(userId, requestId));
