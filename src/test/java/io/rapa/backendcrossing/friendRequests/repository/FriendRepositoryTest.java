@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.authentication.TestingAuthenticationToken;
@@ -37,6 +38,7 @@ import tools.jackson.databind.ObjectMapper;
 @Import({
         QueryDslConfiguration.class, PasswordConfiguration.class,JpaConfig.class
 })
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) // ⭐️ 내 설정을 그대로 쓰겠다고 명시
 @ActiveProfiles("test")
 @DisplayName("Describe : FriendRequestRepository의")
 class FriendRepositoryTest {

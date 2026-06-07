@@ -4,6 +4,7 @@ import io.rapa.backendcrossing.inventory.entity.Inventories;
 import io.rapa.backendcrossing.inventory.repository.InventoriesRepository;
 import io.rapa.backendcrossing.inventory.response.InventoriesResponse;
 import io.rapa.backendcrossing.support.BaseIntegrationTest;
+import io.rapa.backendcrossing.users.constants.UserStatus;
 import io.rapa.backendcrossing.users.domain.entity.Users;
 import io.rapa.backendcrossing.users.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -51,8 +52,15 @@ public class InventoriesServiceIntegrationTests extends BaseIntegrationTest {
 
     @BeforeEach
     void setUp(){
-        userId = 1L;
-        foundedUser = userRepository.findByIdOrThrow(userId);
+        Users testUser = userRepository.save(Users.builder()
+                .email("test@test.com")
+                .nickname("테스터")
+                .password("password123!")
+                .build());
+
+        // 2. 방금 저장된 따끈따끈한 유저의 ID와 객체를 할당하기
+        userId = testUser.getUserId();
+        foundedUser = testUser;
     }
 
 
