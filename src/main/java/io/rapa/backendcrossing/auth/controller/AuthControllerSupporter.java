@@ -229,6 +229,7 @@ public interface AuthControllerSupporter {
     )
     ResponseEntity<CommonResponse<AuthLoginResponse>> refreshToken(AuthRefreshRequest request);
 
+
     void redirectToGoogle(
             String redirect_uri,
             String state,

@@ -99,7 +99,7 @@ public class AuthService {
     }
 
     @Transactional
-    @PostMapping()
+    @PreAuthorize("isAuthenticated()")
     public void signOut(String refreshToken){
         if(Strings.isBlank(refreshToken)) throw new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
         refreshTokenRepository.deleteById(refreshToken);

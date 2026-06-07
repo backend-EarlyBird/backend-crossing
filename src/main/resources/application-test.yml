@@ -11,29 +11,18 @@ spring:
     password:
     driver-class-name: org.h2.Driver
   jpa:
+    defer-datasource-initialization: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     show-sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
+        dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
   flyway:
     enabled: false
-    validate-on-migrate: true
-    baseline-on-migrate: false
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-name: Google
-            client-id: ${oauthClientId}
-            client-secret: ${oauthClientSecretKey}
-            scope:
-              - email
+  no-bean-override: true
 custom:
-  baseUrl: http://localhost:3000/
   jwt:
     payloads:
       issuer: wjdtn747@naver.com

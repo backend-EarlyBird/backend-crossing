@@ -76,7 +76,7 @@ public class ItemsServiceIntegrationTests {
         List<ItemsResponse> result = itemsService.findAllItems();
 
         // then: 반환된 결과 검증
-        assertThat(result).hasSize(2);
+        assertThat(result).hasSize(102);
         assertThat(result.get(0).getItemName()).isEqualTo("연습용 검");
     }
 
