@@ -28,6 +28,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
@@ -36,6 +37,7 @@ import tools.jackson.databind.ObjectMapper;
 @Import({
         QueryDslConfiguration.class, PasswordConfiguration.class,JpaConfig.class
 })
+@ActiveProfiles("test")
 @DisplayName("Describe : FriendRequestRepository의")
 class FriendRepositoryTest {
 
