@@ -7,7 +7,6 @@ import io.rapa.backendcrossing.users.domain.entity.QUsers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-@Repository
 @RequiredArgsConstructor
 public class FriendRepositoryImpl implements FriendRepository {
 
@@ -19,7 +18,7 @@ public class FriendRepositoryImpl implements FriendRepository {
         return jpaQueryFactory.selectFrom(qFriendRequests)
                 .where(
                         qFriendRequests.fromUser.userId.eq(userId)
-                                .and(qFriendRequests.status.eq(FriendRequestsStatus.ACCEPTED))
+                        .and(qFriendRequests.status.eq(FriendRequestsStatus.ACCEPTED))
                 ).fetch().size();
     }
 }

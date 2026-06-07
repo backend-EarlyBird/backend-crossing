@@ -1,16 +1,27 @@
 package io.rapa.backendcrossing.users.controller;
 
+import io.rapa.backendcrossing.common.constants.CommonResponse;
 import io.rapa.backendcrossing.common.constants.ErrorCode;
 import io.rapa.backendcrossing.common.constants.SuccessMessage;
+import io.rapa.backendcrossing.common.exception.CustomException;
+import io.rapa.backendcrossing.friendRequests.constants.FriendRequestsStatus;
+import io.rapa.backendcrossing.friendRequests.repository.FriendRequestsRepository;
+import io.rapa.backendcrossing.inventory.entity.Inventories;
+import io.rapa.backendcrossing.inventory.repository.InventoriesRepository;
+import io.rapa.backendcrossing.profiles.domain.entity.Profiles;
 import io.rapa.backendcrossing.security.domain.CurrentUser;
 import io.rapa.backendcrossing.security.domain.dto.KeyPair;
 import io.rapa.backendcrossing.security.service.TokenService;
+import io.rapa.backendcrossing.support.BaseIntegrationTest;
 import io.rapa.backendcrossing.users.constants.Role;
 import io.rapa.backendcrossing.users.domain.dto.request.UserCreateRequest;
+import io.rapa.backendcrossing.users.domain.dto.response.MeAllDataResponse;
 import io.rapa.backendcrossing.users.domain.dto.response.MeDetailResponse;
+import io.rapa.backendcrossing.users.domain.dto.response.UserCreateResponse;
 import io.rapa.backendcrossing.users.domain.entity.Users;
 import io.rapa.backendcrossing.users.repository.UserRepository;
 import io.rapa.backendcrossing.users.service.UserService;
+import io.rapa.backendcrossing.wallets.domain.entity.Wallets;
 import io.rapa.util.UserUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
@@ -21,13 +32,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -36,7 +50,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class UserControllerTest {
+class UserControllerTest extends BaseIntegrationTest  {
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -46,6 +60,12 @@ class UserControllerTest {
     ObjectMapper objectMapper;
     @Autowired
     MockMvc mockMvc;
+    @Autowired
+    InventoriesRepository inventoriesRepository;
+    @Autowired
+    FriendRequestsRepository friendRepository;
+    @Autowired
+    UserService userService;
 
     Users testUser;
     String userEmail = "wrong@naver.com";
@@ -194,6 +214,99 @@ class UserControllerTest {
                 // then
                 actions.andExpect(status().is3xxRedirection());
 
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("Describe: 내 전체 데이터 조회 ( GET /api/v1/users/me/data )")
+    class Describe_with_me_all_data{
+
+        Users testUser;
+        Wallets testWallet;
+        Profiles testProfile;
+        Inventories testInventory;
+        TestingAuthenticationToken authenticationToken;
+
+        @BeforeEach
+        void setUp(){
+            UserCreateResponse response = userService.registerUser(UserUtils.makeCreateRequest("testUser@naver.com", "wjdtn747"));
+            testUser = userRepository.findByIdOrThrow(response.userId());
+            testWallet = testUser.getWallet();
+            testProfile = testUser.getProfile();
+            testInventory = inventoriesRepository.save(Inventories.builder()
+                    .subUserId(testUser.getUserId())
+                    .user(testUser).item(savedItem).quantity(3).equipped(false).build());
+
+            friendRepository.save(UserUtils.buildRequest(testUser,
+                    userRepository.save(UserUtils.makeUsers("testUser@naver.com1", "wjdtn747"))
+                    , FriendRequestsStatus.ACCEPTED));
+            friendRepository.save(UserUtils.buildRequest(testUser,
+                    userRepository.save(UserUtils.makeUsers("testUser@naver.com2", "wjdtn747"))
+                    , FriendRequestsStatus.ACCEPTED));
+            friendRepository.save(UserUtils.buildRequest(testUser,
+                    userRepository.save(UserUtils.makeUsers("testUser@naver.com3", "wjdtn747"))
+                    , FriendRequestsStatus.ACCEPTED));
+
+            authenticationToken = new TestingAuthenticationToken(
+                    CurrentUser.from(
+                            testUser
+                    )   ,
+                    null,
+                    "ROLE_" + testUser.getRole()
+            );
+        }
+
+        @Nested
+        @DisplayName("Context: 올바른 데이터들이 주어지는 경우")
+        class Context_with_valid_data{
+
+            @Test
+            @DisplayName("It:  조회 성공 후 DTO 반환 및 200 OK 응답")
+            void It_나의_모든_정보_조회_성공() throws Exception {
+                // given
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+                // when
+                MockHttpServletResponse response = mockMvc.perform(
+                                MockMvcRequestBuilders.get(BASE_ENDPOINT + "/me/data")
+                        )
+                        // then
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse();
+
+                String json = response.getContentAsString();
+                MeAllDataResponse foundedData = objectMapper.readValue(
+                        json,
+                        new TypeReference<CommonResponse<MeAllDataResponse>>() {
+                        }
+                ).getData();
+
+                // then
+                Assertions.assertThat(foundedData.account().userId()).isEqualTo(testUser.getUserId());
+                Assertions.assertThat(foundedData.wallet().gem()).isEqualTo(0L);
+                Assertions.assertThat(foundedData.profile().level()).isEqualTo(0);
+                Assertions.assertThat(foundedData.inventory().size()).isGreaterThan(0);
+                Assertions.assertThat(foundedData.friendCount()).isEqualTo(3);
+            }
+
+        }
+
+        @Nested
+        @DisplayName("Context : 인증되지 않거나, 잘못된 데이터가 주어진 경우")
+        class Context_with_unlogged_or_invalid_data{
+
+            @Test
+            @DisplayName("It : 인증 되지 않아 모든 정보 조회에 실패하고, 302 에러가 발생")
+            void It_나의_모든_정보_조회_실패__인증_안됨() throws Exception {
+                // when
+                ResultActions actions = mockMvc.perform(
+                        MockMvcRequestBuilders.get(BASE_ENDPOINT + "/me/data")
+                );
+
+                // then
+                actions.andExpect(status().is3xxRedirection());
             }
         }
     }

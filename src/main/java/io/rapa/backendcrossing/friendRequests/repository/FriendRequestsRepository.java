@@ -52,6 +52,4 @@ public interface FriendRequestsRepository extends JpaRepository<FriendRequests, 
             Long fromUserId,
             FriendRequestsStatus status
     );
-
-    Integer countFriendByUserId();
 }

@@ -78,7 +78,7 @@ public class Users extends BaseEntity{
         role = Role.USER;
         profileImageUrl = "";
         emailDomain = extractProvider(email);
-        lastLoginAt = LocalDateTime.now();
+        lastLoginAt = LocalDateTime.now().withNano(0);
 
         if(emailDomain.equals("gmail")) provider = Provider.GOOGLE;
         else provider = Provider.LOCAL;

@@ -3,6 +3,7 @@ package io.rapa.backendcrossing.users.service;
 import io.rapa.backendcrossing.common.constants.ErrorCode;
 import io.rapa.backendcrossing.common.exception.CustomException;
 import io.rapa.backendcrossing.friendRequests.repository.FriendRepository;
+import io.rapa.backendcrossing.friendRequests.repository.FriendRequestsRepository;
 import io.rapa.backendcrossing.inventory.repository.InventoriesRepository;
 import io.rapa.backendcrossing.profiles.domain.entity.Profiles;
 import io.rapa.backendcrossing.security.domain.CurrentUser;
@@ -34,7 +35,7 @@ public class UserService {
     private final UserBoundaryRepository userBoundaryRepository;
     private final PasswordEncoder passwordEncoder;
     private final InventoriesRepository inventoriesRepository;
-    private final FriendRepository friendRepository;
+    private final FriendRequestsRepository friendRepository;
 
     @Transactional
     public UserCreateResponse registerUser(UserCreateRequest request){
@@ -61,6 +62,7 @@ public class UserService {
                         .level(0).exp(0L).user(savedUser).totalPlaySeconds(0L)
                         .build()
         );
+
 
 
         return UserCreateResponse.from(savedUser);

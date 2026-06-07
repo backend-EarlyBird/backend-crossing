@@ -4,6 +4,7 @@ import io.rapa.backendcrossing.common.constants.CommonResponse;
 import io.rapa.backendcrossing.common.constants.SuccessMessage;
 import io.rapa.backendcrossing.security.domain.CurrentUser;
 import io.rapa.backendcrossing.users.domain.dto.request.UserCreateRequest;
+import io.rapa.backendcrossing.users.domain.dto.response.MeAllDataResponse;
 import io.rapa.backendcrossing.users.domain.dto.response.MeDetailResponse;
 import io.rapa.backendcrossing.users.domain.dto.response.UserCreateResponse;
 import io.rapa.backendcrossing.users.service.UserService;
@@ -49,6 +50,20 @@ public class UserController implements UserControllerSupporter{
                 .body(
                         CommonResponse.successWithMessage(
                                 meDetails,
+                                null
+                        )
+                );
+    }
+
+    @GetMapping("/me/data")
+    public ResponseEntity<CommonResponse<MeAllDataResponse>> getMeAllData(
+            @AuthenticationPrincipal CurrentUser currentUser
+    ){
+        MeAllDataResponse allDataOfMe = userService.getAllDataOfMe(currentUser.getId());
+        return ResponseEntity.ok()
+                .body(
+                        CommonResponse.successWithMessage(
+                                allDataOfMe,
                                 null
                         )
                 );
