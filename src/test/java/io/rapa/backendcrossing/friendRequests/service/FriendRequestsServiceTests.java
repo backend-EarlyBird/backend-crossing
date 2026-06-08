@@ -240,6 +240,7 @@ public class FriendRequestsServiceTests {
 
         when(friendRepository.findByFriendRequestIdAndToUserUserId(requestId, userId))
                 .thenReturn(Optional.of(request));
+        when(friendRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
 
         friendService.declineFriendRequest(userId, requestId);
 
@@ -265,6 +266,7 @@ public class FriendRequestsServiceTests {
 
         when(friendRepository.findByFriendRequestIdAndFromUserUserId(requestId, userId))
                 .thenReturn(Optional.of(request));
+        when(friendRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
 
         friendService.cancelFriendRequest(userId, requestId);
 
