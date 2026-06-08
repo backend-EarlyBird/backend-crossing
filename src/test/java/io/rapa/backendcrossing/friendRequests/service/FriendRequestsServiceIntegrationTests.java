@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -34,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("FriendRequests 서비스 통합 테스트")
 @Transactional
 @Slf4j
+@ActiveProfiles("test")
 public class FriendRequestsServiceIntegrationTests {
 
     @Autowired

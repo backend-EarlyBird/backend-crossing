@@ -21,11 +21,13 @@ import org.springframework.security.authentication.AuthenticationCredentialsNotF
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @SpringBootTest
 @Transactional
+@ActiveProfiles("test")
 @DisplayName("AuthService의")
 class AuthServiceTest {
     @Autowired

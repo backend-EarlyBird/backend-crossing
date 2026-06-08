@@ -1,5 +1,6 @@
 package io.rapa.backendcrossing.users.service;
 
+import io.rapa.backendcrossing.common.aop.annotation.SpecLogger;
 import io.rapa.backendcrossing.common.constants.ErrorCode;
 import io.rapa.backendcrossing.common.exception.CustomException;
 import io.rapa.backendcrossing.friendRequests.repository.FriendRequestsRepository;
@@ -78,6 +79,7 @@ public class UserService {
     }
 
     @PreAuthorize("#userId == authentication.principal.id and isAuthenticated()")
+    @SpecLogger
     public MeAllDataResponse getAllDataOfMe(Long userId){
         return MeAllDataResponse.from(
                 userBoundaryRepository.findUserByIdOrThrow(userId),
