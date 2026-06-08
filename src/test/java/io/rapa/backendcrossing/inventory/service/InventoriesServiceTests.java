@@ -21,6 +21,7 @@ import java.util.List;
 
 import io.rapa.backendcrossing.common.exception.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 
@@ -43,6 +44,7 @@ import static org.mockito.Mockito.*;
  */
 @ExtendWith(MockitoExtension.class)
 @Slf4j
+@ActiveProfiles("test")
 @DisplayName("InventoriesService 단위 테스트")
 public class InventoriesServiceTests {
 

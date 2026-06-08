@@ -13,6 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
@@ -37,7 +38,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Items 서비스 통합 테스트")
 @Transactional //db롤백용
 @Slf4j
-//@ActiveProfiles("test")
+@ActiveProfiles("test")
 public class ItemsServiceIntegrationTests {
 
     //통합이니 진짜 객체 사용함

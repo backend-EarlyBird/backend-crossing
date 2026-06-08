@@ -46,6 +46,7 @@ import io.rapa.backendcrossing.inventory.request.ItemPickupRequest;
 @Transactional
 @DisplayName("InventoriesController 통합 테스트")
 @Slf4j
+@ActiveProfiles("test")
 public class InventoryControllerIntegrationTests extends BaseIntegrationTest {
 
     @Autowired

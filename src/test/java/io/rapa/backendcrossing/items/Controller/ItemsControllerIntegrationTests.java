@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import org.springframework.http.MediaType;
@@ -31,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional // DB에 테스트 데이터가 남지 않게 자동 롤백
 @DisplayName("ItemsController 통합 테스트")
 @Slf4j
+@ActiveProfiles("test")
 public class ItemsControllerIntegrationTests {
 
     @Autowired
