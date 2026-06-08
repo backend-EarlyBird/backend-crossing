@@ -1,5 +1,6 @@
 package io.rapa.backendcrossing.friendRequests.repository;
 
+import io.rapa.backendcrossing.common.config.QueryDslConfiguration;
 import io.rapa.backendcrossing.friendRequests.constants.FriendRequestsStatus;
 import io.rapa.backendcrossing.friendRequests.entity.FriendRequests;
 import io.rapa.backendcrossing.users.domain.entity.Users;
@@ -14,6 +15,7 @@ import org.springframework.boot.jdbc.autoconfigure.DataSourceInitializationAutoC
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase.Replace;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
@@ -36,7 +38,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest(excludeAutoConfiguration = DataSourceInitializationAutoConfiguration.class)
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-@Import(JpaConfig.class)
+// 💡 프로젝트에 실제 존재하는 Querydsl 설정 클래스명을 적어줍니다.
+@Import({JpaConfig.class, QueryDslConfiguration.class})
+@ActiveProfiles("test")
 @DisplayName("FriendRequestsRepository @Query 테스트")
 class FriendRequestsRepositoryTests {
 

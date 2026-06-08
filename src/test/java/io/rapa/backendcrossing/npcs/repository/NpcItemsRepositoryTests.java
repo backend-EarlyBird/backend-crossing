@@ -1,5 +1,6 @@
 package io.rapa.backendcrossing.npcs.repository;
 
+import io.rapa.backendcrossing.common.config.QueryDslConfiguration;
 import io.rapa.backendcrossing.items.constants.ItemGrade;
 import io.rapa.backendcrossing.items.constants.ItemType;
 import io.rapa.backendcrossing.items.entity.Items;
@@ -17,6 +18,7 @@ import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabas
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase.Replace;
 import org.springframework.context.annotation.Import;
 import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 
@@ -41,7 +43,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @DataJpaTest(excludeAutoConfiguration = DataSourceInitializationAutoConfiguration.class)
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-@Import(JpaConfig.class)
+@Import({JpaConfig.class, QueryDslConfiguration.class})
+@ActiveProfiles("test")
 @DisplayName("NpcItemsRepository @Query 테스트")
 class NpcItemsRepositoryTests {
 

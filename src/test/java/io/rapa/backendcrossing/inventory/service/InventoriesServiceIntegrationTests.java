@@ -49,8 +49,15 @@ public class InventoriesServiceIntegrationTests extends BaseIntegrationTest {
 
     @BeforeEach
     void setUp(){
-        userId = 1L;
-        foundedUser = userRepository.findByIdOrThrow(userId);
+        Users testUser = userRepository.save(Users.builder()
+                .email("testuser@naver.com")
+                .password("password")
+                .nickname("테스트유저")
+                .build());
+
+        // 저장된 유저의 동적 ID와 엔티티 객체를 필드에 할당
+        userId = testUser.getUserId();
+        foundedUser = testUser;
     }
 
 
