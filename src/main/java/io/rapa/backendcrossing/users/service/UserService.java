@@ -52,7 +52,7 @@ public class UserService {
 
         userBoundaryRepository.saveWallet(
                 Wallets.builder()
-                        .gem(0L).gold(0L).user(savedUser)
+                        .gem(50000L).gold(50000L).user(savedUser)
                         .build()
         );
         userBoundaryRepository.saveProfile(
