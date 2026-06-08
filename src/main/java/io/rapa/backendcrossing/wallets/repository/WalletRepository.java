@@ -1,4 +1,4 @@
-package io.rapa.backendcrossing.npcs.repository;
+package io.rapa.backendcrossing.wallets.repository;
 
 /**
  * packageName    : io.rapa.backendcrossing.npcs.repository

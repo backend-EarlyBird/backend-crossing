@@ -2,11 +2,11 @@ package io.rapa.backendcrossing.profiles.domain.entity;
 
 import io.rapa.backendcrossing.users.domain.entity.Users;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
+@Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Profiles {
     @Id
@@ -31,10 +31,13 @@ public class Profiles {
     public Profiles(
             Integer level,
             Long exp,
-            Long totalPlaySeconds
+            Long totalPlaySeconds,
+            Users user
     ){
         this.exp = exp;
         this.level = level;
         this.totalPlaySeconds = totalPlaySeconds;
+        this.user = user;
+        user.setProfile(this);
     }
 }

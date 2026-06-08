@@ -18,13 +18,12 @@ import lombok.*;
 
 @Entity
 @Getter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Wallets {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long userId;
 
     @MapsId
@@ -33,12 +32,32 @@ public class Wallets {
     private Users user;
 
     @Column(nullable = false)
-    @Builder.Default
-    private Long gold = 0L;
+    private Long gold;
 
     @Column(nullable = false)
-    @Builder.Default
-    private Long gem = 0L;
+    private Long gem;
+
+    public Wallets(
+            Long userId,
+            Long gem,
+            Long gold
+    ){
+        this.gold = gold;
+        this.gem = gem;
+        this.userId = userId;
+    }
+
+    @Builder
+    public Wallets(
+            Long gold,
+            Long gem,
+            Users user
+    ){
+        this.gold = gold;
+        this.gem = gem;
+        this.user = user;
+        user.setWallet(this);
+    }
 
     public void deductGold(long amount) {
         this.gold -= amount;

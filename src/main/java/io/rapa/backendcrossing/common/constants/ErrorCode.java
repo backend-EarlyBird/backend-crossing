@@ -40,13 +40,19 @@ public enum ErrorCode {
     ABNORMAL_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 Refresh Token입니다."),
     AUTHENTICATION_ERROR(HttpStatus.UNAUTHORIZED, "인증 과정 중 오류가 발생했습니다."),
 
-    EMAIL_ALREAY_EXISTS(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),
+    EMAIL_ALREDY_EXISTS(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),
     PASSWORD_INCORRECT(HttpStatus.UNAUTHORIZED, "잘못된 이메일/비밀번호 입니다."),
     USER_INACTIVATED(HttpStatus.BAD_REQUEST, "해당 계정이 비활성화 상태입니다."),
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "해당 Refrsh Token이 서버에 존재하지 않습니다."),
     TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 토큰을 찾을 수 없습니다."),
     PASSWORD_LENGTH_NOT_VALID(HttpStatus.BAD_REQUEST, "비밀번호는 8~64자여야 합니다."),
     VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "입력값이 잘못되었습니다."),
+
+    // 지갑 관련
+    WALLET_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저의 지갑을 찾을 수 없습니다."),
+    
+    // 프로필 관련
+    PROFILE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저의 프로필을 찾을 수 없습니다."),
 
     // AUTH 관련
     AUTHORIZE_NEEDED(HttpStatus.UNAUTHORIZED, "인증이 필요합니다.")

@@ -1,6 +1,5 @@
-package io.rapa.backendcrossing.users.service;
+package io.rapa.backendcrossing.auth.service;
 
-import io.rapa.backendcrossing.auth.service.AuthService;
 import io.rapa.backendcrossing.common.constants.ErrorCode;
 import io.rapa.backendcrossing.common.exception.CustomException;
 import io.rapa.backendcrossing.security.domain.CurrentUser;
@@ -138,7 +137,7 @@ class AuthServiceTest {
 
 
             @Test
-            @DisplayName("It: RefreshToken을 재발급 성공한다.")
+            @DisplayName("It: RefreshToken을 재발급 실패한다.")
             void It_RefreshToken_reissue_success(){
                 // given
                 AuthRefreshRequest request = new AuthRefreshRequest("invalidToken");

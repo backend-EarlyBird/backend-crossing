@@ -8,10 +8,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsUtils;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @RequiredArgsConstructor
@@ -22,7 +28,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity){
         return httpSecurity
                 .csrf(csrf->csrf.disable())
-                .cors(cors->cors.disable())
+                .cors(cors-> cors.disable() )
                 .formLogin(formLogin->formLogin.disable())
                 .oauth2Login(
                         oauth->oauth.successHandler(oauthSuccessHandler)
@@ -31,8 +37,9 @@ public class SecurityConfiguration {
                 .sessionManagement(sessionConfig-> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
                     auth -> auth
-
-                            .requestMatchers("/login/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**" ).permitAll()
+                            .requestMatchers(HttpMethod.OPTIONS,"/**").permitAll()
+                            .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                            .requestMatchers("/login/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
                             .requestMatchers(HttpMethod.POST, EndPoints.POST_ANONYMOUS).anonymous()
                             .requestMatchers(HttpMethod.POST, EndPoints.POST_PERMITALL).permitAll()

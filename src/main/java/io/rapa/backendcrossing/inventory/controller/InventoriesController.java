@@ -7,6 +7,7 @@ import io.rapa.backendcrossing.inventory.response.InventoriesResponse;
 import io.rapa.backendcrossing.inventory.service.InventoriesService;
 import io.rapa.backendcrossing.inventory.request.ItemPickupRequest;
 import io.rapa.backendcrossing.security.domain.CurrentUser;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
 @RequestMapping("/api/v1/users/me/inventory")
 @Tag(name = "Inventories API", description = "인벤토리 관련 API 명세서")
 public class InventoriesController implements ApiInventoriesSupperts {

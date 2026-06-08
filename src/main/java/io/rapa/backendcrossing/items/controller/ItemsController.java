@@ -5,6 +5,7 @@ import io.rapa.backendcrossing.common.constants.CommonResponse;
 import io.rapa.backendcrossing.items.response.ItemsResponse;
 import io.rapa.backendcrossing.items.service.ItemsService;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/items")
+@SecurityRequirement(name = "Bearer Authentication")
 @Tag(name = "Items API", description = "아이템 관련 API 명세서")
 public class ItemsController implements ApiItemSupperts {
 

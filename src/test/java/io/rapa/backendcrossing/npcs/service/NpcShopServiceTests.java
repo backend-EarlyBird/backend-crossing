@@ -14,7 +14,7 @@ import io.rapa.backendcrossing.users.repository.UserRepository;
 import io.rapa.backendcrossing.wallets.domain.entity.Wallets;
 import io.rapa.backendcrossing.npcs.repository.NpcItemsRepository;
 import io.rapa.backendcrossing.npcs.repository.NpcsRepository;
-import io.rapa.backendcrossing.npcs.repository.WalletRepository;
+import io.rapa.backendcrossing.wallets.repository.WalletRepository;
 import io.rapa.backendcrossing.npcs.request.NpcPurchaseRequest;
 import io.rapa.backendcrossing.npcs.response.NpcPurchaseResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -54,6 +54,7 @@ public class NpcShopServiceTests {
     @Mock private NpcItemsRepository npcItemsRepository;
     @Mock private WalletRepository walletRepository;
     @Mock private InventoriesRepository inventoriesRepository;
+    @Mock private UserRepository userRepository;
 
     @Mock
     Users user = mock();
@@ -66,10 +67,6 @@ public class NpcShopServiceTests {
     private NpcItems npcItem;
     private Wallets wallet;
     private NpcPurchaseRequest request;
-
-    @Mock
-    UserRepository userRepository;
-
     @BeforeEach
     void setUp() {
         npc = Npcs.builder().npcId(1L).rId("npc_merchant").name("상인").locationKey("market").active(true).build();
@@ -82,7 +79,7 @@ public class NpcShopServiceTests {
 
         npcItem = NpcItems.builder().npcItemId(1L).npc(npc).item(item).quantity(99).sortOrder(1).build();
 
-        wallet = Wallets.builder().userId(1L).gold(5000L).gem(10L).build();
+        wallet = new Wallets(1L, 10L, 5000L);
 
         request = new NpcPurchaseRequest();
         try {
@@ -149,7 +146,7 @@ public class NpcShopServiceTests {
     void purchase_Fail_InsufficientGold() {
         // given
         Long userId = 1L;
-        Wallets poorWallet = Wallets.builder().userId(1L).gold(10L).gem(0L).build(); // 30*3=90 필요
+        Wallets poorWallet = new Wallets(1L, 0L, 10L); // 30*3=90 필요
 
         given(npcsRepository.findByIdOrThrow(1L)).willReturn(npc);
         given(npcItemsRepository.findByIdWithDetails(1L)).willReturn(Optional.of(npcItem));

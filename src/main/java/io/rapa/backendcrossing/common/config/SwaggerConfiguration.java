@@ -6,9 +6,11 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,26 +22,6 @@ import org.springframework.context.annotation.Configuration;
                 version = "0.0.1",
                 description = "백엔드의 숲 API 명세"
         )
-)
-@ApiResponses(
-        value = {
-                @ApiResponse(
-                        responseCode = "500",
-                        description = "회원가입 실패 ( 서버 내부 오류 발생 )",
-                        content = @Content(
-                                mediaType = "application/json",
-                                examples = @ExampleObject(
-                                        """
-                            { 
-                                "success": false, 
-                                "message": "서버 오류가 발생했습니다.", 
-                                "data": null 
-                            }
-                                        """
-                                )
-                        )
-                )
-        }
 )
 public class SwaggerConfiguration {
     @Bean
@@ -69,8 +51,7 @@ public class SwaggerConfiguration {
     public GroupedOpenApi userApi(){
         return GroupedOpenApi.builder()
                 .pathsToMatch("/api/v1/users/**")
-                .pathsToExclude("/api/v1/users/me/friends/**")
-                .pathsToExclude("/api/v1/users/me/npcs/**")
+                .pathsToExclude("/api/v1/users/me/friends/**", "/api/v1/users/me/npcs/**", "/api/v1/users/me/inventory/**", "/api/v1/users/me/wallet/**")
                 .group("유저")
                 .build();
     }
@@ -118,8 +99,7 @@ public class SwaggerConfiguration {
     @Bean
     public GroupedOpenApi npcApi(){
         return GroupedOpenApi.builder()
-                .pathsToMatch("/api/v1/npcs/**")
-                .pathsToMatch("/api/v1/users/me/npcs/**")
+                .pathsToMatch("/api/v1/npcs/**", "/api/v1/users/me/npcs/**")
                 .group("NPC")
                 .build();
     }
