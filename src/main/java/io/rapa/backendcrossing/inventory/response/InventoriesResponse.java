@@ -36,7 +36,8 @@ public class InventoriesResponse {
     @Schema(description = "판매 가격", example = "10")
     private Integer sellPrice;
     @Schema(description = "보유 수량", example = "5")
-    private Integer quantity;
+    @Builder.Default
+    private Integer quantity = 0;
     @Schema(description = "장착 여부", example = "false")
     private boolean equipped;
     @Schema(description = "획득 시간", example = "2026-05-21T12:00:00")
@@ -58,5 +59,9 @@ public class InventoriesResponse {
                 .equipped(inventory.isEquipped())
                 .acquiredAt(inventory.getAcquiredAt())
                 .build();
+    }
+
+    public static InventoriesResponse empty() {
+        return new InventoriesResponse(); // 필드가 모두 null 또는 기본값인 객체
     }
 }

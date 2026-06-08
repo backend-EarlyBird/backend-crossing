@@ -20,6 +20,7 @@ import org.hibernate.annotations.CreationTimestamp;
  */
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(uniqueConstraints = @UniqueConstraint(name = "idx_unique_subuser_item", columnNames = {"sub_user_id", "item_id"}))
 public class Inventories {

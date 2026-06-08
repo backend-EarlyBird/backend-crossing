@@ -10,6 +10,7 @@ import io.rapa.backendcrossing.items.repository.ItemsRepository;
 import io.rapa.backendcrossing.users.domain.entity.Users;
 import io.rapa.backendcrossing.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
  * -----------------------------------------------------------
  * 26. 6. 2.        Admin       최초 생성
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class InventoriesService {
@@ -70,12 +72,29 @@ public class InventoriesService {
     * */
     @Transactional
     public InventoriesResponse discardItem(Long itemId, int quantity, Long userId) {
+
         Inventories inventory = inventoriesRepository.findBySubUserIdAndItemItemId(userId, itemId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
-        if (inventory.getQuantity() < quantity) throw new CustomException(ErrorCode.ITEM_COUNT_FOUND);
-        if (inventory.getQuantity() == quantity) inventoriesRepository.delete(inventory);
-        else inventory.addQuantity(-quantity);
 
+        if (inventory.getQuantity() < quantity) {
+            throw new CustomException(ErrorCode.ITEM_COUNT_FOUND);
+        }
+
+        if (inventory.getQuantity() == quantity) {
+            // [수정] 삭제 로직 수행 후, 응답용 빈 DTO 생성
+            Long userItemId = inventory.getUserItemId();
+            inventoriesRepository.delete(inventory);
+
+            // 유니티 파싱 에러를 막기 위한 최소한의 데이터가 담긴 객체
+            return InventoriesResponse.builder()
+                    .userItemId(userItemId)
+                    .quantity(0)
+                    .build();
+        }
+
+        inventory.addQuantity(-quantity);
         return InventoriesResponse.from(inventory);
     }
+
+
 }
