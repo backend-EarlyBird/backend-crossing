@@ -40,7 +40,7 @@ public class Inventories {
 
     private Long subUserId; // 시큐리티에서 가져온 정보 매핑용
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private Items item; // Items 엔티티와 관계 설정
 

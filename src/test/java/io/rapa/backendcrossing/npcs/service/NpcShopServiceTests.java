@@ -2,15 +2,12 @@ package io.rapa.backendcrossing.npcs.service;
 
 import io.rapa.backendcrossing.common.constants.ErrorCode;
 import io.rapa.backendcrossing.common.exception.CustomException;
-import io.rapa.backendcrossing.inventory.entity.Inventories;
 import io.rapa.backendcrossing.inventory.repository.InventoriesRepository;
 import io.rapa.backendcrossing.items.constants.ItemGrade;
 import io.rapa.backendcrossing.items.constants.ItemType;
 import io.rapa.backendcrossing.items.entity.Items;
 import io.rapa.backendcrossing.npcs.entity.NpcItems;
 import io.rapa.backendcrossing.npcs.entity.Npcs;
-import io.rapa.backendcrossing.users.domain.entity.Users;
-import io.rapa.backendcrossing.users.repository.UserRepository;
 import io.rapa.backendcrossing.wallets.domain.entity.Wallets;
 import io.rapa.backendcrossing.npcs.repository.NpcItemsRepository;
 import io.rapa.backendcrossing.npcs.repository.NpcsRepository;
@@ -56,10 +53,6 @@ public class NpcShopServiceTests {
     @Mock private NpcItemsRepository npcItemsRepository;
     @Mock private WalletRepository walletRepository;
     @Mock private InventoriesRepository inventoriesRepository;
-    @Mock private UserRepository userRepository;
-
-    @Mock
-    Users user = mock();
 
     @InjectMocks
     private NpcShopService npcShopService;
@@ -94,21 +87,13 @@ public class NpcShopServiceTests {
     }
 
     @Test
-    @DisplayName("아이템 구매 - 성공 (신규 아이템)")
-    void purchase_Success_NewItem() {
+    @DisplayName("아이템 구매 - 성공")
+    void purchase_Success() {
         // given
         Long userId = 1L;
         given(npcsRepository.findByIdOrThrow(1L)).willReturn(npc);
         given(npcItemsRepository.findByIdWithDetails(1L)).willReturn(Optional.of(npcItem));
         given(walletRepository.findByUserIdOrThrow(userId)).willReturn(wallet);
-        given(inventoriesRepository.findBySubUserIdAndItemItemId(userId, item.getItemId())).willReturn(Optional.empty());
-
-        Inventories savedInventory = Inventories.builder()
-                .userItemId(1L).user(user).item(item).quantity(3).build();
-        given(inventoriesRepository.save(any())).willReturn(savedInventory);
-
-        given(userRepository.findByIdOrThrow(userId))
-                .willReturn(user);
 
         // when
         NpcPurchaseResponse result = npcShopService.purchase(userId, 1L, 1L, request);
@@ -117,30 +102,7 @@ public class NpcShopServiceTests {
         assertThat(result).isNotNull();
         assertThat(result.getWallet().getGold()).isEqualTo(5000L - 90L); // 30 * 3
         assertThat(result.getAcquiredItem().getQuantity()).isEqualTo(3);
-    }
-
-    @Test
-    @DisplayName("아이템 구매 - 성공 (기존 보유 아이템 수량 증가)")
-    void purchase_Success_ExistingItem() {
-        // given
-        Long userId = 1L;
-        Inventories existingInventory = Inventories.builder()
-                .userItemId(1L).user(user).item(item).quantity(5).build();
-
-        given(userRepository.findByIdOrThrow(userId))
-                .willReturn(user);
-
-        given(npcsRepository.findByIdOrThrow(1L)).willReturn(npc);
-        given(npcItemsRepository.findByIdWithDetails(1L)).willReturn(Optional.of(npcItem));
-        given(walletRepository.findByUserIdOrThrow(userId)).willReturn(wallet);
-        given(inventoriesRepository.findBySubUserIdAndItemItemId(userId, item.getItemId())).willReturn(Optional.of(existingInventory));
-
-        // when
-        NpcPurchaseResponse result = npcShopService.purchase(userId, 1L, 1L, request);
-
-        // then
-        assertThat(result.getAcquiredItem().getQuantity()).isEqualTo(8); // 5 + 3
-        verify(inventoriesRepository, never()).save(any());
+        verify(inventoriesRepository).upsertQuantity(userId, item.getItemId(), userId, 3);
     }
 
     @Test
