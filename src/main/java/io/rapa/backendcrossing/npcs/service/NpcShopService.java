@@ -45,19 +45,28 @@ public class NpcShopService {
 
     @Transactional
     public NpcPurchaseResponse purchase(Long userId, Long npcId, Long npcItemId, NpcPurchaseRequest request) {
-        // 1. 유효성 검증
+        // 유효성 검증
         npcsRepository.findByIdOrThrow(npcId);
 
         // Fetch Join된 아이템 로딩
         NpcItems npcItem = npcItemsRepository.findByIdWithDetails(npcItemId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NPC_SHOP_ITEM_NOT_FOUND));
 
-        // 2. [소속 검증] - 확실하게 여기서 체크합니다.
+        // [소속 검증] - 확실하게 여기서 체크합니다.
         if (!npcItem.getNpc().getNpcId().equals(npcId)) {
             throw new CustomException(ErrorCode.NPC_SHOP_ITEM_NOT_FOUND);
         }
 
-        // 3. 재화 확인 및 차감
+        // NPC 상점 아이템 재고 확인
+        if (npcItem.getQuantity() < request.getQuantity()) {
+            throw new CustomException(ErrorCode.INVALID_INPUT); // 재고 부족 예외
+        }
+
+        //NPC 상점 재고 차감
+        int updatedStock = npcItem.getQuantity() - request.getQuantity();
+        npcItem.setQuantity(updatedStock);
+
+        // 재화 확인 및 차감
         long totalPrice = (long) npcItem.getItem().getPrice() * request.getQuantity();
         Wallets wallet = walletRepository.findByUserIdOrThrow(userId);
         if (wallet.getGold() < totalPrice) {

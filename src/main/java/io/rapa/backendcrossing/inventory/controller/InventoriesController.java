@@ -69,18 +69,23 @@ public class InventoriesController implements ApiInventoriesSupperts {
 
 
     @ApiDiscardItem
-    @DeleteMapping("{itemId}/discard")
+    @DeleteMapping("/{itemId}/discard")
     public ResponseEntity<CommonResponse<InventoriesResponse>> discardItem(
             @AuthenticationPrincipal CurrentUser currentUser,
             @PathVariable Long itemId,
             @RequestParam Integer quantity) {
 
+        log.info("!!!!!!");
         InventoriesResponse result = service.discardItem(itemId, quantity, currentUser.getId());
 
-        return ResponseEntity.ok(CommonResponse.successWithMessage(result,
-                SuccessMessage.ITEM_DISCARD_SUCCESS.getMessage()));
+        // [핵심] result가 null이면(아이템 삭제됨), 유니티의 JsonUtility가
+        // 파싱 에러를 내지 않도록 "빈 객체"를 생성해서 보냅니다.
+        InventoriesResponse responseData = (result == null) ? new InventoriesResponse() : result;
 
-        //return ResponseEntity.ok(CommonResponse.success(null));
+        return ResponseEntity.ok(CommonResponse.successWithMessage(
+                responseData,
+                SuccessMessage.ITEM_DISCARD_SUCCESS.getMessage()
+        ));
 
     }
 

@@ -66,7 +66,7 @@ public class FriendRequestsController {
 
     // 친구 요청 수락
     @FriendRequestsSupperts.ApiAcceptFriendRequest
-    @PatchMapping("/requests/{requestId}/accept")
+    @PostMapping("/requests/{requestId}/accept")
     public ResponseEntity<CommonResponse<FriendRequestResponse>> acceptFriendRequest(
             @AuthenticationPrincipal CurrentUser currentUser,
             @PathVariable Long requestId) {
@@ -77,7 +77,7 @@ public class FriendRequestsController {
 
     // 친구 요청 거절
     @FriendRequestsSupperts.ApiDeclineFriendRequest
-    @PatchMapping("/requests/{requestId}/decline")
+    @PostMapping("/requests/{requestId}/decline")
     public ResponseEntity<CommonResponse<FriendRequestResponse>> declineFriendRequest(
             @AuthenticationPrincipal CurrentUser currentUser,
             @PathVariable Long requestId) {

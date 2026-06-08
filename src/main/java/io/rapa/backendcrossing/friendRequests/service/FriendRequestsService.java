@@ -9,6 +9,7 @@ import io.rapa.backendcrossing.friendRequests.repository.FriendRequestsRepositor
 import io.rapa.backendcrossing.users.domain.entity.Users;
 import io.rapa.backendcrossing.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,7 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FriendRequestsService {
 
     private final FriendRequestsRepository friendRequestsRepository;
@@ -145,7 +147,7 @@ public class FriendRequestsService {
 
         friendRequest.setStatus(FriendRequestsStatus.DECLINED);
 
-        return toResponse(friendRequest);
+        return toResponse(friendRequestsRepository.save(friendRequest));
     }
 
     /**
@@ -167,7 +169,7 @@ public class FriendRequestsService {
 
         friendRequest.setStatus(FriendRequestsStatus.CANCELED);
 
-        return toResponse(friendRequest);
+        return toResponse(friendRequestsRepository.save(friendRequest));
     }
 
     /**
