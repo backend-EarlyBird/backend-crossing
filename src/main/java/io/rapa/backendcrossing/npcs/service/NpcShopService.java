@@ -17,18 +17,19 @@ import io.rapa.backendcrossing.common.exception.CustomException;
 import io.rapa.backendcrossing.inventory.entity.Inventories;
 import io.rapa.backendcrossing.inventory.repository.InventoriesRepository;
 import io.rapa.backendcrossing.npcs.entity.NpcItems;
-import io.rapa.backendcrossing.users.domain.entity.Users;
-import io.rapa.backendcrossing.users.repository.UserRepository;
 import io.rapa.backendcrossing.wallets.domain.entity.Wallets;
 import io.rapa.backendcrossing.npcs.repository.NpcItemsRepository;
 import io.rapa.backendcrossing.npcs.repository.NpcsRepository;
 import io.rapa.backendcrossing.wallets.repository.WalletRepository;
 import io.rapa.backendcrossing.npcs.request.NpcPurchaseRequest;
 import io.rapa.backendcrossing.npcs.response.NpcPurchaseResponse;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Slf4j
 @Service
@@ -39,59 +40,58 @@ public class NpcShopService {
     private final NpcItemsRepository npcItemsRepository;
     private final WalletRepository walletRepository;
     private final InventoriesRepository inventoriesRepository;
-    private final UserRepository userRepository;
+
+    private final EntityManager entityManager;
 
     @Transactional
     public NpcPurchaseResponse purchase(Long userId, Long npcId, Long npcItemId, NpcPurchaseRequest request) {
-        // NPC, 상점 아이템 유효성 검증
+        // 1. 유효성 검증
         npcsRepository.findByIdOrThrow(npcId);
-        //NpcItems npcItem = npcItemsRepository.findByIdOrThrow(npcItemId);
 
-        log.info("NPC ID: {}, Item ID: {}, Quantity: {}", npcId, npcItemId, request.getQuantity());
-
-        // Fetch Join을 사용하여 NpcItems + Npc + Item 을 한 번에 로딩
-        // 1+N 관련 해결용
+        // Fetch Join된 아이템 로딩
         NpcItems npcItem = npcItemsRepository.findByIdWithDetails(npcItemId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NPC_SHOP_ITEM_NOT_FOUND));
 
-        /**
-         * 기존 : NpcItems만 가져옴 : 연관 데이터 필요시 마다 쿼리 추가(자연로딩)
-         * 현재 : Fetch Join을 사용하여 NpcItems + Npc + Item 을 한 번에 로딩(추가 쿼리를 가져오지않음)
-         */
-
-        // npcItemId가 해당 npc 소속인지 검증
+        // 2. [소속 검증] - 확실하게 여기서 체크합니다.
         if (!npcItem.getNpc().getNpcId().equals(npcId)) {
             throw new CustomException(ErrorCode.NPC_SHOP_ITEM_NOT_FOUND);
         }
 
+        // 3. 재화 확인 및 차감
         long totalPrice = (long) npcItem.getItem().getPrice() * request.getQuantity();
-
-        // 골드 차감
         Wallets wallet = walletRepository.findByUserIdOrThrow(userId);
         if (wallet.getGold() < totalPrice) {
             throw new CustomException(ErrorCode.INSUFFICIENT_GOLD);
         }
-        wallet.deductGold(totalPrice);
+        wallet.deductGold(totalPrice); // JPA가 Dirty Checking으로 자동 update
 
-        Users foundedUser = userRepository.findByIdOrThrow(userId);
+        Long itemId = npcItem.getItem().getItemId();
 
-        // 인벤토리에 아이템 추가 (기존 보유 시 수량 증가)
-        Inventories inventory = inventoriesRepository
-                .findBySubUserIdAndItemItemId(userId, npcItem.getItem().getItemId())
-                .map(existing -> {
-                    existing.addQuantity(request.getQuantity());
-                    return existing;
-                })
-                .orElseGet(() -> inventoriesRepository.save(
-                        Inventories.builder()
-                                .subUserId(userId)
-                                .item(npcItem.getItem())
-                                .user(foundedUser)
-                                .quantity(request.getQuantity())
-                                .build()
-                ));
+        // UPSERT 실행 (DB에 반영됨)
+        log.info("UPSERT 파라미터 확인: subUserId={}, itemId={}, userId={}, quantity={}",
+                userId, npcItem.getItem().getItemId(), userId, request.getQuantity());
+        inventoriesRepository.upsertQuantity(userId, itemId, userId, request.getQuantity());
 
-        return toResponse(wallet, inventory);
+
+        return NpcPurchaseResponse.builder()
+                .wallet(NpcPurchaseResponse.WalletDto.builder()
+                        .gold(wallet.getGold())
+                        .gem(wallet.getGem())
+                        .build())
+                .acquiredItem(NpcPurchaseResponse.AcquiredItemDto.builder()
+                        .itemId(npcItem.getItem().getItemId())
+                        .rId(npcItem.getItem().getRId())
+                        .itemName(npcItem.getItem().getItemName())
+                        .itemType(npcItem.getItem().getItemType())
+                        .itemGrade(npcItem.getItem().getItemGrade())
+                        .description(npcItem.getItem().getDescription())
+                        .price(npcItem.getItem().getPrice())
+                        .sellPrice(npcItem.getItem().getSellPrice())
+                        .quantity(request.getQuantity()) // 요청한 수량 그대로 사용
+                        .equipped(false) // 신규 획득/수량 추가 시 기본값
+                        .acquiredAt(LocalDateTime.now()) // 현재 시각
+                        .build())
+                .build();
     }
 
     private NpcPurchaseResponse toResponse(Wallets wallet, Inventories inventory) {

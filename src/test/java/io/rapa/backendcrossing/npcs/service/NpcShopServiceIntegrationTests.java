@@ -90,6 +90,8 @@ public class NpcShopServiceIntegrationTests {
         );
         userId = user.getUserId();
 
+        log.info("user saved: {}", user.getUserId());
+
         walletRepository.save(Wallets.builder().user(user).gold(5000L).gem(10L).build());
 
         Items item = itemsRepository.save(Items.builder()
@@ -139,8 +141,8 @@ public class NpcShopServiceIntegrationTests {
         // when: 동일 아이템 한 번 더 구매
         NpcPurchaseResponse result = npcShopService.purchase(userId, npcId, npcItemId, request);
 
-        // then
-        assertThat(result.getAcquiredItem().getQuantity()).isEqualTo(6); // 3 + 3
+        // then: 응답은 요청 수량(3) 반환, DB는 누적(6)
+        assertThat(result.getAcquiredItem().getQuantity()).isEqualTo(3);
 
         Optional<Inventories> saved = inventoriesRepository.findBySubUserIdAndItemItemId(userId, result.getAcquiredItem().getItemId());
         assertThat(saved.get().getQuantity()).isEqualTo(6);

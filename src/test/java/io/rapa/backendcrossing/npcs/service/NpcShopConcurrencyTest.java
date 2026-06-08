@@ -11,6 +11,8 @@ import io.rapa.backendcrossing.npcs.repository.NpcsRepository;
 import io.rapa.backendcrossing.npcs.request.NpcPurchaseRequest;
 import io.rapa.backendcrossing.users.domain.entity.Users;
 import io.rapa.backendcrossing.users.repository.UserRepository;
+import io.rapa.backendcrossing.wallets.domain.entity.Wallets;
+import io.rapa.backendcrossing.wallets.repository.WalletRepository;
 import io.rapa.util.UserUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -21,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @SpringBootTest
 @Slf4j
+@ActiveProfiles("test")
 public class NpcShopConcurrencyTest {
 
     @Autowired
@@ -46,6 +50,8 @@ public class NpcShopConcurrencyTest {
     NpcsRepository npcsRepository;
     @Autowired
     ItemsRepository itemsRepository;
+    @Autowired
+    WalletRepository walletRepository;
 
     AtomicInteger successCount = new AtomicInteger(0);
     AtomicInteger failureCount = new AtomicInteger(0);
@@ -66,6 +72,7 @@ public class NpcShopConcurrencyTest {
             );
         }
         userRepository.saveAll(users);
+        users.forEach(u -> walletRepository.save(Wallets.builder().user(u).gold(5000L).gem(10L).build()));
 
         Items item = itemsRepository.save(Items.builder()
                 .rId("potion_hp_001").itemName("HP 포션")
@@ -120,7 +127,7 @@ public class NpcShopConcurrencyTest {
                 }
                 countDownLatch.await();
                 executorService.shutdown();
-                NpcItems foundedItem = npcItemsRepository.findByIdOrThrow(1L);
+                NpcItems foundedItem = npcItemsRepository.findByIdOrThrow(npcItemId);
                 log.info(foundedItem.getQuantity() + "");
                 log.info("성공한 주문수 : %d \n 실패한 주문수 : %d \n 남은 재고 수 : %d".formatted(successCount.get(), failureCount.get(), foundedItem.getQuantity()));
                 Assertions.assertThat(foundedItem.getQuantity()).isNotEqualTo(0);

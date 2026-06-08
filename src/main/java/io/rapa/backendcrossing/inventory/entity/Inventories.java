@@ -20,7 +20,8 @@ import org.hibernate.annotations.CreationTimestamp;
  */
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED) // JPA 규약에 따른 기본 생성자
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(uniqueConstraints = @UniqueConstraint(name = "idx_unique_subuser_item", columnNames = {"sub_user_id", "item_id"}))
 public class Inventories {
 
     @Id
@@ -40,7 +41,7 @@ public class Inventories {
 
     private Long subUserId; // 시큐리티에서 가져온 정보 매핑용
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private Items item; // Items 엔티티와 관계 설정
 
