@@ -8,6 +8,7 @@ import io.rapa.backendcrossing.npcs.response.NpcPurchaseResponse;
 import io.rapa.backendcrossing.npcs.service.NpcShopService;
 import io.rapa.backendcrossing.security.domain.CurrentUser;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users/me/npcs")
+@SecurityRequirement(name = "Bearer Authentication")
 @Tag(name = "Npc API", description = "Npc 관련 API 명세서")
 public class NpcShopController {
 

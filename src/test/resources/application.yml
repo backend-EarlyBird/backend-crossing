@@ -6,19 +6,17 @@ spring:
       host: ${redisHost}
       port: ${redisPort}
   datasource:
-    username: ${dbUserName}
-    password: ${dbPassword}
-    url: jdbc:mysql://localhost:3306/${dbName}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    hikari:
-      maximum-pool-size: 100
+    url: jdbc:h2:mem:testdb;MODE=MySQL;NON_KEYWORDS=USER;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
   jpa:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
+        dialect: org.hibernate.dialect.H2Dialect
         format_sql: true
   flyway:
     enabled: false

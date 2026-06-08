@@ -37,6 +37,9 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request,response);
             return;
         }
+
+        log.info("구동1");
+
         if(tokenService.validate(extractedToken)){
             TokenBody tokenBody = tokenService.parseJwt(extractedToken);
             log.info(tokenBody.email());
@@ -46,6 +49,7 @@ public class JwtFilter extends OncePerRequestFilter {
                     null,
                     currentUser.getAuthorities()
             );
+            log.info("구동2");
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(request,response);

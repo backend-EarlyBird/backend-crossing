@@ -4,9 +4,11 @@ import io.rapa.backendcrossing.common.constants.CommonResponse;
 import io.rapa.backendcrossing.common.constants.SuccessMessage;
 import io.rapa.backendcrossing.security.domain.CurrentUser;
 import io.rapa.backendcrossing.users.domain.dto.request.UserCreateRequest;
+import io.rapa.backendcrossing.users.domain.dto.response.MeAllDataResponse;
 import io.rapa.backendcrossing.users.domain.dto.response.MeDetailResponse;
 import io.rapa.backendcrossing.users.domain.dto.response.UserCreateResponse;
 import io.rapa.backendcrossing.users.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
+@SecurityRequirement(name = "Bearer Authentication")
 public class UserController implements UserControllerSupporter{
 
     private final UserService userService;
@@ -39,16 +42,28 @@ public class UserController implements UserControllerSupporter{
     }
 
     @GetMapping("/me")
-    public ResponseEntity<CommonResponse<MeDetailResponse>> getUserDetails(
+    public ResponseEntity<CommonResponse<MeDetailResponse>> getMeDetails(
             @AuthenticationPrincipal CurrentUser currentUser
     ){
-        log.info("1");
         MeDetailResponse meDetails = userService.getDetailofMe(currentUser.getEmail());
-        log.info("3");
         return ResponseEntity.ok()
                 .body(
                         CommonResponse.successWithMessage(
                                 meDetails,
+                                null
+                        )
+                );
+    }
+
+    @GetMapping("/me/data")
+    public ResponseEntity<CommonResponse<MeAllDataResponse>> getMeAllData(
+            @AuthenticationPrincipal CurrentUser currentUser
+    ){
+        MeAllDataResponse allDataOfMe = userService.getAllDataOfMe(currentUser.getId());
+        return ResponseEntity.ok()
+                .body(
+                        CommonResponse.successWithMessage(
+                                allDataOfMe,
                                 null
                         )
                 );

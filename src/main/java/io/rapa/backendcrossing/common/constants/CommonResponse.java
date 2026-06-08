@@ -2,8 +2,10 @@ package io.rapa.backendcrossing.common.constants;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * packageName    : io.rapa.backendcrossing.common.constants
@@ -18,6 +20,8 @@ import lombok.Getter;
  */
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Schema(description = "공통 응답 객체")
 public class CommonResponse<T> {
     @Schema(description = "성공 여부", example = "true")

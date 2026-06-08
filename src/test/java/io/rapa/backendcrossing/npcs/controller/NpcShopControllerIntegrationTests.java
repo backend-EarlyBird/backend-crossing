@@ -11,7 +11,7 @@ import io.rapa.backendcrossing.npcs.entity.Npcs;
 import io.rapa.backendcrossing.wallets.domain.entity.Wallets;
 import io.rapa.backendcrossing.npcs.repository.NpcItemsRepository;
 import io.rapa.backendcrossing.npcs.repository.NpcsRepository;
-import io.rapa.backendcrossing.npcs.repository.WalletRepository;
+import io.rapa.backendcrossing.wallets.repository.WalletRepository;
 import io.rapa.backendcrossing.security.domain.CurrentUser;
 import io.rapa.backendcrossing.users.domain.entity.Users;
 import io.rapa.backendcrossing.users.repository.UserRepository;

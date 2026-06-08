@@ -13,7 +13,7 @@ import io.rapa.backendcrossing.npcs.repository.NpcItemsRepository;
 import io.rapa.backendcrossing.npcs.repository.NpcsRepository;
 import io.rapa.backendcrossing.inventory.entity.Inventories;
 import io.rapa.backendcrossing.inventory.repository.InventoriesRepository;
-import io.rapa.backendcrossing.npcs.repository.WalletRepository;
+import io.rapa.backendcrossing.wallets.repository.WalletRepository;
 import io.rapa.backendcrossing.npcs.request.NpcPurchaseRequest;
 import io.rapa.backendcrossing.npcs.response.NpcPurchaseResponse;
 import io.rapa.backendcrossing.users.domain.entity.Users;
