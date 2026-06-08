@@ -117,6 +117,7 @@ public class AuthService {
         UuidValidator uuidValidator = uuidValidatorRepository.findByIdOrThrow(code);
 
         Users foundedUser = userRepository.findByEmailOrThrow(uuidValidator.getUserEmail());
+        foundedUser.setLoginTimeNow();
 
         return tokenService.issueKeyPair(
                 foundedUser.getEmail(),

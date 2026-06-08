@@ -14,10 +14,10 @@ public class EndPoints {
 
     };
     public static final String[] GET_ANONYMOUS ={
-            "/api/v1/npcs/**", "/api/v1/auth/google/**"
+             "/api/v1/auth/google/**"
     };
     public static final String[] GET_PERMITALL ={
-            "/api/v1/items/**"
+            "/api/v1/npcs/**","/api/v1/items/**"
     };
     public static final String[] GET_AUTHENTICATED = {
             "/api/v1/users/me/**", "/api/v1/users/me/friends/**", "/api/v1/users/me/inventory"
