@@ -8,6 +8,8 @@ import io.rapa.backendcrossing.items.entity.Items;
 import io.rapa.backendcrossing.items.repository.ItemsRepository;
 import io.rapa.backendcrossing.npcs.entity.NpcItems;
 import io.rapa.backendcrossing.npcs.entity.Npcs;
+import io.rapa.backendcrossing.users.domain.dto.request.UserCreateRequest;
+import io.rapa.backendcrossing.users.service.UserService;
 import io.rapa.backendcrossing.wallets.domain.entity.Wallets;
 import io.rapa.backendcrossing.npcs.repository.NpcItemsRepository;
 import io.rapa.backendcrossing.npcs.repository.NpcsRepository;
@@ -18,16 +20,29 @@ import io.rapa.backendcrossing.npcs.request.NpcPurchaseRequest;
 import io.rapa.backendcrossing.npcs.response.NpcPurchaseResponse;
 import io.rapa.backendcrossing.users.domain.entity.Users;
 import io.rapa.backendcrossing.users.repository.UserRepository;
+import io.rapa.util.UserUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -57,6 +72,11 @@ public class NpcShopServiceIntegrationTests {
     @Autowired private InventoriesRepository inventoriesRepository;
     @Autowired private UserRepository userRepository;
     @Autowired private ItemsRepository itemsRepository;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+    @Autowired
+    UserService userService;
 
     private Long userId;
     private Long npcId;
@@ -162,4 +182,6 @@ public class NpcShopServiceIntegrationTests {
 
         assertThat(exception.getMessage()).isEqualTo(ErrorCode.NPC_SHOP_ITEM_NOT_FOUND.getDescription());
     }
+
+
 }

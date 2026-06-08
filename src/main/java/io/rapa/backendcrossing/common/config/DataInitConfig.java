@@ -31,15 +31,7 @@ public class DataInitConfig {
     CommandLineRunner initUser() {
         final int BATCH_SIZE = 50;
         return args -> {
-            if (userRepository.count() < 1) {
-                userService.registerUser(
-                        new UserCreateRequest(
-                                "wjdtn747@gmail.com",
-                                passwordEncoder.encode("wjdtn0619"),
-                                "슈빠어드민"
-                        )
-                );
-            }
+            Users founded = userRepository.findByIdOrThrow(1L);
             if(userRepository.count() < 200){
                 for (int start = 0; start < 200; start += BATCH_SIZE) {
 

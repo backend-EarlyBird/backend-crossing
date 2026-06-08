@@ -26,4 +26,8 @@ public class NpcPurchaseRequest {
     @Min(1)
     @Schema(description = "구매 수량", example = "3")
     private Integer quantity;
+
+    public NpcPurchaseRequest(Integer quantity){
+        this.quantity = quantity;
+    }
 }
