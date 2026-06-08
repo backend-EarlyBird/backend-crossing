@@ -90,6 +90,8 @@ public class NpcShopServiceIntegrationTests {
         );
         userId = user.getUserId();
 
+        log.info("user saved: {}", user.getUserId());
+
         walletRepository.save(Wallets.builder().user(user).gold(5000L).gem(10L).build());
 
         Items item = itemsRepository.save(Items.builder()

@@ -20,7 +20,8 @@ import org.hibernate.annotations.CreationTimestamp;
  */
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED) // JPA 규약에 따른 기본 생성자
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(uniqueConstraints = @UniqueConstraint(name = "idx_unique_subuser_item", columnNames = {"sub_user_id", "item_id"}))
 public class Inventories {
 
     @Id
