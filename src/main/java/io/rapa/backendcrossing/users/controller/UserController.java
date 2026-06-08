@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
-@SecurityRequirement(name = "Bearer Authentication")
 public class UserController implements UserControllerSupporter{
 
     private final UserService userService;

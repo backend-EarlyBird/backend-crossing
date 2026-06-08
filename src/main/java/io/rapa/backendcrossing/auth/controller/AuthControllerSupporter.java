@@ -1,9 +1,10 @@
 package io.rapa.backendcrossing.auth.controller;
 
+import io.rapa.backendcrossing.auth.domain.dto.request.AuthGoogleExchangeRequest;
 import io.rapa.backendcrossing.common.constants.CommonResponse;
-import io.rapa.backendcrossing.auth.dto.request.AuthLoginRequest;
-import io.rapa.backendcrossing.auth.dto.request.AuthRefreshRequest;
-import io.rapa.backendcrossing.auth.dto.response.AuthLoginResponse;
+import io.rapa.backendcrossing.auth.domain.dto.request.AuthLoginRequest;
+import io.rapa.backendcrossing.auth.domain.dto.request.AuthRefreshRequest;
+import io.rapa.backendcrossing.auth.domain.dto.response.AuthLoginResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -12,8 +13,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
-@SecurityRequirement(name = "Bearer Authentication")
+
+import java.io.IOException;
+
 @Tag(name = "Auth API" , description = "인증 관련 API 명세서")
 public interface AuthControllerSupporter {
     @Operation(
@@ -90,6 +96,65 @@ public interface AuthControllerSupporter {
     )
     ResponseEntity<CommonResponse<AuthLoginResponse>> logInAccount(AuthLoginRequest request);
 
+    @Operation(
+            summary = "로그아웃",
+            description = "계정의 로그아웃을 수행하는 API"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "계정 로그아웃 성공",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            """
+                                                   {
+                                                             "success": true,
+                                                             "message": "로그아웃되었습니다.",
+                                                             "data": null
+                                                    }
+                                            """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "계정 로그아웃 실패 ( Refresh Token이 올바르지 않음. )",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            """
+                                     { 
+                                        "success": false, 
+                                        "message": "인증이 필요합니다.", 
+                                        "data": null 
+                                     }
+                                            """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "계정 로그아웃 실패 ( 서버 내부 오류 발생 )",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            """
+                                    { 
+                                        "success": false, 
+                                        "message": "서버 오류가 발생했습니다.", 
+                                        "data": null 
+                                    }
+                                            """
+                                    )
+                            )
+                    )
+            }
+    )
+    @SecurityRequirement(name = "Bearer Authentication")
+    ResponseEntity<CommonResponse<Void>> logOut(HttpServletRequest request);
+
 
     @Operation(
             summary = "토큰 갱신",
@@ -163,4 +228,12 @@ public interface AuthControllerSupporter {
             }
     )
     ResponseEntity<CommonResponse<AuthLoginResponse>> refreshToken(AuthRefreshRequest request);
+
+    void redirectToGoogle(
+            String redirect_uri,
+            String state,
+            HttpServletResponse httpServletResponse
+    ) throws IOException;
+
+    ResponseEntity<CommonResponse<AuthLoginResponse>> googleLoginAccount(AuthGoogleExchangeRequest request);
 }

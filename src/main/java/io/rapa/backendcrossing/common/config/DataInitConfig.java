@@ -1,8 +1,10 @@
 package io.rapa.backendcrossing.common.config;
 
 
+import io.rapa.backendcrossing.users.domain.dto.request.UserCreateRequest;
 import io.rapa.backendcrossing.users.domain.entity.Users;
 import io.rapa.backendcrossing.users.repository.UserRepository;
+import io.rapa.backendcrossing.users.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class DataInitConfig {
 
     private final UserRepository userRepository;
+    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
     @Bean
@@ -24,21 +27,12 @@ public class DataInitConfig {
     CommandLineRunner initRootUser() {
         return args -> {
             if( userRepository.count() < 2 ){
-                userRepository.save(
-                        Users.builder()
-                                .email("wjdtn747@naver.com")
-                                .password(passwordEncoder.encode("1234"))
-                                .nickname("닉네임")
-                                .build()
-                                .switchToSuperAdmin()
-                );
-                userRepository.save(
-                        Users.builder()
-                                .email("wjdtn747@gmail.com")
-                                .password(passwordEncoder.encode("1234"))
-                                .nickname("닉네임")
-                                .build()
-                                .switchToSuperAdmin()
+                userService.registerUser(
+                        new UserCreateRequest(
+                                "wjdtn747@gmail.com",
+                                "wjdtn0619",
+                                "슈빠어드민"
+                        )
                 );
             }
         };

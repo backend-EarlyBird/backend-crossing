@@ -1,5 +1,9 @@
 package io.rapa.backendcrossing.auth.service;
 
+import io.rapa.backendcrossing.auth.domain.dto.request.AuthGoogleExchangeRequest;
+import io.rapa.backendcrossing.auth.domain.dto.response.AuthLoginResponse;
+import io.rapa.backendcrossing.auth.domain.entity.UuidValidator;
+import io.rapa.backendcrossing.auth.repository.UuidValidatorRepository;
 import io.rapa.backendcrossing.common.constants.ErrorCode;
 import io.rapa.backendcrossing.common.exception.CustomException;
 import io.rapa.backendcrossing.common.util.PreConditions;
@@ -7,9 +11,9 @@ import io.rapa.backendcrossing.security.domain.RefreshToken;
 import io.rapa.backendcrossing.security.repository.RefreshTokenRepository;
 import io.rapa.backendcrossing.security.domain.dto.KeyPair;
 import io.rapa.backendcrossing.users.constants.UserStatus;
-import io.rapa.backendcrossing.auth.dto.request.AuthLoginRequest;
+import io.rapa.backendcrossing.auth.domain.dto.request.AuthLoginRequest;
 import io.rapa.backendcrossing.security.service.TokenService;
-import io.rapa.backendcrossing.auth.dto.request.AuthRefreshRequest;
+import io.rapa.backendcrossing.auth.domain.dto.request.AuthRefreshRequest;
 import io.rapa.backendcrossing.users.domain.entity.Users;
 import io.rapa.backendcrossing.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +24,10 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -30,6 +38,7 @@ public class AuthService {
     private final TokenService tokenService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UuidValidatorRepository uuidValidatorRepository;
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
@@ -74,7 +83,7 @@ public class AuthService {
 
 
 
-        RefreshToken foundedRT = refreshTokenRepository.findRefreshTokenByRefreshToken(receivedRT)
+        RefreshToken foundedRT = refreshTokenRepository.findById(receivedRT)
                 .orElseThrow(
                         () -> new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND)
                 );
@@ -90,9 +99,28 @@ public class AuthService {
     }
 
     @Transactional
-    @PreAuthorize("isAuthenticated()")
+    @PostMapping()
     public void signOut(String refreshToken){
         if(Strings.isBlank(refreshToken)) throw new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
         refreshTokenRepository.deleteById(refreshToken);
+    }
+
+    @Transactional
+    public KeyPair googleSignIn(AuthGoogleExchangeRequest request){
+        String code = UUID.fromString(request.code()).toString();
+
+        PreConditions.validate(
+            uuidValidatorRepository.existsById(code),
+            ErrorCode.NO_GOOGLE_AUTH_HISTORY
+        );
+
+        UuidValidator uuidValidator = uuidValidatorRepository.findByIdOrThrow(code);
+
+        Users foundedUser = userRepository.findByEmailOrThrow(uuidValidator.getUserEmail());
+
+        return tokenService.issueKeyPair(
+                foundedUser.getEmail(),
+                foundedUser.getRole()
+        );
     }
 }

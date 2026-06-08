@@ -1,4 +1,4 @@
-package io.rapa.backendcrossing.auth.dto.response;
+package io.rapa.backendcrossing.auth.domain.dto.response;
 
 import io.rapa.backendcrossing.security.domain.dto.KeyPair;
 import lombok.Builder;

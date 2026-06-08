@@ -55,7 +55,9 @@ public enum ErrorCode {
     PROFILE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저의 프로필을 찾을 수 없습니다."),
 
     // AUTH 관련
-    AUTHORIZE_NEEDED(HttpStatus.UNAUTHORIZED, "인증이 필요합니다.")
+    AUTHORIZE_NEEDED(HttpStatus.UNAUTHORIZED, "인증이 필요합니다."),
+    NO_GOOGLE_AUTH_HISTORY(HttpStatus.UNAUTHORIZED, "해당 계정으로 구글 로그인을 수행한 기록이 없습니다."),
+    UUID_HISTORY_NOT_FOUND(HttpStatus.UNAUTHORIZED, "OAuth 코드를 찾을 수 없습니다.")
     ;
 
 

@@ -32,7 +32,6 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/npcs")
-@SecurityRequirement(name = "Bearer Authentication")
 @Tag(name = "Npc API", description = "Npc 관련 API 명세서")
 public class NpcController implements ApiNpcsSupperts {
 

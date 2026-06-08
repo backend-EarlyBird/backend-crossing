@@ -1,6 +1,6 @@
 package io.rapa.util;
 
-import io.rapa.backendcrossing.auth.dto.request.AuthLoginRequest;
+import io.rapa.backendcrossing.auth.domain.dto.request.AuthLoginRequest;
 import io.rapa.backendcrossing.friendRequests.constants.FriendRequestsStatus;
 import io.rapa.backendcrossing.friendRequests.entity.FriendRequests;
 import io.rapa.backendcrossing.users.domain.dto.request.UserCreateRequest;

@@ -14,5 +14,5 @@ public interface RefreshTokenRepository extends CrudRepository<RefreshToken, Str
         return findById(refreshToken).orElseThrow(()->new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND));
     }
 
-    Optional<RefreshToken> findRefreshTokenByRefreshToken(String refreshToken);
+    Optional<RefreshToken> findById(String refreshToken);
 }
