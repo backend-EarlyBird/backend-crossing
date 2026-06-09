@@ -40,7 +40,7 @@ public interface UserControllerSupporter {
     @ApiResponses(
             value = {
                     @ApiResponse(
-                            responseCode = "200",
+                            responseCode = "201",
                             description = "회원가입 성공",
                             content = @Content(
                                     mediaType = "application/json",

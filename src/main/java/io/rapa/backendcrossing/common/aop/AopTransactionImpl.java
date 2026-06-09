@@ -10,6 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class AopTransactionImpl implements AopTransactionManager{
     @Override
     public Object proceed(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        return proceedingJoinPoint;
+        return proceedingJoinPoint.proceed();
     }
 }
