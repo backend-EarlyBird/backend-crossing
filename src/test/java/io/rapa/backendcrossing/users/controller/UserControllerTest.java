@@ -294,7 +294,7 @@ class UserControllerTest extends BaseIntegrationTest  {
 
                 // then
                 Assertions.assertThat(foundedData.account().userId()).isEqualTo(testUser.getUserId());
-                Assertions.assertThat(foundedData.wallet().gem()).isEqualTo(0L);
+                Assertions.assertThat(foundedData.wallet().gem()).isEqualTo(50000L);
                 Assertions.assertThat(foundedData.profile().level()).isEqualTo(0);
                 Assertions.assertThat(foundedData.inventory().size()).isGreaterThan(0);
                 Assertions.assertThat(foundedData.friendCount()).isEqualTo(3);

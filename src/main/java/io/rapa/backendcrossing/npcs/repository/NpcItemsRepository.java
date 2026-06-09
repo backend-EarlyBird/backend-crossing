@@ -25,8 +25,23 @@ public interface NpcItemsRepository extends JpaRepository<NpcItems, Long> {
 
     // Fetch Join을 사용하여 연관 엔티티를 한 번에 로딩
     // NpcItems + Npc + Item : 1+N 관련 해결용
-    @Query("SELECT ni FROM NpcItems ni JOIN FETCH ni.npc JOIN FETCH ni.item WHERE ni.npcItemId = :id")
+    @Query( """
+            SELECT ni 
+                FROM NpcItems ni 
+                JOIN FETCH ni.npc 
+                JOIN FETCH ni.item 
+                WHERE ni.npcItemId = :id
+            """)
     Optional<NpcItems> findByIdWithDetails(@Param("id") Long id);
+
+    @Query( """
+            SELECT ni 
+                FROM NpcItems ni 
+                JOIN ni.npc 
+                JOIN ni.item 
+                WHERE ni.npcItemId = :id
+            """)
+    Optional<NpcItems> findByIdWithDetailsWithout(@Param("id") Long id);
 
     default NpcItems findByIdOrThrow(Long id) {
         return findById(id).orElseThrow(

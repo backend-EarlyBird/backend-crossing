@@ -204,7 +204,7 @@ class UserServiceTest extends BaseIntegrationTest {
 
                 // then
                 Assertions.assertThat(allDataOfMe.account().userId()).isEqualTo(testUser.getUserId());
-                Assertions.assertThat(allDataOfMe.wallet().gem()).isEqualTo(0L);
+                Assertions.assertThat(allDataOfMe.wallet().gem()).isEqualTo(50000L);
                 Assertions.assertThat(allDataOfMe.profile().level()).isEqualTo(0);
                 Assertions.assertThat(allDataOfMe.inventory().size()).isGreaterThan(0);
                 Assertions.assertThat(allDataOfMe.friendCount()).isEqualTo(3);
