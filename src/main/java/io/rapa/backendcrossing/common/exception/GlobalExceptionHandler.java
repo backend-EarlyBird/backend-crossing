@@ -1,0 +1,118 @@
+package io.rapa.backendcrossing.common.exception;
+
+import io.rapa.backendcrossing.common.constants.CommonResponse;
+import io.rapa.backendcrossing.common.constants.ErrorCode;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+/**
+ * packageName    : io.rapa.backendcrossing.common.exception
+ * fileName       : GlobalExceptionHandler
+ * author         : Admin
+ * date           : 26. 6. 1.
+ * description    :
+ * ===========================================================
+ * DATE              AUTHOR             NOTE
+ * -----------------------------------------------------------
+ * 26. 6. 1.        Admin       최초 생성
+ */
+@RestControllerAdvice
+@Slf4j
+public class GlobalExceptionHandler {
+
+    // 500에러 말고 다른 응답 규격
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<CommonResponse<?>> handleCustomException(CustomException e) {
+        log.error("에러 발생: {}", e.getErrorCode().getDescription());
+
+        return ResponseEntity
+                .status(e.getErrorCode().getHttpStatus())
+                .body(CommonResponse.fail(e.getErrorCode().getDescription()));
+    }
+
+    // 500에러 응답 규격
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<CommonResponse<?>> handleException(Exception e) {
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(CommonResponse.fail("서버 오류가 발생했습니다."));
+    }
+
+    @ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
+    public ResponseEntity<CommonResponse<Void>> handleAuthenticationNotFound(
+            MethodArgumentNotValidException e
+    ) {
+        return  ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(
+                        CommonResponse
+                                .fail(
+                                        ErrorCode.AUTHORIZE_NEEDED.getDescription()
+                                )
+                );
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<CommonResponse<Void>> handleAuthenticationArgumentError(
+            MethodArgumentNotValidException e
+    ) {
+        return  ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(
+                        CommonResponse
+                                .fail(
+                                        ErrorCode.AUTHORIZE_NEEDED.getDescription()
+                                )
+                );
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<CommonResponse<Void>> handleValidation(
+            MethodArgumentNotValidException e
+    ){
+
+        for (FieldError error : e.getBindingResult().getFieldErrors()) {
+
+            if (Strings.isNotBlank(error.getField())){
+
+                return switch ( error.getField() ){
+                    case "password" ->  ResponseEntity
+                                .badRequest()
+                                .body(
+                                        CommonResponse
+                                                .fail(
+                                                    ErrorCode.PASSWORD_LENGTH_NOT_VALID.getDescription()
+                                                )
+                                );
+                    default -> ResponseEntity
+                                .badRequest()
+                                .body(
+                                        CommonResponse
+                                                .fail(
+                                                        ErrorCode.VALIDATION_ERROR.getDescription()
+                                                )
+                                );
+
+                };
+            }
+        }
+
+        return  ResponseEntity
+                .badRequest()
+                .body(
+                        CommonResponse
+                                .fail(
+                                        ErrorCode.VALIDATION_ERROR.getDescription()
+                                )
+                );
+    }
+
+}

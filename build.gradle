@@ -22,6 +22,7 @@ dependencies {
     // OpenFeign 관련
     implementation 'io.github.openfeign.querydsl:querydsl-core:7.1'
     implementation 'io.github.openfeign.querydsl:querydsl-jpa:7.1'
+    implementation 'org.springframework.boot:spring-boot-starter-security-oauth2-client'
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'io.github.openfeign.querydsl:querydsl-apt:7.1:jakarta'
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
@@ -34,6 +35,10 @@ dependencies {
 
     // Thymeleaf 레이아웃
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:4.0.1'
+
+    // 레디스
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.redisson:redisson-spring-boot-starter:4.4.0'
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-flyway'
@@ -52,6 +57,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-thymeleaf-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    runtimeOnly 'com.h2database:h2'
     testCompileOnly 'org.projectlombok:lombok'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testAnnotationProcessor 'org.projectlombok:lombok'

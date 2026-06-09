@@ -1,0 +1,39 @@
+spring:
+  config:
+    import: optional:file:.env.development[.properties]
+  data:
+    redis:
+      host: ${redisHost}
+      port: ${redisPort}
+  sql:
+    init:
+      mode: always
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MySQL;NON_KEYWORDS=USER;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+  flyway:
+    enabled: false
+custom:
+  jwt:
+    payloads:
+      issuer: wjdtn747@naver.com
+      subjectAccessToken: access-token
+      subjectRefreshToken: refresh-token
+      audiance: service-user
+    secrets:
+      secretKey: ${jwtSecretKey}
+      vanillaKey: ${vanillaKey}
+    validations:
+      access: 900000
+      refresh: 1209600000
